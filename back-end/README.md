@@ -1,29 +1,37 @@
 # Sistema de Estágios - Backend
 
-## Tasks atuais
+- [x] Implementar autenticação
+- [x] Configurar autorização
+- [x] Configurar serviço de email
+- [x] Configurar migrações de banco de dados
+- [x] Configurar ambientes (Dev, Staging, Prod)
+- [x] Configurar GitHub Actions
+- [x] Implementar recuperação de senha
 
-* [x] Configurar testes login administrador
-* [x] Adicionar lib de validação dos dados dos corpos das requisições
-* [ ] Adicionar lib para envio de emails
-* [x] Configurar testes dos métodos do banco de dados
-* [ ] Configurar husky para formatar o código ao fazer um commit
-* [ ] Criar pipeline CI/CD do github para bloquear pull requests que não passarem nos testes
-* [x] Sanatizar os inputs do usuário para evitar vulnerabilidades
-* [x] Configurar helmet para proteger o servidor de perigos comuns como XSS Atack
-* [ ] Configurar bcrypt para proteger senhas
-* [ ] Implementar rate limiting
+---
 
-### Próximas Tasks
-- Adicionar rotas estudantes
-- Adicionar rotas coordenadores
-- Adicionar rotas usuários
-- Adicionar testes rotas estudantes
-- Adicionar testes rotas coordenadores
-- Adicionar testes rotas usuários
-- Adicionar rota para resetar senha com email de verificação
-- Adicionar middleware de autorização de acordo com o tipo de usuário
-- Configurar as migrations do sequelize para o ambiente de produção
-- Configurar autenticação de dois fatores (qrcode e secret) com speakeasy
-- Adicionar testes para rotas de emails
-- Adicionar teste para rota de autenticação de dois fatores
-- Configurar morgan para monitorar as requisições
+- [ ] Iniciar cadastro de estágio
+    - [ ] Cadastro de estágio
+    - [ ] Busca por CNPJ (usando Brasil API)
+    - [ ] Auto cadastrar de documentos necessários
+- [ ] Retornar alunos (com funcionalidade de pesquisa)
+- [ ] Retornar estágios (com funcionalidade de pesquisa)
+- [ ] Retornar documentos de estágio
+- [ ] Retornar documentos pendentes de estágio
+- [ ] Atualizar estágio (quando possível)
+
+---
+
+- [ ] Cancelar solicitação de estágio
+- [ ] Enviar/Retornar documentos
+- [ ] Encerrar estágio
+- [ ] Aprovar/Reprovar estágio
+- [ ] Marcar documento como entregue
+
+---
+
+- [ ] Configurar notificações
+- [ ] Obter informações do usuário
+- [ ] Atualizar informações do usuário
+- [ ] Descadastrar usuário
+
