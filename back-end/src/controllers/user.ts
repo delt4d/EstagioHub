@@ -2,13 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import { ResetPasswordToken } from '../models/reset-password-token';
 import { mapUserToJson as mapUserToData, User } from '../models/user';
 import config from '../modules/config';
-import { toResult, validateSchema } from '../modules/config/utils';
 import { NotFoundError, UnhandledError } from '../modules/errors';
+import { validateSchema } from '../modules/helpers';
+import { toResult } from '../modules/utils';
 import { ForgotPasswordSchema, ResetPasswordSchema } from '../schemas/user';
 import authService from '../services/auth';
 import emailService from '../services/email';
 import userService from '../services/user';
-
 export default class UserController {
     async me(req: Request, res: Response, next: NextFunction) {
         return res.send({

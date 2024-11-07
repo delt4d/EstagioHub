@@ -2,10 +2,9 @@ import { AccessToken } from '../models/access-token';
 import { ResetPasswordToken } from '../models/reset-password-token';
 import { User } from '../models/user';
 import config from '../modules/config';
-import { Replace } from '../modules/config/helpers';
-import { toResult } from '../modules/config/utils';
 import { DatabaseResolver } from '../modules/database';
 import { BadRequestError, NotFoundError } from '../modules/errors';
+import { Replace, toResult } from '../modules/utils';
 import tokenService from './token';
 
 export class AuthService {

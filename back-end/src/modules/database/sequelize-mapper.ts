@@ -5,8 +5,8 @@ import { Student } from '../../models/student';
 import { Supervisor } from '../../models/supervisor';
 import { User } from '../../models/user';
 import { UserRole } from '../../models/user-role';
-import { MapperDictionary } from '../config/helpers';
-import { mapObject } from '../config/utils';
+import { mapObject } from '../helpers';
+import { MapperDictionary } from '../utils';
 import {
     AccessTokenTable,
     AdminTable,

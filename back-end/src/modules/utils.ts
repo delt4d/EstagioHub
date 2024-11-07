@@ -1,51 +1,3 @@
-import Joi from 'joi';
-import { ValidationError } from '../errors';
-import { DeepPartial, MapperDictionary } from './helpers';
-
-type ValueOrError<T, E extends Error = Error> =
-    | {
-          value: T;
-          isError: false;
-          isSuccess: true;
-          orElseThrow: (cb?: (err: E) => E | string) => T;
-          orElse: <U>(alternative: U) => T;
-          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
-          validate: <U = T>(
-              predicate: (val: T) => boolean,
-              error: Error
-          ) => ValueOrError<U, Error>;
-      }
-    | {
-          value: E;
-          isError: true;
-          isSuccess: false;
-          orElseThrow: (cb?: (err: E) => E | string) => never;
-          orElse: <U>(alternative: U) => U;
-          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
-          validate: <U = T>(
-              predicate: (val: T) => boolean,
-              error: Error
-          ) => ValueOrError<U, Error>;
-      };
-
-type AsyncValueOrError<T, E extends Error = Error> = {
-    resolveAsync: () => Promise<ValueOrError<T, E>>;
-    waitAsync: () => Promise<void>;
-    getValueAsync: () => Promise<T | E>;
-    getErrorAsync: () => Promise<E | null>;
-    isErrorAsync: () => Promise<boolean>;
-    isSuccessAsync: () => Promise<boolean>;
-    orElseThrowAsync: (cb?: (err: E) => E | string) => Promise<T>;
-    orElseAsync: <U>(alternative: U | Promise<U>) => Promise<T | U>;
-    validateAsync: <U = T>(
-        predicate: (val: T) => boolean | Promise<boolean>,
-        error: Error
-    ) => AsyncValueOrError<U, Error>;
-    mapAsync: <U>(
-        fn: (val: T) => U | Promise<U>
-    ) => AsyncValueOrError<U, Error>;
-};
-
 export function toResult<T, E extends Error = Error>(
     promise: Promise<T>
 ): AsyncValueOrError<T, E> {
@@ -165,21 +117,14 @@ export function toResult<T, E extends Error = Error>(
     };
 }
 
-export function validateSchema<T>(
-    validationSchema: Joi.ObjectSchema<T>,
-    value?: any
-): T {
-    const validationResult = validationSchema.validate(value);
-
-    if (validationResult.error) {
-        throw new ValidationError(
-            validationResult.error.message,
-            validationResult.error.details,
-            validationResult.warning
-        );
-    }
-
-    return validationResult.value;
+export function deepFreeze<T extends object>(obj: T): Immutable<T> {
+    Object.keys(obj).forEach((key) => {
+        const prop = obj[key as keyof T];
+        if (typeof prop === 'object' && prop !== null) {
+            deepFreeze(prop);
+        }
+    });
+    return Object.freeze(obj);
 }
 
 export function deepMerge<T>(target: T, source: DeepPartial<T>): T {
@@ -203,28 +148,70 @@ export function deepMerge<T>(target: T, source: DeepPartial<T>): T {
     return target;
 }
 
-export function mapObject<From extends object, To extends object>(
-    sourceObject: From,
-    mapper: MapperDictionary<From, To>,
-    ignoreError: boolean = false
-): To {
-    const result: Partial<To> = {};
-
-    for (const toKey in mapper) {
-        const fromKey = mapper[toKey];
-
-        if (typeof fromKey === 'function') {
-            try {
-                result[toKey] = fromKey(sourceObject);
-            } catch (err) {
-                if (!ignoreError) throw err;
-            }
-        } else if (typeof fromKey === 'string' && fromKey in sourceObject) {
-            result[toKey] = sourceObject[
-                fromKey as keyof From
-            ] as unknown as To[typeof toKey];
-        }
-    }
-
-    return result as To;
+export function is<T>(
+    value: unknown,
+    constructor: new (...args: any[]) => T
+): value is T {
+    return value instanceof constructor;
 }
+
+export type MergeReplace<T, U> = Omit<T, keyof U> & U;
+export type Replace<
+    T,
+    U extends { [K in keyof T]?: T[K] | unknown },
+> = MergeReplace<T, U>;
+
+export type Immutable<T> = {
+    readonly [K in keyof T]: Immutable<T[K]>;
+};
+
+export type DeepPartial<T> = {
+    [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+
+export type MapperDictionary<From extends object, To extends object> = {
+    [K in keyof To]: keyof From | ((source: From) => To[K]);
+};
+export type ValueOrError<T, E extends Error = Error> =
+    | {
+          value: T;
+          isError: false;
+          isSuccess: true;
+          orElseThrow: (cb?: (err: E) => E | string) => T;
+          orElse: <U>(alternative: U) => T;
+          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
+          validate: <U = T>(
+              predicate: (val: T) => boolean,
+              error: Error
+          ) => ValueOrError<U, Error>;
+      }
+    | {
+          value: E;
+          isError: true;
+          isSuccess: false;
+          orElseThrow: (cb?: (err: E) => E | string) => never;
+          orElse: <U>(alternative: U) => U;
+          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
+          validate: <U = T>(
+              predicate: (val: T) => boolean,
+              error: Error
+          ) => ValueOrError<U, Error>;
+      };
+
+export type AsyncValueOrError<T, E extends Error = Error> = {
+    resolveAsync: () => Promise<ValueOrError<T, E>>;
+    waitAsync: () => Promise<void>;
+    getValueAsync: () => Promise<T | E>;
+    getErrorAsync: () => Promise<E | null>;
+    isErrorAsync: () => Promise<boolean>;
+    isSuccessAsync: () => Promise<boolean>;
+    orElseThrowAsync: (cb?: (err: E) => E | string) => Promise<T>;
+    orElseAsync: <U>(alternative: U | Promise<U>) => Promise<T | U>;
+    validateAsync: <U = T>(
+        predicate: (val: T) => boolean | Promise<boolean>,
+        error: Error
+    ) => AsyncValueOrError<U, Error>;
+    mapAsync: <U>(
+        fn: (val: T) => U | Promise<U>
+    ) => AsyncValueOrError<U, Error>;
+};

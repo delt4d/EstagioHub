@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { Supervisor } from '../models/supervisor';
 import config from '../modules/config';
-import { toResult, validateSchema } from '../modules/config/utils';
 import { NotFoundError, UnhandledError } from '../modules/errors';
+import { validateSchema } from '../modules/helpers';
+import { toResult } from '../modules/utils';
 import {
     SupervisorLoginSchema,
     SupervisorRegisterSchema,
@@ -11,7 +12,6 @@ import authService from '../services/auth';
 import emailService from '../services/email';
 import supervisorService from '../services/supervisor';
 import userService from '../services/user';
-
 export default class SupervisorController {
     async login(req: Request, res: Response) {
         const data = validateSchema(SupervisorLoginSchema, req.body);
