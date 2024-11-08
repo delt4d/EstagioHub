@@ -12,8 +12,8 @@ export class UnauthorizedError extends Error {
 export class BadRequestError extends Error {
     readonly name = 'BadRequestError';
 
-    public constructor(message: string) {
-        super(message);
+    public constructor(message?: string) {
+        super(message || 'Verifique se os dados estão corretos.');
     }
 }
 
@@ -44,7 +44,7 @@ export class TooManyRequestsError extends Error {
     readonly name = 'TooManyRequestsError';
 
     public constructor(message?: string) {
-        super(message ?? 'A requisição excedeu o limite de requisições.');
+        super(message || 'A requisição excedeu o limite de requisições.');
     }
 }
 

@@ -17,9 +17,11 @@ export const cnpjWsMapper: Mapper<CNPJwsApiDto, Organization> = {
     }),
     phone1: (data) =>
         data.estabelecimento.ddd1 + data.estabelecimento.telefone1,
-    phone2: (data) =>
-        (data.estabelecimento.ddd2 ?? '') +
-        (data.estabelecimento.telefone2 ?? ''),
+    phone2: (data) => {
+        if (!data.estabelecimento.ddd2 || !data.estabelecimento.telefone2)
+            return undefined;
+        return data.estabelecimento.ddd2 + data.estabelecimento.telefone2;
+    },
 };
 
 export const brasilApiCnpjMapper: Mapper<BrasilApiCnpjDto, Organization> = {
@@ -36,5 +38,5 @@ export const brasilApiCnpjMapper: Mapper<BrasilApiCnpjDto, Organization> = {
         additionalInfo: data.complemento,
     }),
     phone1: 'ddd_telefone_1',
-    phone2: 'ddd_telefone_2',
+    phone2: (data) => data.ddd_telefone_2 || undefined,
 };

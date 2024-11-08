@@ -1,4 +1,4 @@
-export interface BrasilApiCnpjDto {
+export type BrasilApiCnpjDto = {
     uf: string;
     cep: string;
     qsa: Array<{
@@ -65,9 +65,9 @@ export interface BrasilApiCnpjDto {
     descricao_tipo_de_logradouro: string;
     descricao_motivo_situacao_cadastral: string;
     descricao_identificador_matriz_filial: string;
-}
+};
 
-export interface CNPJwsApiDto {
+export type CNPJwsApiDto = {
     cnpj_raiz: string;
     razao_social: string;
     capital_social: string;
@@ -176,4 +176,4 @@ export interface CNPJwsApiDto {
         motivo_situacao_cadastral: string | null;
         inscricoes_estaduais: Array<unknown>;
     };
-}
+};

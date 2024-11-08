@@ -2,11 +2,13 @@ import { Axios } from 'axios';
 import config from '../../app/config';
 import {
     BadRequestError,
+    NotFoundError,
     TooManyRequestsError,
     UnhandledError,
 } from '../../app/errors';
 import { mapObject } from '../../app/helpers';
 import { Organization } from '../../models/organization';
+import { BrasilApiCnpjDto, CNPJwsApiDto } from './dtos';
 import { brasilApiCnpjMapper, cnpjWsMapper } from './mapper';
 
 export interface CnpjHandler {
@@ -35,29 +37,40 @@ abstract class BaseCnpjHandler implements CnpjHandler {
 }
 
 export class CnpjWsApiHandler extends BaseCnpjHandler {
-    protected static request: Axios;
+    private request: Axios;
 
-    public static BrasilCnpjApiHandler() {
-        this.request.defaults.baseURL = config.external.cnpjWS.baseURL;
+    constructor() {
+        super();
+        this.request = new Axios({
+            baseURL: config.external.cnpjWS.baseURL,
+        });
     }
 
     async fetchData(cnpj: string): Promise<Organization | never> {
         try {
             const route = '/cnpj/' + cnpj;
-            const response = await CnpjWsApiHandler.request.get(route);
+            const response = await this.request.get(route);
+            const data: unknown = JSON.parse(response.data);
 
-            if (response.status !== 200) {
-                if (response.status === 400) {
-                    throw new BadRequestError(response.data.message);
-                }
-                if (response.status === 429) {
-                    throw new TooManyRequestsError(response.data.detalhes);
-                }
-
-                return await super.fetchData(cnpj);
+            if (response.status === 200) {
+                return mapObject(data as CNPJwsApiDto, cnpjWsMapper);
             }
 
-            return mapObject(response.data, cnpjWsMapper);
+            const errorData = data as {
+                status: number;
+                titulo: string;
+                detalhes: string;
+                validacao: Array<unknown>;
+            };
+
+            if (response.status === 400) {
+                throw new BadRequestError(errorData.detalhes);
+            }
+            if (response.status === 429) {
+                throw new TooManyRequestsError(errorData.detalhes);
+            }
+
+            return await super.fetchData(cnpj);
         } catch (err: any) {
             return await super.fetchData(cnpj, err);
         }
@@ -65,26 +78,40 @@ export class CnpjWsApiHandler extends BaseCnpjHandler {
 }
 
 export class BrasilApiHandler extends BaseCnpjHandler {
-    protected static request: Axios;
+    private request: Axios;
 
-    public static BrasilCnpjApiHandler() {
-        this.request.defaults.baseURL = config.external.brasilAPI.baseURL;
+    constructor() {
+        super();
+        this.request = new Axios({
+            baseURL: config.external.brasilAPI.baseURL,
+        });
     }
 
     async fetchData(cnpj: string): Promise<Organization | never> {
         try {
             const route = '/cnpj/v1/' + cnpj;
-            const response = await BrasilApiHandler.request.get(route);
+            const response = await this.request.get(route);
+            const data: unknown = JSON.parse(response.data);
 
-            if (response.status !== 200) {
-                if (response.status === 400) {
-                    throw new BadRequestError(response.data.message);
-                }
-
-                return await super.fetchData(cnpj);
+            if (response.status === 200) {
+                return mapObject(data as BrasilApiCnpjDto, brasilApiCnpjMapper);
             }
 
-            return mapObject(response.data, brasilApiCnpjMapper);
+            const errorData = data as {
+                name: string;
+                message: string;
+                type: string;
+                errors: Array<unknown>;
+            };
+
+            if (response.status === 400) {
+                throw new BadRequestError(errorData.message);
+            }
+            if (response.status === 404) {
+                throw new NotFoundError(errorData.message);
+            }
+
+            return await super.fetchData(cnpj);
         } catch (err: any) {
             return await super.fetchData(cnpj, err);
         }
