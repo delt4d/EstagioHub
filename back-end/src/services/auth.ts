@@ -89,7 +89,7 @@ export class AuthService {
         conn.throwIfHasError();
 
         if (!resetPassToken) {
-            throw new NotFoundError(config.messages.invalidToken);
+            throw new NotFoundError(config.messages.invalidResetPasswordToken);
         }
 
         return resetPassToken;

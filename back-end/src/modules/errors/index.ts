@@ -40,6 +40,14 @@ export class ValidationError extends Joi.ValidationError implements Error {
     }
 }
 
+export class TooManyRequestsError extends Error {
+    readonly name = 'TooManyRequestsError';
+
+    public constructor(message?: string) {
+        super(message ?? 'A requisição excedeu o limite de requisições.');
+    }
+}
+
 export class UnhandledError extends Error {
     readonly name = 'UnhandledError';
 

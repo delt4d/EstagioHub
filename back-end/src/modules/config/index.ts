@@ -48,7 +48,8 @@ const messages = {
         'O código de uso único ou o e-mail é inválido.',
     expiredResetPasswordToken: 'O código de uso único expirou.',
     invalidResetPasswordToken: 'O código de uso único é inválido',
-    invalidToken: 'Este token não é válido!',
+    organizationNotFoundWithCNPJ:
+        'Nenhum empresa foi encontrada com este CNPJ.',
 };
 
 const validations = {
@@ -136,6 +137,12 @@ const external = {
             if (project.environment === 'test') return message;
             console.log('=>', message, ...optionalParams);
         };
+    },
+    brasilAPI: {
+        baseURL: 'https://brasilapi.com.br/api',
+    },
+    cnpjWS: {
+        baseURL: 'https://publica.cnpj.ws',
     },
 };
 

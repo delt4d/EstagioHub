@@ -110,6 +110,7 @@ app.use(
                 NotFoundError: 404,
                 ValidationError: 400,
                 UnhandledError: 500,
+                TooManyRequestsError: 429,
             }[error.name] ?? 500;
 
         if (config.project.environment === 'development') {

@@ -1,9 +1,9 @@
 import Joi, { ValidationError } from 'joi';
-import { MapperDictionary } from './utils';
+import { Mapper } from './utils';
 
 export function mapObject<From extends object, To extends object>(
     sourceObject: From,
-    mapper: MapperDictionary<From, To>,
+    mapper: Mapper<From, To>,
     ignoreError: boolean = false
 ): To {
     const result: Partial<To> = {};

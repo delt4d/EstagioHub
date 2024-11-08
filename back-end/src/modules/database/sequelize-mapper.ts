@@ -6,7 +6,7 @@ import { Supervisor } from '../../models/supervisor';
 import { User } from '../../models/user';
 import { UserRole } from '../../models/user-role';
 import { mapObject } from '../helpers';
-import { MapperDictionary } from '../utils';
+import { Mapper } from '../utils';
 import {
     AccessTokenTable,
     AdminTable,
@@ -16,25 +16,25 @@ import {
     UserTable,
 } from './sequelize-tables';
 
-const adminMapper: MapperDictionary<AdminTable, Admin> = {
+const adminMapper: Mapper<AdminTable, Admin> = {
     id: 'id',
     name: 'name',
     user: (src) => mapSequelizeUserToModel(src.user),
 };
 
-const supervisorMapper: MapperDictionary<SupervisorTable, Supervisor> = {
+const supervisorMapper: Mapper<SupervisorTable, Supervisor> = {
     id: 'id',
     name: 'name',
     user: (src) => mapSequelizeUserToModel(src.user),
 };
 
-const studentMapper: MapperDictionary<StudentTable, Student> = {
+const studentMapper: Mapper<StudentTable, Student> = {
     id: 'id',
     fullName: 'fullName',
     user: (src) => mapSequelizeUserToModel(src.user),
 };
 
-const userMapper: MapperDictionary<UserTable, User> = {
+const userMapper: Mapper<UserTable, User> = {
     id: 'id',
     email: 'email',
     password: 'password',
@@ -49,7 +49,7 @@ const userMapper: MapperDictionary<UserTable, User> = {
     },
 };
 
-const accessTokenMapper: MapperDictionary<AccessTokenTable, AccessToken> = {
+const accessTokenMapper: Mapper<AccessTokenTable, AccessToken> = {
     id: 'id',
     token: 'token',
     expiredAt: 'expiredAt',
@@ -57,7 +57,7 @@ const accessTokenMapper: MapperDictionary<AccessTokenTable, AccessToken> = {
     user: (src) => mapSequelizeUserToModel(src.user),
 };
 
-const resetPasswordTokenMapper: MapperDictionary<
+const resetPasswordTokenMapper: Mapper<
     ResetPasswordTokenTable,
     ResetPasswordToken
 > = {

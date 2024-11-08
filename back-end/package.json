@@ -27,6 +27,7 @@
     "devDependencies": {
         "@swc/core": "^1.7.26",
         "@swc/jest": "^0.2.36",
+        "@types/axios": "^0.14.4",
         "@types/bcrypt": "^5.0.2",
         "@types/cookie-parser": "^1.4.7",
         "@types/cors": "^2.8.17",
@@ -59,6 +60,7 @@
         "typescript-eslint": "^7.16.1"
     },
     "dependencies": {
+        "axios": "^1.7.7",
         "bcrypt": "^5.1.1",
         "connect-redis": "^7.1.1",
         "cookie-parser": "^1.4.6",

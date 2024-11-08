@@ -169,7 +169,7 @@ export type DeepPartial<T> = {
     [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
 
-export type MapperDictionary<From extends object, To extends object> = {
+export type Mapper<From extends object, To extends object> = {
     [K in keyof To]: keyof From | ((source: From) => To[K]);
 };
 export type ValueOrError<T, E extends Error = Error> =
