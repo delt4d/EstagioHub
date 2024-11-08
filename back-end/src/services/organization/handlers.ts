@@ -9,15 +9,15 @@ import {
 import { mapObject } from '../../modules/helpers';
 import { brasilApiCnpjMapper, cnpjWsMapper } from './mapper';
 
-export interface CnpjApiHandler {
-    setNext(handler: CnpjApiHandler): CnpjApiHandler;
+export interface CnpjHandler {
+    setNext(handler: CnpjHandler): CnpjHandler;
     fetchData(cnpj: string): Promise<Organization | never>;
 }
 
-abstract class BaseHandler implements CnpjApiHandler {
-    private nextHandler?: CnpjApiHandler;
+abstract class BaseCnpjHandler implements CnpjHandler {
+    private nextHandler?: CnpjHandler;
 
-    setNext(handler: CnpjApiHandler): CnpjApiHandler {
+    setNext(handler: CnpjHandler): CnpjHandler {
         this.nextHandler = handler;
         return handler;
     }
@@ -34,7 +34,7 @@ abstract class BaseHandler implements CnpjApiHandler {
     }
 }
 
-export class CnpjWsApiHandler extends BaseHandler {
+export class CnpjWsApiHandler extends BaseCnpjHandler {
     protected static request: Axios;
 
     public static BrasilCnpjApiHandler() {
@@ -64,7 +64,7 @@ export class CnpjWsApiHandler extends BaseHandler {
     }
 }
 
-export class BrasilApiHandler extends BaseHandler {
+export class BrasilApiHandler extends BaseCnpjHandler {
     protected static request: Axios;
 
     public static BrasilCnpjApiHandler() {

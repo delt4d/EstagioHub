@@ -2,7 +2,7 @@ import { Organization } from '../../models/organization';
 import config from '../../modules/config';
 import { NotFoundError } from '../../modules/errors';
 import * as fakeData from './data.json';
-import { BrasilApiHandler, CnpjApiHandler, CnpjWsApiHandler } from './handlers';
+import { BrasilApiHandler, CnpjHandler, CnpjWsApiHandler } from './handlers';
 
 interface OrganizationService {
     fetchDataByCnpj(cnpj: string): Promise<Organization | never>;
@@ -30,7 +30,7 @@ class FakeOrganizationService implements OrganizationService {
 }
 
 class ImplOrganizationService implements OrganizationService {
-    private cnpjApiHandler: CnpjApiHandler;
+    private cnpjApiHandler: CnpjHandler;
 
     constructor() {
         const handler1 = new BrasilApiHandler();
