@@ -13,13 +13,13 @@ import {
     Unique,
     Validate,
 } from 'sequelize-typescript';
-import { AccessToken } from '../../models/access-token';
-import { Admin } from '../../models/admin';
-import { ResetPasswordToken } from '../../models/reset-password-token';
-import { Student } from '../../models/student';
-import { Supervisor } from '../../models/supervisor';
-import { User } from '../../models/user';
-import config from '../config';
+import { AccessToken } from '../../../models/access-token';
+import { Admin } from '../../../models/admin';
+import { ResetPasswordToken } from '../../../models/reset-password-token';
+import { Student } from '../../../models/student';
+import { Supervisor } from '../../../models/supervisor';
+import { User } from '../../../models/user';
+import config from '../../config';
 
 type SequelizeUser = User;
 type SequelizeAdmin = Omit<Admin, 'user'> & { userId: number };

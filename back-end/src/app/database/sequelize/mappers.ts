@@ -1,12 +1,12 @@
-import { AccessToken } from '../../models/access-token';
-import { Admin } from '../../models/admin';
-import { ResetPasswordToken } from '../../models/reset-password-token';
-import { Student } from '../../models/student';
-import { Supervisor } from '../../models/supervisor';
-import { User } from '../../models/user';
-import { UserRole } from '../../models/user-role';
-import { mapObject } from '../helpers';
-import { Mapper } from '../utils';
+import { AccessToken } from '../../../models/access-token';
+import { Admin } from '../../../models/admin';
+import { ResetPasswordToken } from '../../../models/reset-password-token';
+import { Student } from '../../../models/student';
+import { Supervisor } from '../../../models/supervisor';
+import { User } from '../../../models/user';
+import { UserRole } from '../../../models/user-role';
+import { mapObject } from '../../helpers';
+import { Mapper } from '../../utils';
 import {
     AccessTokenTable,
     AdminTable,
@@ -14,7 +14,7 @@ import {
     StudentTable,
     SupervisorTable,
     UserTable,
-} from './sequelize-tables';
+} from './tables';
 
 const adminMapper: Mapper<AdminTable, Admin> = {
     id: 'id',

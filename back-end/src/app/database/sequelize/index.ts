@@ -1,15 +1,15 @@
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { DatabaseConnection } from '.';
-import { AccessToken } from '../../models/access-token';
-import { Admin, AdminCollection } from '../../models/admin';
-import { ResetPasswordToken } from '../../models/reset-password-token';
-import { Student } from '../../models/student';
-import { Supervisor } from '../../models/supervisor';
-import { User } from '../../models/user';
-import { UserRole } from '../../models/user-role';
-import config from '../config';
-import { UnhandledError } from '../errors';
+import { DatabaseConnection } from '..';
+import { AccessToken } from '../../../models/access-token';
+import { Admin, AdminCollection } from '../../../models/admin';
+import { ResetPasswordToken } from '../../../models/reset-password-token';
+import { Student } from '../../../models/student';
+import { Supervisor } from '../../../models/supervisor';
+import { User } from '../../../models/user';
+import { UserRole } from '../../../models/user-role';
+import config from '../../config';
+import { UnhandledError } from '../../errors';
 import {
     mapSequelizeAccessTokenToModel,
     mapSequelizeAdminToModel,
@@ -17,7 +17,7 @@ import {
     mapSequelizeStudentToModel,
     mapSequelizeSupervisorToModel,
     mapSequelizeUserToModel,
-} from './sequelize-mapper';
+} from './mappers';
 import {
     AccessTokenTable,
     AdminTable,
@@ -25,7 +25,7 @@ import {
     StudentTable,
     SupervisorTable,
     UserTable,
-} from './sequelize-tables';
+} from './tables';
 
 export class SequelizeDatabaseConnection implements DatabaseConnection {
     private static models = [
