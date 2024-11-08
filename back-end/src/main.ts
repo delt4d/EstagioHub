@@ -1,4 +1,4 @@
-import app from './modules/app';
+import app from './modules';
 import config from './modules/config';
 import adminService from './services/admin';
 

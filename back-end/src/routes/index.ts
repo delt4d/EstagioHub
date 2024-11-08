@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import 'express-async-errors';
-import adminRoutes from '../../routes/admin';
-import logoutRoutes from '../../routes/logout';
-import studentRoutes from '../../routes/student';
-import supervisorRoutes from '../../routes/supervisor';
-import userRoutes from '../../routes/user';
+import adminRoutes from './admin';
+import logoutRoutes from './logout';
+import studentRoutes from './student';
+import supervisorRoutes from './supervisor';
+import userRoutes from './user';
 
 export default function () {
     const routes = Router();

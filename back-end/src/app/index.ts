@@ -6,9 +6,9 @@ import session, { MemoryStore } from 'express-session';
 import slowDown from 'express-slow-down';
 import helmet from 'helmet';
 import validator from 'validator';
-import config from '../config';
-import configurePassport from '../passport';
-import routes from './routes';
+import routes from '../routes';
+import config from './config';
+import configurePassport from './passport';
 
 const app = express();
 const sessionOptions: session.SessionOptions = {
