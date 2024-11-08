@@ -1,7 +1,7 @@
 import config from '../../app/config';
 import { NotFoundError } from '../../app/errors';
 import { Organization } from '../../models/organization';
-import * as fakeData from './data.json';
+import fakeData from './data.json';
 import { BrasilApiHandler, CnpjHandler, CnpjWsApiHandler } from './handlers';
 
 interface OrganizationService {
@@ -12,7 +12,7 @@ class FakeOrganizationService implements OrganizationService {
     private organizations: Organization[];
 
     constructor() {
-        this.organizations = [...fakeData] as Organization[];
+        this.organizations = fakeData as Organization[];
     }
 
     fetchDataByCnpj(cnpj: string): Promise<Organization | never> {
