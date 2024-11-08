@@ -17,6 +17,14 @@ const EmailSchemaNoMessages = Joi.string()
     .lowercase()
     .required();
 
+export const CnpjSchema = Joi.string()
+    .pattern(/^[0-9]+$/)
+    .messages({
+        'string.pattern.base': config.messages.invalidCnpj,
+        'any.required': config.messages.emptyCnpj,
+        'string.empty': config.messages.emptyCnpj,
+    });
+
 export const AdminNameSchema = AdminNameSchemaNoMessages.messages({
     'string.pattern.base': config.messages.invalidAdminName,
 });

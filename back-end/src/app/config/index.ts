@@ -24,6 +24,8 @@ const messages = {
     nameOnlyLetters: 'O campo nome só pode ter letras.',
     wrongRepeatPassword: 'A confirmação de senha está incorreta',
     wrongPassword: 'A senha está incorreta!',
+    invalidCnpj: 'Este CNPJ não é válido. Use apenas números.',
+    emptyCnpj: 'O campo CNPJ é obrigatório.',
 
     // good
     welcomeMessage: 'Servidor ativo. API está disponível.',

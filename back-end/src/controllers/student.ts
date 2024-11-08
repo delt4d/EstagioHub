@@ -73,4 +73,6 @@ export default class StudentController {
             message: config.messages.successfullRegister,
         });
     }
+
+    async findStudents(req: Request, res: Response) {}
 }

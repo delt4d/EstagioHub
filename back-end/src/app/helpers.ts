@@ -28,7 +28,7 @@ export function mapObject<From extends object, To extends object>(
 }
 
 export function validateSchema<T>(
-    validationSchema: Joi.ObjectSchema<T>,
+    validationSchema: Joi.Schema<T>,
     value?: any
 ): T {
     const validationResult = validationSchema.validate(value);

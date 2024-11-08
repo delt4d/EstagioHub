@@ -12,7 +12,7 @@
 
 - [ ] Iniciar cadastro de estágio
     - [ ] Cadastro de estágio
-    - [ ] Busca por CNPJ (usando Brasil API)
+    - [x] Busca por CNPJ (usando Brasil API)
     - [ ] Auto cadastrar de documentos necessários
 - [ ] Retornar alunos (com funcionalidade de pesquisa)
 - [ ] Retornar estágios (com funcionalidade de pesquisa)
