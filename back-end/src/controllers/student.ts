@@ -74,5 +74,7 @@ export default class StudentController {
         });
     }
 
-    async findStudents(req: Request, res: Response) {}
+    async findStudents(req: Request, res: Response) {
+        throw new UnhandledError('Not implemented');
+    }
 }

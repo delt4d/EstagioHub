@@ -106,6 +106,7 @@ app.use(
         const statusCode =
             {
                 UnauthorizedError: 401,
+                ForbiddenError: 403,
                 BadRequestError: 400,
                 NotFoundError: 404,
                 ValidationError: 400,

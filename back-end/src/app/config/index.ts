@@ -43,7 +43,9 @@ const messages = {
         'Não foi possível completar a requisição porque ocorreu um erro inesperado!',
     tooManyRequests:
         'Muitas requisições foram enviadas em pouco tempo. Aguarde alguns minutos para continuar.',
-    notAuth: 'Você precisa estar autenticado para acessar este recurso!',
+    unauthenticated:
+        'Você precisa estar autenticado para acessar este recurso!',
+    unauthorized: 'Você não tem permissão para acessar este recurso!',
     invalidAccessToken:
         'Seu acesso não é válido! Tente fazer o login novamente.',
     invalidEmailOrResetPasswordToken:

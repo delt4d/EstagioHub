@@ -4,8 +4,18 @@ import config from '../config';
 export class UnauthorizedError extends Error {
     readonly name = 'UnauthorizedError';
 
-    public constructor() {
-        super('Você precisa estar logado para acessar este recurso.');
+    public constructor(message?: string) {
+        super(
+            message || 'Você precisa estar logado para acessar este recurso.'
+        );
+    }
+}
+
+export class ForbiddenError extends Error {
+    readonly name = 'ForbiddenError';
+
+    public constructor(message?: string) {
+        super(message || config.messages.unauthorized);
     }
 }
 

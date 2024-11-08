@@ -25,3 +25,11 @@ Access-Control-Allow-Credentials: true
     "password": "{{password}}",
     "repeatPassword": "{{password}}"
 }
+
+###
+# @name searchStudents
+# @prompt token
+GET {{baseUrl}}/student
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
