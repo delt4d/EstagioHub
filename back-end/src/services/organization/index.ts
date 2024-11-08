@@ -1,6 +1,6 @@
+import config from '../../app/config';
+import { NotFoundError } from '../../app/errors';
 import { Organization } from '../../models/organization';
-import config from '../../modules/config';
-import { NotFoundError } from '../../modules/errors';
 import * as fakeData from './data.json';
 import { BrasilApiHandler, CnpjHandler, CnpjWsApiHandler } from './handlers';
 

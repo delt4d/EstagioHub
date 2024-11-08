@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import config from '../app/config';
+import { NotFoundError, UnhandledError } from '../app/errors';
+import { validateSchema } from '../app/helpers';
+import { toResult } from '../app/utils';
 import { ResetPasswordToken } from '../models/reset-password-token';
 import { mapUserToJson as mapUserToData, User } from '../models/user';
-import config from '../modules/config';
-import { NotFoundError, UnhandledError } from '../modules/errors';
-import { validateSchema } from '../modules/helpers';
-import { toResult } from '../modules/utils';
 import { ForgotPasswordSchema, ResetPasswordSchema } from '../schemas/user';
 import authService from '../services/auth';
 import emailService from '../services/email';

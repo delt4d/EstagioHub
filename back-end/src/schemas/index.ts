@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import config from '../modules/config';
+import config from '../app/config';
 
 const NameSchemaNoMessages = Joi.string()
     .pattern(/^[a-zA-Z ]+$/)

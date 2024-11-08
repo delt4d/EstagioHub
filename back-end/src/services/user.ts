@@ -1,7 +1,7 @@
+import config from '../app/config';
+import { DatabaseResolver } from '../app/database';
+import { BadRequestError, NotFoundError } from '../app/errors';
 import { User } from '../models/user';
-import config from '../modules/config';
-import { DatabaseResolver } from '../modules/database';
-import { BadRequestError, NotFoundError } from '../modules/errors';
 import hashService from './hash';
 
 class UserService {

@@ -1,6 +1,6 @@
 import timekeeper from 'timekeeper';
 import testing from '.';
-import { DatabaseConnection, DatabaseResolver } from '../modules/database';
+import { DatabaseConnection, DatabaseResolver } from '../app/database';
 
 let dbConn: DatabaseConnection;
 

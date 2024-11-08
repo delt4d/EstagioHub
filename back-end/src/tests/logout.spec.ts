@@ -1,6 +1,6 @@
 import timekeeper from 'timekeeper';
 import testing from '.';
-import { DatabaseResolver } from '../modules/database';
+import { DatabaseResolver } from '../app/database';
 import adminService from '../services/admin';
 
 describe('logout', () => {

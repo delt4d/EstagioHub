@@ -1,5 +1,5 @@
-import app from './modules';
-import config from './modules/config';
+import app from './app';
+import config from './app/config';
 import adminService from './services/admin';
 
 app.listen(config.project.port, async () => {

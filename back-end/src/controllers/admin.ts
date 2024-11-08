@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
+import config from '../app/config';
+import { NotFoundError, UnhandledError } from '../app/errors';
+import { validateSchema } from '../app/helpers';
+import { toResult } from '../app/utils';
 import { Admin } from '../models/admin';
-import config from '../modules/config';
-import { NotFoundError, UnhandledError } from '../modules/errors';
-import { validateSchema } from '../modules/helpers';
-import { toResult } from '../modules/utils';
 import { AdminLoginSchema } from '../schemas/admin';
 import adminService from '../services/admin';
 import authService from '../services/auth';

@@ -1,5 +1,5 @@
+import { DatabaseResolver } from '../app/database';
 import { Supervisor } from '../models/supervisor';
-import { DatabaseResolver } from '../modules/database';
 import hashService from './hash';
 import userService from './user';
 

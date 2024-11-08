@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
+import config from '../app/config';
+import { NotFoundError, UnhandledError } from '../app/errors';
+import { validateSchema } from '../app/helpers';
+import { toResult } from '../app/utils';
 import { Student } from '../models/student';
-import config from '../modules/config';
-import { NotFoundError, UnhandledError } from '../modules/errors';
-import { validateSchema } from '../modules/helpers';
-import { toResult } from '../modules/utils';
 import { StudentLoginSchema, StudentRegisterSchema } from '../schemas/student';
 import authService from '../services/auth';
 import emailService from '../services/email';

@@ -1,7 +1,7 @@
 import timekeeper from 'timekeeper';
 import testing from '.';
-import config from '../modules/config';
-import { DatabaseResolver } from '../modules/database';
+import config from '../app/config';
+import { DatabaseResolver } from '../app/database';
 
 describe('users', () => {
     beforeEach(async () => {

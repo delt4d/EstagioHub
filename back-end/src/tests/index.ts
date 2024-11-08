@@ -1,12 +1,12 @@
 import { randomUUID } from 'crypto';
 import supertest, { Response } from 'supertest';
+import app from '../app';
+import { deepMerge, DeepPartial, toResult } from '../app/utils';
 import { Admin } from '../models/admin';
 import { Student } from '../models/student';
 import { Supervisor } from '../models/supervisor';
 import { User } from '../models/user';
 import { UserRole } from '../models/user-role';
-import app from '../modules';
-import { deepMerge, DeepPartial, toResult } from '../modules/utils';
 import adminService from '../services/admin';
 import hashService from '../services/hash';
 import studentService from '../services/student';

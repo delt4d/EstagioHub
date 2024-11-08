@@ -1,6 +1,6 @@
 import { randomBytes, randomUUID } from 'crypto';
+import { DatabaseResolver } from '../app/database';
 import { ResetPasswordToken } from '../models/reset-password-token';
-import { DatabaseResolver } from '../modules/database';
 
 class TokenService {
     generateAccessToken(): string {

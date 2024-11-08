@@ -1,12 +1,12 @@
 import { Axios } from 'axios';
-import { Organization } from '../../models/organization';
-import config from '../../modules/config';
+import config from '../../app/config';
 import {
     BadRequestError,
     TooManyRequestsError,
     UnhandledError,
-} from '../../modules/errors';
-import { mapObject } from '../../modules/helpers';
+} from '../../app/errors';
+import { mapObject } from '../../app/helpers';
+import { Organization } from '../../models/organization';
 import { brasilApiCnpjMapper, cnpjWsMapper } from './mapper';
 
 export interface CnpjHandler {

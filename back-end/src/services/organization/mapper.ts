@@ -1,5 +1,5 @@
+import { Mapper } from '../../app/utils';
 import { Organization } from '../../models/organization';
-import { Mapper } from '../../modules/utils';
 import { BrasilApiCnpjDto, CNPJwsApiDto } from './dtos';
 
 export const cnpjWsMapper: Mapper<CNPJwsApiDto, Organization> = {

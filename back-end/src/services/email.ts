@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import config from '../app/config';
 import { User } from '../models/user';
-import config from '../modules/config';
 
 interface EmailService {
     sendNewUserEmail(user: User): Promise<void>;
