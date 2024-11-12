@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import sequelize from 'sequelize';
 import config from '../config';
 
 export class UnauthorizedError extends Error {
@@ -60,6 +61,7 @@ export class TooManyRequestsError extends Error {
 
 export class UnhandledError extends Error {
     readonly name = 'UnhandledError';
+    readonly userFriendlyMessage?: string;
 
     public constructor(message: string, userFriendlyMessage?: string) {
         if (config.project.environment === 'production') {
@@ -68,5 +70,62 @@ export class UnhandledError extends Error {
         }
 
         super(message);
+
+        this.userFriendlyMessage = userFriendlyMessage;
+    }
+}
+
+export class DatabaseError extends Error {
+    readonly name = 'DatabaseError';
+    databaseErrorName: string;
+    userFriendlyMessage?: string;
+    code: string;
+    sql: string;
+    params: any;
+
+    public constructor(
+        message: string,
+        databaseErrorName: string,
+        code: string,
+        sql: string,
+        params: any,
+        userFriendlyMessage?: string
+    ) {
+        if (config.project.environment === 'production') {
+            const defaultMessage = config.messages.serverUnhandledException;
+            message = userFriendlyMessage || defaultMessage;
+        }
+
+        super(message);
+
+        this.userFriendlyMessage = userFriendlyMessage;
+        this.databaseErrorName = databaseErrorName;
+        this.code = code;
+        this.sql = sql;
+        this.params = params;
+    }
+
+    public static fromSequelizeDatabaseError(
+        error: sequelize.DatabaseError
+    ): DatabaseError {
+        const newErr = new DatabaseError(
+            error.message,
+            error.name,
+            (error.original as any).code,
+            error?.sql,
+            error.parameters
+        );
+        newErr.stack = error.stack;
+        return newErr;
+    }
+
+    public changeFriendlyMessage(newMessage: string): DatabaseError {
+        this.userFriendlyMessage = newMessage;
+
+        if (config.project.environment === 'production') {
+            this.message = newMessage;
+        }
+
+        return this;
     }
 }

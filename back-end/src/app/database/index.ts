@@ -1,16 +1,17 @@
+import { SearchStudentsDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
-import { Admin, AdminCollection } from '../../models/admin';
+import { Admin } from '../../models/admin';
 import { ResetPasswordToken } from '../../models/reset-password-token';
 import { Student } from '../../models/student';
 import { Supervisor } from '../../models/supervisor';
 import { User } from '../../models/user';
-import { UnhandledError } from '../errors';
+import { DatabaseError } from '../errors';
 import { SequelizeDatabaseConnection } from './sequelize';
 
 export interface DatabaseConnection {
-    getError(): UnhandledError | undefined;
+    getError(): DatabaseError | undefined;
 
-    throwIfHasError(): undefined;
+    throwIfHasError(): undefined | never;
 
     // cadastrar novo admin
     saveNewAdmin(admin: Admin): Promise<Admin | undefined>;
@@ -34,7 +35,7 @@ export interface DatabaseConnection {
     ): Promise<ResetPasswordToken | undefined>;
 
     // obter todos os admins
-    getAdmins(): Promise<AdminCollection>;
+    getAdmins(): Promise<Admin[]>;
 
     // obter um usuário pelo id
     findUserById(id: number): Promise<User | undefined>;
@@ -62,6 +63,9 @@ export interface DatabaseConnection {
         email: string,
         token: string
     ): Promise<ResetPasswordToken | undefined>;
+
+    // obter usuários à partir de uma busca e paginição
+    searchStudents(data: SearchStudentsDto): Promise<Student[] | undefined>;
 
     // invalidar um user-token
     invalidateAccessToken(token: string): Promise<AccessToken | undefined>;

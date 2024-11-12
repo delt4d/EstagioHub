@@ -5,5 +5,3 @@ export type Admin = {
     name: string;
     user: User;
 };
-
-export type AdminCollection = Admin[];

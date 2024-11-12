@@ -7,8 +7,8 @@ import {
     UnhandledError,
 } from '../../app/errors';
 import { mapObject } from '../../app/helpers';
+import { BrasilApiCnpjDto, CNPJwsApiDto } from '../../dtos/organization';
 import { Organization } from '../../models/organization';
-import { BrasilApiCnpjDto, CNPJwsApiDto } from './dtos';
 import { brasilApiCnpjMapper, cnpjWsMapper } from './mapper';
 
 export interface CnpjHandler {
@@ -41,9 +41,8 @@ export class CnpjWsApiHandler extends BaseCnpjHandler {
 
     constructor() {
         super();
-        this.request = new Axios({
-            baseURL: config.external.cnpjWS.baseURL,
-        });
+        const baseURL = config.external.cnpjWS.baseURL;
+        this.request = new Axios({ baseURL });
     }
 
     async fetchData(cnpj: string): Promise<Organization | never> {
@@ -82,9 +81,8 @@ export class BrasilApiHandler extends BaseCnpjHandler {
 
     constructor() {
         super();
-        this.request = new Axios({
-            baseURL: config.external.brasilAPI.baseURL,
-        });
+        const baseURL = config.external.brasilAPI.baseURL;
+        this.request = new Axios({ baseURL });
     }
 
     async fetchData(cnpj: string): Promise<Organization | never> {

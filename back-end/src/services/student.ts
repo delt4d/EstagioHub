@@ -1,4 +1,5 @@
 import { DatabaseResolver } from '../app/database';
+import { SearchStudentsDto } from '../dtos/student';
 import { Student } from '../models/student';
 import hashService from './hash';
 import userService from './user';
@@ -9,6 +10,13 @@ export class StudentService {
         const student = await conn.findStudentByEmail(email);
         conn.throwIfHasError();
         return student;
+    }
+
+    async searchStudents(search: SearchStudentsDto): Promise<Student[]> {
+        const conn = await DatabaseResolver.getConnection();
+        const students = await conn.searchStudents(search);
+        conn.throwIfHasError();
+        return students!;
     }
 
     async ensureCanSaveStudent(student: Student): Promise<void> {

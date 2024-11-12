@@ -5,6 +5,7 @@ import {
     Column,
     Default,
     Index,
+    IsLowercase,
     Length,
     Model,
     NotEmpty,
@@ -68,6 +69,7 @@ export class ResetPasswordTable extends Model<
             msg: config.messages.invalidEmail,
         },
     })
+    @IsLowercase
     @Column
     public declare email: string;
 
@@ -112,6 +114,7 @@ export class AccessTokenTable extends Model<
         min: 1,
         msg: 'Este não é um token válido',
     })
+    @Unique
     @Column
     public declare token: string;
 
@@ -179,6 +182,7 @@ export class AdminTable extends Model<SequelizeAdmin, AdminCreate> {
     @Unique
     @AllowNull(false)
     @NotEmpty
+    @IsLowercase
     @Column
     public declare name: string;
 }
@@ -198,6 +202,7 @@ export class SupervisorTable extends Model<
     @Index
     @NotEmpty
     @AllowNull(false)
+    @IsLowercase
     @Column
     public declare name: string;
 }
@@ -214,6 +219,7 @@ export class StudentTable extends Model<SequelizeStudent, StudentCreate> {
     @Index
     @NotEmpty
     @AllowNull(false)
+    @IsLowercase
     @Column
     public declare fullName: string;
 }

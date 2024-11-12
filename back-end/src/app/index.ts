@@ -105,6 +105,7 @@ app.use(
 
         const statusCode =
             {
+                DatabaseError: 500,
                 UnauthorizedError: 401,
                 ForbiddenError: 403,
                 BadRequestError: 400,

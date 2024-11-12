@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import config from '../app/config';
-import { NotFoundError, UnhandledError } from '../app/errors';
+import { DatabaseError, NotFoundError, UnhandledError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import { toResult } from '../app/utils';
 import { Supervisor } from '../models/supervisor';
@@ -31,13 +31,17 @@ export default class SupervisorController {
 
         const accessToken = await toResult(
             authService.saveNewAccessToken(supervisor.user.id!)
-        ).orElseThrowAsync(
-            (error) =>
-                new UnhandledError(
-                    error.message,
-                    'Não foi possível realizar o login, tente novamente mais tarde.'
-                )
-        );
+        ).orElseThrowAsync((err) => {
+            const friendlyMessage =
+                'Não foi possível realizar o login. Tente novamente mais tarde.';
+
+            if (err instanceof DatabaseError) {
+                err.changeFriendlyMessage(friendlyMessage);
+                return err;
+            }
+
+            return new UnhandledError(err.message, friendlyMessage);
+        });
 
         return res
             .status(200)

@@ -1,6 +1,6 @@
 import { Mapper } from '../../app/utils';
+import { BrasilApiCnpjDto, CNPJwsApiDto } from '../../dtos/organization';
 import { Organization } from '../../models/organization';
-import { BrasilApiCnpjDto, CNPJwsApiDto } from './dtos';
 
 export const cnpjWsMapper: Mapper<CNPJwsApiDto, Organization> = {
     cnpj: (data) => data.estabelecimento.cnpj,

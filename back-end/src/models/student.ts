@@ -5,5 +5,3 @@ export type Student = {
     fullName: string;
     user: User;
 };
-
-export type StudentCollection = Student[];
