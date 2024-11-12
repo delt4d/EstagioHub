@@ -15,7 +15,7 @@ routes.get(
     '/',
     ensureIsAuthenticated,
     ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
-    controller.findStudents
+    controller.searchStudents
 );
 
 export default routes;

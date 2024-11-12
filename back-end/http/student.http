@@ -29,7 +29,8 @@ Access-Control-Allow-Credentials: true
 ###
 # @name searchStudents
 # @prompt token
-GET {{baseUrl}}/student
+# @prompt searchTerm
+GET {{baseUrl}}/student?searchTerm={{searchTerm}}
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}

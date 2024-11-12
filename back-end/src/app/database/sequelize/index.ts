@@ -273,10 +273,10 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                         'concat',
                         Sequelize.col('user.email'),
                         '%',
-                        Sequelize.col('student.fullName')
+                        Sequelize.col('students.fullName')
                     ),
                     {
-                        [Op.iLike]: `%${data.searchTerm}%`,
+                        [Op.like]: `%${data.searchTerm}%`,
                     }
                 ),
                 include: [UserTable],

@@ -59,6 +59,9 @@ const messages = {
 const validations = {
     minPasswordLength: 8,
     maxEmailLength: 254,
+    maxSearchTermLength: 100,
+    maxSearchLimit: 100,
+    defaultSearchLimit: 10,
 };
 
 const project = (() => {

@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
 import config from '../app/config';
-import { NotFoundError, UnhandledError } from '../app/errors';
+import { DatabaseError, NotFoundError, UnhandledError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import { toResult } from '../app/utils';
+import { mapStudentOut } from '../dtos/student';
 import { Student } from '../models/student';
-import { StudentLoginSchema, StudentRegisterSchema } from '../schemas/student';
+import {
+    SearchStudentsSchema,
+    StudentLoginSchema,
+    StudentRegisterSchema,
+} from '../schemas/student';
 import authService from '../services/auth';
 import emailService from '../services/email';
 import studentService from '../services/student';
@@ -29,13 +34,17 @@ export default class StudentController {
 
         const accessToken = await toResult(
             authService.saveNewAccessToken(student.user.id!)
-        ).orElseThrowAsync(
-            (err) =>
-                new UnhandledError(
-                    err.message,
-                    'Não foi possível realizar o login, tente novamente mais tarde.'
-                )
-        );
+        ).orElseThrowAsync((err) => {
+            const friendlyMessage =
+                'Não foi possível realizar o login. Tente novamente mais tarde.';
+
+            if (err instanceof DatabaseError) {
+                err.changeFriendlyMessage(friendlyMessage);
+                return err;
+            }
+
+            return new UnhandledError(err.message, friendlyMessage);
+        });
 
         return res
             .status(200)
@@ -74,7 +83,14 @@ export default class StudentController {
         });
     }
 
-    async findStudents(req: Request, res: Response) {
-        throw new UnhandledError('Not implemented');
+    async searchStudents(req: Request, res: Response) {
+        const data = validateSchema(SearchStudentsSchema, req.query);
+        const students = await studentService.searchStudents(data);
+
+        return res.send({
+            ...data,
+            success: true,
+            students: students.map(mapStudentOut),
+        });
     }
 }
