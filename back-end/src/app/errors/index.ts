@@ -111,7 +111,7 @@ export class DatabaseError extends Error {
         const newErr = new DatabaseError(
             error.message,
             error.name,
-            (error.original as any).code,
+            (error.original as any)?.code,
             error?.sql,
             error.parameters
         );

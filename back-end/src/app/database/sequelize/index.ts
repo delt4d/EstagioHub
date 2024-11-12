@@ -1,15 +1,16 @@
-import { Op } from 'sequelize';
+import sequelize, { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { DatabaseConnection } from '..';
+import { SearchStudentsDto } from '../../../dtos/student';
 import { AccessToken } from '../../../models/access-token';
-import { Admin, AdminCollection } from '../../../models/admin';
+import { Admin } from '../../../models/admin';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
 import { Supervisor } from '../../../models/supervisor';
 import { User } from '../../../models/user';
 import { UserRole } from '../../../models/user-role';
 import config from '../../config';
-import { UnhandledError } from '../../errors';
+import { DatabaseError } from '../../errors';
 import {
     mapSequelizeAccessTokenToModel,
     mapSequelizeAdminToModel,
@@ -37,13 +38,8 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         ResetPasswordTable,
     ];
     private static sequelize: Sequelize;
-    private _error?: Error;
-
-    private get error(): Error | undefined {
-        return this._error;
-    }
-
-    private set error(err: Error) {
+    private _error?: sequelize.DatabaseError;
+    private set error(err: sequelize.DatabaseError) {
         config.external.logger(err.message);
         this._error = err;
     }
@@ -85,7 +81,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return entity;
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
 
@@ -111,7 +107,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeResetPasswordTokenToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
 
@@ -129,7 +125,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeResetPasswordTokenToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
 
@@ -148,7 +144,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeUserToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
 
@@ -157,35 +153,25 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             admin.user.role = UserRole.Adm;
 
             const model = await AdminTable.create(admin, {
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             const entity = mapSequelizeAdminToModel(model);
 
             return entity;
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
-    async getAdmins(): Promise<AdminCollection> {
+    async getAdmins(): Promise<Admin[]> {
         try {
             const admins = await AdminTable.findAll({
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             return admins.map(mapSequelizeAdminToModel);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
             return [];
         }
     }
@@ -196,29 +182,18 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             const model = await AdminTable.findOne({
                 where: {
                     [Op.or]: [
-                        Sequelize.where(
-                            Sequelize.fn('LOWER', Sequelize.col('name')),
-                            nameOrEmail.toLowerCase()
-                        ),
-                        Sequelize.where(
-                            Sequelize.fn('LOWER', Sequelize.col('user.email')),
-                            nameOrEmail.toLowerCase()
-                        ),
+                        { name: nameOrEmail },
+                        { '$user.email$': nameOrEmail },
                     ],
                 },
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             if (!model) return;
 
             return mapSequelizeAdminToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async saveNewSupervisor(
@@ -228,19 +203,14 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             supervisor.user.role = UserRole.Supervisor;
 
             const model = await SupervisorTable.create(supervisor, {
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             const entity = mapSequelizeSupervisorToModel(model);
 
             return entity;
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async findSupervisorByEmail(
@@ -251,19 +221,14 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 where: {
                     [Op.or]: [{ '$user.email$': email }],
                 },
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             if (!model) return;
 
             return mapSequelizeSupervisorToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async saveNewStudent(student: Student): Promise<Student | undefined> {
@@ -271,19 +236,14 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             student.user.role = UserRole.Student;
 
             const model = await StudentTable.create(student, {
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             const entity = mapSequelizeStudentToModel(model);
 
             return entity;
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async findStudentByEmail(email: string): Promise<Student | undefined> {
@@ -292,19 +252,39 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 where: {
                     [Op.or]: [{ '$user.email$': email }],
                 },
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             if (!model) return;
 
             return mapSequelizeStudentToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
+        }
+    }
+    async searchStudents(
+        data: SearchStudentsDto
+    ): Promise<Student[] | undefined> {
+        try {
+            // TODO: limit and offset
+            const models = await StudentTable.findAll({
+                where: Sequelize.where(
+                    Sequelize.fn(
+                        'concat',
+                        Sequelize.col('user.email'),
+                        '%',
+                        Sequelize.col('student.fullName')
+                    ),
+                    {
+                        [Op.iLike]: `%${data.searchTerm}%`,
+                    }
+                ),
+                include: [UserTable],
+            });
+
+            return models.map(mapSequelizeStudentToModel);
+        } catch (err) {
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async saveNewAccessToken(
@@ -319,7 +299,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeAccessTokenToModel(model, true);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async invalidateAccessToken(
@@ -328,12 +308,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         try {
             const model = await AccessTokenTable.findOne({
                 where: { token },
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             if (!model) return;
@@ -342,19 +317,14 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeAccessTokenToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async findUserByValidAccessToken(token: string): Promise<User | undefined> {
         try {
             const model = await AccessTokenTable.findOne({
                 where: { token },
-                include: [
-                    {
-                        model: UserTable,
-                        as: 'user',
-                    },
-                ],
+                include: [UserTable],
             });
 
             // token não encontrado
@@ -370,7 +340,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeUserToModel(model.user);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async findUserById(id: number): Promise<User | undefined> {
@@ -379,7 +349,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             if (!model) return;
             return mapSequelizeUserToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async findUserByEmail(email: string): Promise<User | undefined> {
@@ -388,7 +358,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             if (!model) return;
             return mapSequelizeUserToModel(model);
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
     async verifyIfEmailIsInUse(email: string): Promise<boolean | undefined> {
@@ -398,7 +368,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             });
             return result.count > 0;
         } catch (err) {
-            this.error = err as Error;
+            this.error = err as sequelize.DatabaseError;
         }
     }
 
@@ -410,46 +380,39 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.sequelize.addModels(SequelizeDatabaseConnection.models);
 
             // user and user-tokens association
-            UserTable.hasMany(AccessTokenTable, {
-                as: 'access_token',
-                foreignKey: 'id',
-            });
-            AccessTokenTable.belongsTo(UserTable, { as: 'user' });
+            AccessTokenTable.belongsTo(UserTable);
+            UserTable.hasMany(AccessTokenTable);
 
             // user and admin association
-            UserTable.hasOne(AdminTable, { as: 'admin', foreignKey: 'id' });
-            AdminTable.belongsTo(UserTable, { as: 'user' });
+            AdminTable.belongsTo(UserTable);
+            UserTable.hasOne(AdminTable);
 
             // user and supervisor association
-            UserTable.hasOne(SupervisorTable, {
-                as: 'supervisor',
-                foreignKey: 'id',
-            });
-            SupervisorTable.belongsTo(UserTable, { as: 'user' });
+            SupervisorTable.belongsTo(UserTable);
+            UserTable.hasOne(SupervisorTable);
 
             // user and student association
-            UserTable.hasOne(StudentTable, { as: 'student', foreignKey: 'id' });
-            StudentTable.belongsTo(UserTable, { as: 'user' });
+            StudentTable.belongsTo(UserTable);
+            UserTable.hasOne(StudentTable);
 
             // sync
             if (config.project.environment !== 'production')
                 await this.sequelize.sync();
+
             await this.sequelize.authenticate();
         } catch (err) {
-            const customError = err as Error;
+            const customError = err as sequelize.DatabaseError;
             customError.message = `Unable to connect to the database: ${customError.message}`;
             throw customError;
         }
     }
 
-    getError(): UnhandledError | undefined {
-        if (!this.error) return;
-        const error = new UnhandledError(this.error.message);
-        error.stack = this.error.stack;
-        return error;
+    getError(): DatabaseError | undefined {
+        if (!this._error) return;
+        return DatabaseError.fromSequelizeDatabaseError(this._error);
     }
 
-    throwIfHasError(): undefined {
+    throwIfHasError(): undefined | never {
         const error = this.getError();
         if (!error) return;
         throw error;

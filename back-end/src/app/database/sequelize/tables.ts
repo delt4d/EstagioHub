@@ -1,7 +1,6 @@
 import { DataTypes, Optional } from 'sequelize';
 import {
     AllowNull,
-    AutoIncrement,
     Column,
     Default,
     Index,
@@ -9,7 +8,6 @@ import {
     Length,
     Model,
     NotEmpty,
-    PrimaryKey,
     Table,
     Unique,
     Validate,
@@ -47,16 +45,12 @@ type ResetPasswordCreate = Omit<
 
 @Table({
     tableName: 'reset-password-tokens',
+    modelName: 'reset-password-tokens',
 })
 export class ResetPasswordTable extends Model<
     SequelizeResetPasswordToken,
     ResetPasswordCreate
 > {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    public declare id?: number;
-
     @Index
     @Unique
     @AllowNull(false)
@@ -77,7 +71,7 @@ export class ResetPasswordTable extends Model<
     @Unique
     @Length({
         min: 1,
-        msg: 'Este não é um token válido',
+        msg: config.messages.invalidResetPasswordToken,
     })
     @Column
     public declare token: string;
@@ -97,6 +91,7 @@ export class ResetPasswordTable extends Model<
 
 @Table({
     tableName: 'access-tokens',
+    modelName: 'access-tokens',
 })
 export class AccessTokenTable extends Model<
     SequelizeAccessToken,
@@ -104,15 +99,10 @@ export class AccessTokenTable extends Model<
 > {
     public declare user: UserTable;
 
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    public declare id?: number;
-
     @AllowNull(false)
     @Length({
         min: 1,
-        msg: 'Este não é um token válido',
+        msg: config.messages.invalidAccessToken,
     })
     @Unique
     @Column
@@ -133,13 +123,9 @@ export class AccessTokenTable extends Model<
 
 @Table({
     tableName: 'users',
+    modelName: 'users',
 })
 export class UserTable extends Model<SequelizeUser, UserCreate> {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    public declare id: number;
-
     @Index
     @Unique
     @AllowNull(false)
@@ -169,14 +155,10 @@ export class UserTable extends Model<SequelizeUser, UserCreate> {
 
 @Table({
     tableName: 'admins',
+    modelName: 'admins',
 })
 export class AdminTable extends Model<SequelizeAdmin, AdminCreate> {
     public declare user: UserTable;
-
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    public declare id: number;
 
     @Index
     @Unique
@@ -187,17 +169,15 @@ export class AdminTable extends Model<SequelizeAdmin, AdminCreate> {
     public declare name: string;
 }
 
-@Table({ tableName: 'supervisors' })
+@Table({
+    tableName: 'supervisors',
+    modelName: 'supervisors',
+})
 export class SupervisorTable extends Model<
     SequelizeSupervisor,
     SupervisorCreate
 > {
     public declare user: UserTable;
-
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    public declare id: number;
 
     @Index
     @NotEmpty
@@ -207,14 +187,12 @@ export class SupervisorTable extends Model<
     public declare name: string;
 }
 
-@Table({ tableName: 'students' })
+@Table({
+    tableName: 'students',
+    modelName: 'students',
+})
 export class StudentTable extends Model<SequelizeStudent, StudentCreate> {
     public declare user: UserTable;
-
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    public declare id: number;
 
     @Index
     @NotEmpty
