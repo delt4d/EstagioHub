@@ -41,11 +41,29 @@ const getUserWithoutPassword = (user: User): Omit<User, 'password'> => {
 
 const expectPromiseNotToReject = async <T>(promise: Promise<T>) => {
     const result = await toResult(promise).resolveAsync();
-    expect(result.isSuccess).toBe(true);
+
+    if (result.value instanceof Error) {
+        const errorDetails = JSON.stringify(
+            {
+                name: result.value.name,
+                message: result.value.message,
+            },
+            Object.getOwnPropertyNames(result.value),
+            2
+        );
+        throw new Error(
+            `Expected promise not to reject, but it rejected with: ${errorDetails}`
+        );
+    }
+
+    expect(result.value).not.toBeInstanceOf(Error);
     return result.orElseThrow();
 };
 
 const expectPromiseNotToBeUndefined = async <T>(promise: Promise<T>) => {
+    // const result = await expectPromiseNotToReject<T>(promise);
+    // expect(result).not.toBeUndefined();
+    // return result as Exclude<Awaited<T>, undefined>;
     const result = await toResult(promise).resolveAsync();
     expect(result.isSuccess).toBe(true);
     expect(result.value).not.toBeUndefined();

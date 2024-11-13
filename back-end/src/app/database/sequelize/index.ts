@@ -182,8 +182,11 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             const model = await AdminTable.findOne({
                 where: {
                     [Op.or]: [
-                        { name: nameOrEmail },
-                        { '$user.email$': nameOrEmail },
+                        Sequelize.where(
+                            Sequelize.fn('LOWER', Sequelize.col('name')),
+                            nameOrEmail.toLowerCase()
+                        ),
+                        { '$user.email$': nameOrEmail.toLowerCase() },
                     ],
                 },
                 include: [UserTable],
@@ -378,6 +381,10 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 throw new Error(config.messages.databaseImplNotDefined);
 
             this.sequelize.addModels(SequelizeDatabaseConnection.models);
+
+            UserTable.addHook('beforeValidate', (model) => {
+                model.set('email', model.getDataValue('email').toLowerCase());
+            });
 
             // user and user-tokens association
             AccessTokenTable.belongsTo(UserTable);
