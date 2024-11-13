@@ -7,4 +7,12 @@ export type Organization = {
     address: Address;
     phone1: string;
     phone2?: string;
+    website?: string;
+    whatsapp?: string;
+};
+
+export type OrganizationInternshipSupervisor = {
+    name: string;
+    email: string;
+    position: string; // cargo do supervisor
 };
