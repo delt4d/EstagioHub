@@ -269,7 +269,6 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         data: SearchStudentsDto
     ): Promise<Student[] | undefined> {
         try {
-            // TODO: limit and offset
             const models = await StudentTable.findAll({
                 where: Sequelize.where(
                     Sequelize.fn(
@@ -283,6 +282,8 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                     }
                 ),
                 include: [UserTable],
+                limit: data.limit,
+                offset: data.offset,
             });
 
             return models.map(mapSequelizeStudentToModel);

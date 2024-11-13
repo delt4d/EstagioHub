@@ -40,6 +40,7 @@ export const SearchStudentsSchema = Joi.object<SearchStudentsDto>({
         }),
     offset: Joi.number().integer().min(0).default(0),
     searchTerm: Joi.string()
+        .allow('')
         .max(config.validations.maxSearchTermLength)
         .messages({
             'number.max': `O termo não deve exceder ${config.validations.maxSearchTermLength} caracteres.`,
