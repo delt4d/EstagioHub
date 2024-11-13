@@ -2,6 +2,7 @@ import timekeeper from 'timekeeper';
 import testing from '.';
 import config from '../app/config';
 import { DatabaseResolver } from '../app/database';
+import { pick } from '../app/utils';
 import { Student } from '../models/student';
 
 describe('student', () => {
@@ -179,11 +180,17 @@ describe('student', () => {
                     offset: 0,
                     success: true,
                     students: [
-                        testing.models.getStudentWithoutPassword(
-                            testing.models.defaultStudent
+                        pick(
+                            testing.models.getStudentWithoutPassword(
+                                testing.models.defaultStudent
+                            ),
+                            ['fullName', 'user']
                         ),
-                        testing.models.getStudentWithoutPassword(
-                            testing.models.alternativeStudent
+                        pick(
+                            testing.models.getStudentWithoutPassword(
+                                testing.models.alternativeStudent
+                            ),
+                            ['fullName', 'user']
                         ),
                     ],
                 },
@@ -246,19 +253,25 @@ describe('student', () => {
                     offset: 1,
                     success: true,
                     students: [
-                        testing.models.getStudentWithoutPassword(
-                            testing.models.alternativeStudent
+                        pick(
+                            testing.models.getStudentWithoutPassword(
+                                testing.models.alternativeStudent
+                            ),
+                            ['fullName', 'user']
                         ),
-                        testing.models.getStudentWithoutPassword(
-                            testing.models.custom<Student>(
-                                testing.models.defaultStudent,
-                                {
-                                    fullName: 'student 3',
-                                    user: {
-                                        email: 'student3_email@email.com',
-                                    },
-                                }
-                            )
+                        pick(
+                            testing.models.getStudentWithoutPassword(
+                                testing.models.custom<Student>(
+                                    testing.models.defaultStudent,
+                                    {
+                                        fullName: 'student 3',
+                                        user: {
+                                            email: 'student3_email@email.com',
+                                        },
+                                    }
+                                )
+                            ),
+                            ['fullName', 'user']
                         ),
                     ],
                 },
@@ -321,16 +334,19 @@ describe('student', () => {
                     offset: 0,
                     success: true,
                     students: [
-                        testing.models.getStudentWithoutPassword(
-                            testing.models.custom<Student>(
-                                testing.models.defaultStudent,
-                                {
-                                    fullName: 'student 3',
-                                    user: {
-                                        email: 'student3_email@email.com',
-                                    },
-                                }
-                            )
+                        pick(
+                            testing.models.getStudentWithoutPassword(
+                                testing.models.custom<Student>(
+                                    testing.models.defaultStudent,
+                                    {
+                                        fullName: 'student 3',
+                                        user: {
+                                            email: 'student3_email@email.com',
+                                        },
+                                    }
+                                )
+                            ),
+                            ['fullName', 'user']
                         ),
                     ],
                 },

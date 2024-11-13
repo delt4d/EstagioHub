@@ -31,6 +31,11 @@ const supervisorMapper: Mapper<SupervisorTable, Supervisor> = {
 const studentMapper: Mapper<StudentTable, Student> = {
     id: 'id',
     fullName: 'fullName',
+    phone: 'phone',
+    whatsapp: 'whatsapp',
+    academicClass: 'academicClass',
+    address: 'address',
+    rg: 'rg',
     user: (src) => mapSequelizeUserToModel(src.user),
 };
 

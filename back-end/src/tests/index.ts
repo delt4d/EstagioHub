@@ -3,6 +3,7 @@ import supertest, { Response } from 'supertest';
 import app from '../app';
 import { deepMerge, DeepPartial, toResult } from '../app/utils';
 import { Admin } from '../models/admin';
+import { ClassPeriod } from '../models/institution';
 import { Student } from '../models/student';
 import { Supervisor } from '../models/supervisor';
 import { User } from '../models/user';
@@ -61,13 +62,13 @@ const expectPromiseNotToReject = async <T>(promise: Promise<T>) => {
 };
 
 const expectPromiseNotToBeUndefined = async <T>(promise: Promise<T>) => {
-    // const result = await expectPromiseNotToReject<T>(promise);
-    // expect(result).not.toBeUndefined();
-    // return result as Exclude<Awaited<T>, undefined>;
-    const result = await toResult(promise).resolveAsync();
-    expect(result.isSuccess).toBe(true);
-    expect(result.value).not.toBeUndefined();
-    return result.orElseThrow() as Exclude<T, undefined>;
+    const result = await expectPromiseNotToReject<T>(promise);
+    expect(result).not.toBeUndefined();
+    return result as Exclude<Awaited<T>, undefined>;
+    // const result = await toResult(promise).resolveAsync();
+    // expect(result.isSuccess).toBe(true);
+    // expect(result.value).not.toBeUndefined();
+    // return result.orElseThrow() as Exclude<T, undefined>;
 };
 
 const requests = {
@@ -281,6 +282,22 @@ const models = {
                 password: 'student-123pass__word',
                 role: UserRole.Student,
             },
+            academicClass: {
+                courseName: 'Administration',
+                schedulePeriod: ClassPeriod.Morning,
+            },
+            address: {
+                street: '123 Main St',
+                city: 'City Name',
+                district: 'Central',
+                postalCode: '12345-678',
+                state: 'StateName',
+                number: '123',
+                additionalInfo: 'Near the park',
+            },
+            phone: '123-456-7890',
+            whatsapp: '123-456-7890',
+            academicId: 'STU123456',
         };
     },
 
@@ -292,9 +309,24 @@ const models = {
                 password: 'anotherStudent123Password*',
                 role: UserRole.Student,
             },
+            academicClass: {
+                courseName: 'Marketing',
+                schedulePeriod: ClassPeriod.Afternoon,
+            },
+            address: {
+                street: '456 Another St',
+                city: 'Another City',
+                district: 'Downtown',
+                postalCode: '23456-789',
+                state: 'AnotherState',
+                number: '456',
+                additionalInfo: 'Near the mall',
+            },
+            phone: '987-654-3210',
+            whatsapp: '987-654-3210',
+            academicId: 'STU987654',
         };
     },
-
     async getStudentWithEncryptedPasswordAsync(student: Student | undefined) {
         expect(student).not.toBeUndefined();
         return this.custom<Student>(student!, {

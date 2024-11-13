@@ -13,7 +13,10 @@ import {
     Validate,
 } from 'sequelize-typescript';
 import { AccessToken } from '../../../models/access-token';
+import { Address } from '../../../models/address';
 import { Admin } from '../../../models/admin';
+import { AcademicClass } from '../../../models/institution';
+import { Organization } from '../../../models/organization';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
 import { Supervisor } from '../../../models/supervisor';
@@ -192,10 +195,166 @@ export class SupervisorTable extends Model<
 })
 export class StudentTable extends Model<SequelizeStudent, StudentCreate> {
     public declare user: UserTable;
+    public declare academicClass: AcademicClassTable;
+    public declare address: AddressTable;
 
     @Index
     @NotEmpty
     @AllowNull(false)
     @Column
     public declare fullName: string;
+
+    @Column
+    public declare rg?: string;
+
+    @Column
+    public declare phone?: string;
+
+    @Column
+    public declare whatsapp?: string;
+
+    @AllowNull(true)
+    @Column
+    public declare addressId?: number;
+
+    @AllowNull(true)
+    @Column
+    public declare academicClassId?: number;
+
+    @AllowNull(true)
+    @Column
+    public declare academicId?: number;
+}
+
+@Table({
+    tableName: 'academic-classes',
+    modelName: 'academic-classes',
+})
+export class AcademicClassTable extends Model<AcademicClass> {
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare courseName: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column(DataTypes.STRING)
+    public declare schedulePeriod: string;
+}
+
+@Table({
+    tableName: 'organizations',
+    modelName: 'organizations',
+})
+export class OrganizationTable extends Model<Organization> {
+    public declare address: AddressTable;
+
+    @AllowNull(false)
+    @Unique
+    @Column
+    public declare cnpj: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare corporateName: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare businessName: string;
+
+    @AllowNull(false)
+    @Column
+    public declare phone1: string;
+
+    @Column
+    public declare phone2?: string;
+
+    @Column
+    public declare website?: string;
+
+    @Column
+    public declare whatsapp?: string;
+
+    @AllowNull(true)
+    @Column
+    public declare addressId?: number;
+}
+
+@Table({
+    tableName: 'addresses',
+    modelName: 'addresses',
+})
+export class AddressTable extends Model<Address> {
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare street: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare city: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare district: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare postalCode: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare state: string;
+
+    @Column
+    public declare number?: string;
+
+    @Column
+    public declare additionalInfo?: string;
+}
+
+@Table({
+    tableName: 'internships',
+    modelName: 'internships',
+})
+export class InternshipTable extends Model {
+    public declare student: StudentTable;
+    public declare supervisor: SupervisorTable;
+    public declare organization: OrganizationTable;
+
+    @AllowNull(false)
+    @Column
+    public declare studentId: number;
+
+    @AllowNull(false)
+    @Column
+    public declare supervisorId: number;
+
+    @AllowNull(false)
+    @Column
+    public declare organizationId: number;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare companySupervisorName: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Validate({
+        isEmail: true,
+    })
+    @Column
+    public declare companySupervisorEmail: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare companySupervisorPosition: string;
 }

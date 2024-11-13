@@ -20,8 +20,12 @@ import {
     mapSequelizeUserToModel,
 } from './mappers';
 import {
+    AcademicClassTable,
     AccessTokenTable,
+    AddressTable,
     AdminTable,
+    InternshipTable,
+    OrganizationTable,
     ResetPasswordTable,
     StudentTable,
     SupervisorTable,
@@ -36,6 +40,10 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         SupervisorTable,
         StudentTable,
         ResetPasswordTable,
+        AcademicClassTable,
+        AddressTable,
+        OrganizationTable,
+        InternshipTable,
     ];
     private static sequelize: Sequelize;
     private _error?: sequelize.DatabaseError;
@@ -402,6 +410,30 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             // user and student association
             StudentTable.belongsTo(UserTable);
             UserTable.hasOne(StudentTable);
+
+            // student and address association
+            StudentTable.belongsTo(AddressTable);
+            AddressTable.hasMany(StudentTable);
+
+            // student and academic-class association
+            StudentTable.belongsTo(AcademicClassTable);
+            AcademicClassTable.hasMany(StudentTable);
+
+            // organization and address association
+            OrganizationTable.belongsTo(AddressTable);
+            AddressTable.hasMany(OrganizationTable);
+
+            // internship and student association
+            InternshipTable.belongsTo(StudentTable);
+            StudentTable.hasMany(InternshipTable);
+
+            // internship and supervisor association
+            InternshipTable.belongsTo(SupervisorTable);
+            SupervisorTable.hasMany(InternshipTable);
+
+            // internship and organization association
+            InternshipTable.belongsTo(OrganizationTable);
+            OrganizationTable.hasMany(InternshipTable);
 
             // sync
             if (config.project.environment !== 'production')

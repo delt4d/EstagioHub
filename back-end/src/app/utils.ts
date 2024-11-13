@@ -1,3 +1,60 @@
+export type MergeReplace<T, U> = Omit<T, keyof U> & U;
+export type Immutable<T> = { readonly [K in keyof T]: Immutable<T[K]> };
+export type DeepPartial<T> = {
+    [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+export type Mapper<From extends object, To extends object> = {
+    [K in keyof To]: keyof From | ((source: From) => To[K]);
+};
+export type Replace<
+    T,
+    U extends { [K in keyof T]?: T[K] | unknown },
+> = MergeReplace<T, U>;
+
+export type ValueOrError<T, E extends Error = Error> =
+    | {
+          value: T;
+          isError: false;
+          isSuccess: true;
+          orElseThrow: (cb?: (err: E) => E | string) => T;
+          orElse: <U>(alternative: U) => T;
+          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
+          validate: <U = T>(
+              predicate: (val: T) => boolean,
+              error: Error
+          ) => ValueOrError<U, Error>;
+      }
+    | {
+          value: E;
+          isError: true;
+          isSuccess: false;
+          orElseThrow: (cb?: (err: E) => E | string) => never;
+          orElse: <U>(alternative: U) => U;
+          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
+          validate: <U = T>(
+              predicate: (val: T) => boolean,
+              error: Error
+          ) => ValueOrError<U, Error>;
+      };
+
+export type AsyncValueOrError<T, E extends Error = Error> = {
+    resolveAsync: () => Promise<ValueOrError<T, E>>;
+    waitAsync: () => Promise<void>;
+    getValueAsync: () => Promise<T | E>;
+    getErrorAsync: () => Promise<E | null>;
+    isErrorAsync: () => Promise<boolean>;
+    isSuccessAsync: () => Promise<boolean>;
+    orElseThrowAsync: (cb?: (err: E) => E | string) => Promise<T>;
+    orElseAsync: <U>(alternative: U | Promise<U>) => Promise<T | U>;
+    validateAsync: <U = T>(
+        predicate: (val: T) => boolean | Promise<boolean>,
+        error: Error
+    ) => AsyncValueOrError<U, Error>;
+    mapAsync: <U>(
+        fn: (val: T) => U | Promise<U>
+    ) => AsyncValueOrError<U, Error>;
+};
+
 export function toResult<T, E extends Error = Error>(
     promise: Promise<T>
 ): AsyncValueOrError<T, E> {
@@ -155,63 +212,56 @@ export function is<T>(
     return value instanceof constructor;
 }
 
-export type MergeReplace<T, U> = Omit<T, keyof U> & U;
-export type Replace<
-    T,
-    U extends { [K in keyof T]?: T[K] | unknown },
-> = MergeReplace<T, U>;
+type DotNotation<T> = T extends object
+    ? {
+          [K in keyof T]: K extends string
+              ? T[K] extends Array<infer U>
+                  ? `${K}` | `${K}.${DotNotation<U>}`
+                  : `${K}` | `${K}.${DotNotation<T[K]>}`
+              : never;
+      }[keyof T]
+    : never;
 
-export type Immutable<T> = {
-    readonly [K in keyof T]: Immutable<T[K]>;
-};
+type NestedKeyOf<T> =
+    DotNotation<T> extends infer D ? (D extends string ? D : never) : never;
 
-export type DeepPartial<T> = {
-    [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
-};
+export function pick<T>(obj: T, paths: NestedKeyOf<T>[]): Partial<T> {
+    const result: any = {};
 
-export type Mapper<From extends object, To extends object> = {
-    [K in keyof To]: keyof From | ((source: From) => To[K]);
-};
-export type ValueOrError<T, E extends Error = Error> =
-    | {
-          value: T;
-          isError: false;
-          isSuccess: true;
-          orElseThrow: (cb?: (err: E) => E | string) => T;
-          orElse: <U>(alternative: U) => T;
-          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
-          validate: <U = T>(
-              predicate: (val: T) => boolean,
-              error: Error
-          ) => ValueOrError<U, Error>;
-      }
-    | {
-          value: E;
-          isError: true;
-          isSuccess: false;
-          orElseThrow: (cb?: (err: E) => E | string) => never;
-          orElse: <U>(alternative: U) => U;
-          map: <U>(fn: (val: T) => U) => ValueOrError<U, Error>;
-          validate: <U = T>(
-              predicate: (val: T) => boolean,
-              error: Error
-          ) => ValueOrError<U, Error>;
-      };
+    for (const path of paths) {
+        const keys = (path as string).split('.');
 
-export type AsyncValueOrError<T, E extends Error = Error> = {
-    resolveAsync: () => Promise<ValueOrError<T, E>>;
-    waitAsync: () => Promise<void>;
-    getValueAsync: () => Promise<T | E>;
-    getErrorAsync: () => Promise<E | null>;
-    isErrorAsync: () => Promise<boolean>;
-    isSuccessAsync: () => Promise<boolean>;
-    orElseThrowAsync: (cb?: (err: E) => E | string) => Promise<T>;
-    orElseAsync: <U>(alternative: U | Promise<U>) => Promise<T | U>;
-    validateAsync: <U = T>(
-        predicate: (val: T) => boolean | Promise<boolean>,
-        error: Error
-    ) => AsyncValueOrError<U, Error>;
-    mapAsync: <U>(
-        fn: (val: T) => U | Promise<U>
-    ) => AsyncValueOrError<U, Error>;
-};
+        function recursivePick(
+            currentObj: any,
+            currentResult: any,
+            keyIndex: number
+        ) {
+            const key = keys[keyIndex];
+            if (currentObj === undefined) return;
+
+            if (keyIndex === keys.length - 1) {
+                currentResult[key] = currentObj[key];
+                return;
+            }
+
+            if (Array.isArray(currentObj[key])) {
+                currentResult[key] = currentObj[key].map((item: any) => {
+                    const nestedResult: any = {};
+                    recursivePick(item, nestedResult, keyIndex + 1);
+                    return nestedResult;
+                });
+            } else {
+                if (!currentResult[key]) currentResult[key] = {};
+                recursivePick(
+                    currentObj[key],
+                    currentResult[key],
+                    keyIndex + 1
+                );
+            }
+        }
+
+        recursivePick(obj, result, 0);
+    }
+
+    return result;
+}
