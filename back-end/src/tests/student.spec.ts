@@ -2,6 +2,7 @@ import timekeeper from 'timekeeper';
 import testing from '.';
 import config from '../app/config';
 import { DatabaseResolver } from '../app/database';
+import { Student } from '../models/student';
 
 describe('student', () => {
     beforeEach(async () => {
@@ -112,6 +113,265 @@ describe('student', () => {
                 testing.models.defaultStudent.user.email,
                 'wrong_password'
             ).expect(expectedResultValue.loginResponse);
+        });
+    });
+
+    describe('GET /student', () => {
+        // should not authorize get students when not authenticated
+        it('should not authorize get students when not authenticated', async () => {
+            const expectedResultValue = {
+                loginResponse: 401,
+            };
+            await testing.requests.student['search']('', {
+                limit: 10,
+                searchTerm: '',
+                offset: 0,
+            }).expect(expectedResultValue.loginResponse);
+        });
+
+        // should not authorize get students when not authorized
+        it('should not authorize get students when not authorized', async () => {
+            const expectedResultValue = {
+                loginResponse: {
+                    success: true,
+                    message: config.messages.successfullLogin,
+                    token: testing.accessToken,
+                    expiresAt: (() => {
+                        const date = new Date();
+                        date.setDate(date.getDate() + 1);
+                        return date.toISOString();
+                    })(),
+                },
+                searchResponse: 403,
+            };
+            await testing.expectPromiseNotToReject(
+                testing.services.student.saveNewStudent(
+                    testing.models.defaultStudent
+                )
+            );
+            await testing.requests.student['login'](
+                testing.models.defaultStudent.user.email,
+                testing.models.defaultStudent.user.password
+            ).expect(expectedResultValue.loginResponse);
+            await testing.requests.student['search'](testing.accessToken, {
+                limit: 10,
+                searchTerm: '',
+                offset: 0,
+            }).expect(expectedResultValue.searchResponse);
+        });
+
+        // should get 2 first students with limit
+        it('should get 2 first students with limit', async () => {
+            const expectedResultValue = {
+                loginResponse: {
+                    success: true,
+                    message: config.messages.successfullLogin,
+                    token: testing.accessToken,
+                    expiresAt: (() => {
+                        const date = new Date();
+                        date.setDate(date.getDate() + 1);
+                        return date.toISOString();
+                    })(),
+                },
+                searchStudentsResponse: {
+                    searchTerm: '',
+                    limit: 2,
+                    offset: 0,
+                    success: true,
+                    students: [
+                        testing.models.getStudentWithoutPassword(
+                            testing.models.defaultStudent
+                        ),
+                        testing.models.getStudentWithoutPassword(
+                            testing.models.alternativeStudent
+                        ),
+                    ],
+                },
+            };
+            const students = [
+                testing.models.defaultStudent,
+                testing.models.alternativeStudent,
+                testing.models.custom<Student>(testing.models.defaultStudent, {
+                    fullName: 'student 3',
+                    user: {
+                        email: 'student3_email@email.com',
+                    },
+                }),
+            ];
+            for (let student of students) {
+                await testing.expectPromiseNotToReject(
+                    testing.services.student.saveNewStudent(student)
+                );
+            }
+
+            await testing.expectPromiseNotToReject(
+                testing.services.admin.saveNewAdmin(testing.models.defaultAdmin)
+            );
+
+            await testing.requests.admin['login'](
+                testing.models.defaultAdmin.user.email,
+                testing.models.defaultAdmin.user.password
+            ).expect(expectedResultValue.loginResponse);
+
+            const response = await testing.requests.student['search'](
+                testing.accessToken,
+                {
+                    searchTerm: '',
+                    limit: 2,
+                    offset: 0,
+                }
+            );
+
+            expect(response.body).toMatchObject(
+                expectedResultValue.searchStudentsResponse
+            );
+        });
+
+        // should get skip a student with offset
+        it('should get skip a students with offset', async () => {
+            const expectedResultValue = {
+                loginResponse: {
+                    success: true,
+                    message: config.messages.successfullLogin,
+                    token: testing.accessToken,
+                    expiresAt: (() => {
+                        const date = new Date();
+                        date.setDate(date.getDate() + 1);
+                        return date.toISOString();
+                    })(),
+                },
+                searchStudentsResponse: {
+                    searchTerm: '',
+                    limit: 10,
+                    offset: 1,
+                    success: true,
+                    students: [
+                        testing.models.getStudentWithoutPassword(
+                            testing.models.alternativeStudent
+                        ),
+                        testing.models.getStudentWithoutPassword(
+                            testing.models.custom<Student>(
+                                testing.models.defaultStudent,
+                                {
+                                    fullName: 'student 3',
+                                    user: {
+                                        email: 'student3_email@email.com',
+                                    },
+                                }
+                            )
+                        ),
+                    ],
+                },
+            };
+            const students = [
+                testing.models.defaultStudent,
+                testing.models.alternativeStudent,
+                testing.models.custom<Student>(testing.models.defaultStudent, {
+                    fullName: 'student 3',
+                    user: {
+                        email: 'student3_email@email.com',
+                    },
+                }),
+            ];
+            for (let student of students) {
+                await testing.expectPromiseNotToReject(
+                    testing.services.student.saveNewStudent(student)
+                );
+            }
+
+            await testing.expectPromiseNotToReject(
+                testing.services.admin.saveNewAdmin(testing.models.defaultAdmin)
+            );
+
+            await testing.requests.admin['login'](
+                testing.models.defaultAdmin.user.email,
+                testing.models.defaultAdmin.user.password
+            ).expect(expectedResultValue.loginResponse);
+
+            const response = await testing.requests.student['search'](
+                testing.accessToken,
+                {
+                    searchTerm: '',
+                    limit: 10,
+                    offset: 1,
+                }
+            );
+
+            expect(response.body).toMatchObject(
+                expectedResultValue.searchStudentsResponse
+            );
+        });
+
+        // should only get students that match search
+        it('should only get students based search', async () => {
+            const expectedResultValue = {
+                loginResponse: {
+                    success: true,
+                    message: config.messages.successfullLogin,
+                    token: testing.accessToken,
+                    expiresAt: (() => {
+                        const date = new Date();
+                        date.setDate(date.getDate() + 1);
+                        return date.toISOString();
+                    })(),
+                },
+                searchStudentsResponse: {
+                    searchTerm: 'student3_email',
+                    limit: 10,
+                    offset: 0,
+                    success: true,
+                    students: [
+                        testing.models.getStudentWithoutPassword(
+                            testing.models.custom<Student>(
+                                testing.models.defaultStudent,
+                                {
+                                    fullName: 'student 3',
+                                    user: {
+                                        email: 'student3_email@email.com',
+                                    },
+                                }
+                            )
+                        ),
+                    ],
+                },
+            };
+            const students = [
+                testing.models.defaultStudent,
+                testing.models.alternativeStudent,
+                testing.models.custom<Student>(testing.models.defaultStudent, {
+                    fullName: 'student 3',
+                    user: {
+                        email: 'student3_email@email.com',
+                    },
+                }),
+            ];
+            for (let student of students) {
+                await testing.expectPromiseNotToReject(
+                    testing.services.student.saveNewStudent(student)
+                );
+            }
+
+            await testing.expectPromiseNotToReject(
+                testing.services.admin.saveNewAdmin(testing.models.defaultAdmin)
+            );
+
+            await testing.requests.admin['login'](
+                testing.models.defaultAdmin.user.email,
+                testing.models.defaultAdmin.user.password
+            ).expect(expectedResultValue.loginResponse);
+
+            const response = await testing.requests.student['search'](
+                testing.accessToken,
+                {
+                    searchTerm: 'student3_email',
+                    limit: 10,
+                    offset: 0,
+                }
+            );
+
+            expect(response.body).toMatchObject(
+                expectedResultValue.searchStudentsResponse
+            );
         });
     });
 });
