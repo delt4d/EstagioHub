@@ -29,7 +29,10 @@ Access-Control-Allow-Credentials: true
 ###
 # @name searchStudents
 # @prompt token
-GET {{baseUrl}}/student
+# @prompt searchTerm
+# @prompt limit 10
+# @prompt offset 0
+GET {{baseUrl}}/student?searchTerm={{searchTerm}}&limit={{limit}}&offset={{offset}}
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}

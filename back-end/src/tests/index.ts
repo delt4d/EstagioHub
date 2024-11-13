@@ -41,11 +41,29 @@ const getUserWithoutPassword = (user: User): Omit<User, 'password'> => {
 
 const expectPromiseNotToReject = async <T>(promise: Promise<T>) => {
     const result = await toResult(promise).resolveAsync();
-    expect(result.isSuccess).toBe(true);
+
+    if (result.value instanceof Error) {
+        const errorDetails = JSON.stringify(
+            {
+                name: result.value.name,
+                message: result.value.message,
+            },
+            Object.getOwnPropertyNames(result.value),
+            2
+        );
+        throw new Error(
+            `Expected promise not to reject, but it rejected with: ${errorDetails}`
+        );
+    }
+
+    expect(result.value).not.toBeInstanceOf(Error);
     return result.orElseThrow();
 };
 
 const expectPromiseNotToBeUndefined = async <T>(promise: Promise<T>) => {
+    // const result = await expectPromiseNotToReject<T>(promise);
+    // expect(result).not.toBeUndefined();
+    // return result as Exclude<Awaited<T>, undefined>;
     const result = await toResult(promise).resolveAsync();
     expect(result.isSuccess).toBe(true);
     expect(result.value).not.toBeUndefined();
@@ -129,11 +147,22 @@ const requests = {
                 repeatPassword: data.repeatPassword,
             });
         },
+        search(
+            access_token: string,
+            data: { searchTerm: string; limit: number; offset: number }
+        ) {
+            return requestWithSupertest.get('/api/v1/student').query({
+                access_token,
+                searchTerm: data.searchTerm,
+                limit: data.limit,
+                offset: data.offset,
+            });
+        },
     },
-    logout(token: string) {
+    logout(access_token: string) {
         return requestWithSupertest
-            .delete(`/api/v1/logout?access_token=${token}`)
-            .send();
+            .delete('/api/v1/logout')
+            .query({ access_token });
     },
 };
 
@@ -194,7 +223,7 @@ const models = {
         return {
             name: 'differentName23',
             user: {
-                email: 'differentEmail23@email.com',
+                email: 'differentemail23@email.com',
                 password: 'different_Password 123',
                 role: UserRole.Adm,
             },
@@ -259,7 +288,7 @@ const models = {
         return {
             fullName: 'Different Student Name',
             user: {
-                email: 'anotherStudent_name123@email.com',
+                email: 'anotherstudent_name123@email.com',
                 password: 'anotherStudent123Password*',
                 role: UserRole.Student,
             },

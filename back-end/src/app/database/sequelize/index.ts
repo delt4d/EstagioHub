@@ -182,8 +182,11 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             const model = await AdminTable.findOne({
                 where: {
                     [Op.or]: [
-                        { name: nameOrEmail },
-                        { '$user.email$': nameOrEmail },
+                        Sequelize.where(
+                            Sequelize.fn('LOWER', Sequelize.col('name')),
+                            nameOrEmail.toLowerCase()
+                        ),
+                        { '$user.email$': nameOrEmail.toLowerCase() },
                     ],
                 },
                 include: [UserTable],
@@ -266,20 +269,21 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         data: SearchStudentsDto
     ): Promise<Student[] | undefined> {
         try {
-            // TODO: limit and offset
             const models = await StudentTable.findAll({
                 where: Sequelize.where(
                     Sequelize.fn(
                         'concat',
                         Sequelize.col('user.email'),
                         '%',
-                        Sequelize.col('student.fullName')
+                        Sequelize.col('students.fullName')
                     ),
                     {
-                        [Op.iLike]: `%${data.searchTerm}%`,
+                        [Op.like]: `%${data.searchTerm}%`,
                     }
                 ),
                 include: [UserTable],
+                limit: data.limit,
+                offset: data.offset,
             });
 
             return models.map(mapSequelizeStudentToModel);
@@ -378,6 +382,10 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 throw new Error(config.messages.databaseImplNotDefined);
 
             this.sequelize.addModels(SequelizeDatabaseConnection.models);
+
+            UserTable.addHook('beforeValidate', (model) => {
+                model.set('email', model.getDataValue('email').toLowerCase());
+            });
 
             // user and user-tokens association
             AccessTokenTable.belongsTo(UserTable);

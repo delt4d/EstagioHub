@@ -3,8 +3,9 @@ import config from '../app/config';
 import { NotFoundError, UnhandledError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import { toResult } from '../app/utils';
+import { mapUserOut } from '../dtos/user';
 import { ResetPasswordToken } from '../models/reset-password-token';
-import { mapUserToJson as mapUserToData, User } from '../models/user';
+import { User } from '../models/user';
 import { ForgotPasswordSchema, ResetPasswordSchema } from '../schemas/user';
 import authService from '../services/auth';
 import emailService from '../services/email';
@@ -13,7 +14,7 @@ export default class UserController {
     async me(req: Request, res: Response, next: NextFunction) {
         return res.send({
             success: true,
-            user: mapUserToData(req.user!),
+            user: mapUserOut(req.user!),
         });
     }
 

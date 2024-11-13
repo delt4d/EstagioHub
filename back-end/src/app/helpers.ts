@@ -31,7 +31,9 @@ export function validateSchema<T>(
     validationSchema: Joi.Schema<T>,
     value?: any
 ): T {
-    const validationResult = validationSchema.validate(value);
+    const validationResult = validationSchema
+        .options({ stripUnknown: true })
+        .validate(value);
 
     if (validationResult.error) {
         throw new ValidationError(

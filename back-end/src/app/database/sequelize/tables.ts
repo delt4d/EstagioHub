@@ -138,6 +138,7 @@ export class UserTable extends Model<SequelizeUser, UserCreate> {
             msg: config.messages.invalidEmail,
         },
     })
+    @IsLowercase
     @Column
     public declare email: string;
 
@@ -164,7 +165,6 @@ export class AdminTable extends Model<SequelizeAdmin, AdminCreate> {
     @Unique
     @AllowNull(false)
     @NotEmpty
-    @IsLowercase
     @Column
     public declare name: string;
 }
@@ -182,7 +182,6 @@ export class SupervisorTable extends Model<
     @Index
     @NotEmpty
     @AllowNull(false)
-    @IsLowercase
     @Column
     public declare name: string;
 }
@@ -197,7 +196,6 @@ export class StudentTable extends Model<SequelizeStudent, StudentCreate> {
     @Index
     @NotEmpty
     @AllowNull(false)
-    @IsLowercase
     @Column
     public declare fullName: string;
 }

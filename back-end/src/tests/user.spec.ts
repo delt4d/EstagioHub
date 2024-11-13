@@ -18,6 +18,7 @@ describe('users', () => {
         it('should return admin user data', async () => {
             const expectedResultValue = {
                 loginResponse: {
+                    message: config.messages.successfullLogin,
                     success: true,
                 },
                 meResponse: {
