@@ -67,13 +67,7 @@ export default class StudentController {
                     password: data.password,
                 },
             })
-        ).orElseThrowAsync(
-            (error) =>
-                new UnhandledError(
-                    error.message,
-                    'Os dados foram preenchidos corretamente, mas não foi possível completar o registro.'
-                )
-        );
+        ).orElseThrowAsync();
 
         await toResult(emailService.sendNewUserEmail(student.user)).waitAsync();
 

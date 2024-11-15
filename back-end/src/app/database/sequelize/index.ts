@@ -1,9 +1,10 @@
-import sequelize, { Op } from 'sequelize';
+import { Op, DatabaseError as SequelizeDatabaseError } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { DatabaseConnection } from '..';
 import { SearchStudentsDto } from '../../../dtos/student';
 import { AccessToken } from '../../../models/access-token';
 import { Admin } from '../../../models/admin';
+import { Internship, InternshipStatus } from '../../../models/internship';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
 import { Supervisor } from '../../../models/supervisor';
@@ -14,6 +15,7 @@ import { DatabaseError } from '../../errors';
 import {
     mapSequelizeAccessTokenToModel,
     mapSequelizeAdminToModel,
+    mapSequelizeInternshipToModel,
     mapSequelizeResetPasswordTokenToModel,
     mapSequelizeStudentToModel,
     mapSequelizeSupervisorToModel,
@@ -24,6 +26,7 @@ import {
     AccessTokenTable,
     AddressTable,
     AdminTable,
+    InternshipScheduleTable,
     InternshipTable,
     OrganizationTable,
     ResetPasswordTable,
@@ -44,10 +47,11 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         AddressTable,
         OrganizationTable,
         InternshipTable,
+        InternshipScheduleTable,
     ];
     private static sequelize: Sequelize;
-    private _error?: sequelize.DatabaseError;
-    private set error(err: sequelize.DatabaseError) {
+    private _error?: SequelizeDatabaseError;
+    private set error(err: SequelizeDatabaseError) {
         config.external.logger(err.message);
         this._error = err;
     }
@@ -89,7 +93,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return entity;
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
 
@@ -115,7 +119,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeResetPasswordTokenToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
 
@@ -133,11 +137,11 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeResetPasswordTokenToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
 
-    async updateUserPasswordByEmail(
+    async saveUserPasswordByEmail(
         email: string,
         newPassword: string
     ): Promise<User | undefined> {
@@ -152,7 +156,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeUserToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
 
@@ -168,7 +172,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return entity;
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async getAdmins(): Promise<Admin[]> {
@@ -179,7 +183,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return admins.map(mapSequelizeAdminToModel);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
             return [];
         }
     }
@@ -204,7 +208,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeAdminToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async saveNewSupervisor(
@@ -221,7 +225,20 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return entity;
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+    async findSupervisorById(id: number): Promise<Supervisor | undefined> {
+        try {
+            const model = await SupervisorTable.findByPk(id, {
+                include: [UserTable],
+            });
+
+            if (!model) return;
+
+            return mapSequelizeSupervisorToModel(model);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async findSupervisorByEmail(
@@ -239,7 +256,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeSupervisorToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async saveNewStudent(student: Student): Promise<Student | undefined> {
@@ -254,7 +271,20 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return entity;
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+    async findStudentById(id: number): Promise<Student | undefined> {
+        try {
+            const model = await StudentTable.findByPk(id, {
+                include: [UserTable],
+            });
+
+            if (!model) return;
+
+            return mapSequelizeStudentToModel(model);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async findStudentByEmail(email: string): Promise<Student | undefined> {
@@ -270,7 +300,35 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeStudentToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+    async verifyStudentIsInterning(
+        studentId: number
+    ): Promise<boolean | undefined> {
+        try {
+            const internships = await InternshipTable.findAll({
+                where: { studentId },
+            });
+
+            for (const internship of internships) {
+                if (
+                    !(
+                        internship.status in
+                        [
+                            InternshipStatus.Closed,
+                            InternshipStatus.Rejected,
+                            InternshipStatus.Completed,
+                        ]
+                    )
+                ) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async searchStudents(
@@ -296,7 +354,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return models.map(mapSequelizeStudentToModel);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async saveNewAccessToken(
@@ -311,7 +369,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeAccessTokenToModel(model, true);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async invalidateAccessToken(
@@ -329,7 +387,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeAccessTokenToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async findUserByValidAccessToken(token: string): Promise<User | undefined> {
@@ -352,7 +410,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeUserToModel(model.user);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async findUserById(id: number): Promise<User | undefined> {
@@ -361,7 +419,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             if (!model) return;
             return mapSequelizeUserToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async findUserByEmail(email: string): Promise<User | undefined> {
@@ -370,17 +428,54 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             if (!model) return;
             return mapSequelizeUserToModel(model);
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
         }
     }
     async verifyIfEmailIsInUse(email: string): Promise<boolean | undefined> {
         try {
-            const result = await UserTable.findAndCountAll({
+            const count = await UserTable.count({
                 where: { email },
             });
-            return result.count > 0;
+            return count > 0;
         } catch (err) {
-            this.error = err as sequelize.DatabaseError;
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+    async saveNewInternship(
+        internship: Omit<Internship, 'status'>
+    ): Promise<Internship | undefined> {
+        try {
+            const model = await InternshipTable.create(
+                {
+                    // TODO: verify other fields to map
+                    ...internship,
+                    organizationId: internship.organization.id!,
+                    supervisorId: internship.supervisor.id!,
+                    studentId: internship.student.id!,
+                    periodStartDate: internship.period.startDate,
+                    periodExpectedEndDate: internship.period.expectedEndDate,
+                    organizationSupervisorName:
+                        internship.organizationSupervisor.name,
+                    organizationSupervisorEmail:
+                        internship.organizationSupervisor.email,
+                    organizationSupervisorPosition:
+                        internship.organizationSupervisor.position,
+                    status: InternshipStatus.AwaitingInitialApproval,
+                },
+                {
+                    include: [
+                        InternshipScheduleTable,
+                        {
+                            model: OrganizationTable,
+                            include: [AddressTable],
+                        },
+                    ],
+                }
+            );
+
+            return mapSequelizeInternshipToModel(model, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
         }
     }
 
@@ -435,13 +530,17 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             InternshipTable.belongsTo(OrganizationTable);
             OrganizationTable.hasMany(InternshipTable);
 
+            // internship-schedule and internship association
+            InternshipScheduleTable.belongsTo(InternshipTable);
+            InternshipTable.hasMany(InternshipScheduleTable);
+
             // sync
             if (config.project.environment !== 'production')
                 await this.sequelize.sync();
 
             await this.sequelize.authenticate();
         } catch (err) {
-            const customError = err as sequelize.DatabaseError;
+            const customError = err as SequelizeDatabaseError;
             customError.message = `Unable to connect to the database: ${customError.message}`;
             throw customError;
         }

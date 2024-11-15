@@ -4,7 +4,7 @@ export type DeepPartial<T> = {
     [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
 export type Mapper<From extends object, To extends object> = {
-    [K in keyof To]: keyof From | ((source: From) => To[K]);
+    [K in keyof To]?: keyof From | ((source: From) => To[K]);
 };
 export type Replace<
     T,

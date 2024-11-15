@@ -16,6 +16,7 @@ import { AccessToken } from '../../../models/access-token';
 import { Address } from '../../../models/address';
 import { Admin } from '../../../models/admin';
 import { AcademicClass } from '../../../models/institution';
+import { Internship, InternshipSchedule } from '../../../models/internship';
 import { Organization } from '../../../models/organization';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
@@ -23,25 +24,53 @@ import { Supervisor } from '../../../models/supervisor';
 import { User } from '../../../models/user';
 import config from '../../config';
 
+// sequelize models
 type SequelizeUser = User;
 type SequelizeAdmin = Omit<Admin, 'user'> & { userId: number };
 type SequelizeSupervisor = Omit<Supervisor, 'user'> & { userId: number };
 type SequelizeStudent = Omit<Student, 'user'> & { userId: number };
+type SequelizeResetPasswordToken = ResetPasswordToken;
+type SequelizeAddress = Address;
+type SequelizeAcademicClass = AcademicClass;
+type SequelizeInternshipSchedule = InternshipSchedule;
+type SequelizeOrganization = Omit<Organization, 'address'> & {
+    addressId: number;
+};
 type SequelizeAccessToken = Omit<AccessToken, 'user'> & {
     userId: number;
     expiredAt?: Date;
 };
-type SequelizeResetPasswordToken = ResetPasswordToken;
+type SequelizeInternship = Omit<
+    Internship,
+    'student' | 'supervisor' | 'organization'
+> & {
+    studentId: number;
+    supervisorId: number;
+    organizationId: number;
+    periodStartDate: Date;
+    periodExpectedEndDate: Date;
+    organizationSupervisorName: string;
+    organizationSupervisorEmail: string;
+    organizationSupervisorPosition: string;
+    schedule: InternshipSchedule[];
+};
 
-type UserCreate = Optional<SequelizeUser, 'id'>;
-type AdminCreate = Omit<Optional<SequelizeAdmin, 'id'>, 'userId'>;
-type SupervisorCreate = Omit<Optional<SequelizeSupervisor, 'id'>, 'userId'>;
-type StudentCreate = Omit<Optional<SequelizeStudent, 'id'>, 'userId'>;
-type AccessTokenCreate = Omit<
+// sequelize model create
+type SequelizeUserCreate = Optional<SequelizeUser, 'id'>;
+type SequelizeAdminCreate = Omit<Optional<SequelizeAdmin, 'id'>, 'userId'>;
+type SequelizeStudentCreate = Omit<Optional<SequelizeStudent, 'id'>, 'userId'>;
+type SequelizeAcademicClassCreate = SequelizeAcademicClass;
+type SequelizeInternshipCreate = SequelizeInternship;
+type SequelizeInternshipScheduleCreate = SequelizeInternshipSchedule;
+type SequelizeSupervisorCreate = Omit<
+    Optional<SequelizeSupervisor, 'id'>,
+    'userId'
+>;
+type SequelizeAccessTokenCreate = Omit<
     SequelizeAccessToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
-type ResetPasswordCreate = Omit<
+type SequelizeResetPasswordCreate = Omit<
     SequelizeResetPasswordToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
@@ -52,7 +81,7 @@ type ResetPasswordCreate = Omit<
 })
 export class ResetPasswordTable extends Model<
     SequelizeResetPasswordToken,
-    ResetPasswordCreate
+    SequelizeResetPasswordCreate
 > {
     @Index
     @Unique
@@ -98,7 +127,7 @@ export class ResetPasswordTable extends Model<
 })
 export class AccessTokenTable extends Model<
     SequelizeAccessToken,
-    AccessTokenCreate
+    SequelizeAccessTokenCreate
 > {
     public declare user: UserTable;
 
@@ -128,7 +157,7 @@ export class AccessTokenTable extends Model<
     tableName: 'users',
     modelName: 'users',
 })
-export class UserTable extends Model<SequelizeUser, UserCreate> {
+export class UserTable extends Model<SequelizeUser, SequelizeUserCreate> {
     @Index
     @Unique
     @AllowNull(false)
@@ -161,7 +190,7 @@ export class UserTable extends Model<SequelizeUser, UserCreate> {
     tableName: 'admins',
     modelName: 'admins',
 })
-export class AdminTable extends Model<SequelizeAdmin, AdminCreate> {
+export class AdminTable extends Model<SequelizeAdmin, SequelizeAdminCreate> {
     public declare user: UserTable;
 
     @Index
@@ -178,7 +207,7 @@ export class AdminTable extends Model<SequelizeAdmin, AdminCreate> {
 })
 export class SupervisorTable extends Model<
     SequelizeSupervisor,
-    SupervisorCreate
+    SequelizeSupervisorCreate
 > {
     public declare user: UserTable;
 
@@ -193,7 +222,10 @@ export class SupervisorTable extends Model<
     tableName: 'students',
     modelName: 'students',
 })
-export class StudentTable extends Model<SequelizeStudent, StudentCreate> {
+export class StudentTable extends Model<
+    SequelizeStudent,
+    SequelizeStudentCreate
+> {
     public declare user: UserTable;
     public declare academicClass: AcademicClassTable;
     public declare address: AddressTable;
@@ -212,25 +244,16 @@ export class StudentTable extends Model<SequelizeStudent, StudentCreate> {
 
     @Column
     public declare whatsapp?: string;
-
-    @AllowNull(true)
-    @Column
-    public declare addressId?: number;
-
-    @AllowNull(true)
-    @Column
-    public declare academicClassId?: number;
-
-    @AllowNull(true)
-    @Column
-    public declare academicId?: number;
 }
 
 @Table({
     tableName: 'academic-classes',
     modelName: 'academic-classes',
 })
-export class AcademicClassTable extends Model<AcademicClass> {
+export class AcademicClassTable extends Model<
+    SequelizeAcademicClassCreate,
+    SequelizeAcademicClass
+> {
     @AllowNull(false)
     @NotEmpty
     @Column
@@ -246,7 +269,7 @@ export class AcademicClassTable extends Model<AcademicClass> {
     tableName: 'organizations',
     modelName: 'organizations',
 })
-export class OrganizationTable extends Model<Organization> {
+export class OrganizationTable extends Model<SequelizeOrganization> {
     public declare address: AddressTable;
 
     @AllowNull(false)
@@ -276,17 +299,13 @@ export class OrganizationTable extends Model<Organization> {
 
     @Column
     public declare whatsapp?: string;
-
-    @AllowNull(true)
-    @Column
-    public declare addressId?: number;
 }
 
 @Table({
     tableName: 'addresses',
     modelName: 'addresses',
 })
-export class AddressTable extends Model<Address> {
+export class AddressTable extends Model<SequelizeAddress> {
     @AllowNull(false)
     @NotEmpty
     @Column
@@ -320,41 +339,92 @@ export class AddressTable extends Model<Address> {
 }
 
 @Table({
+    tableName: 'internship-schedules',
+    modelName: 'internship-schedules',
+})
+export class InternshipScheduleTable extends Model<
+    SequelizeInternshipScheduleCreate,
+    SequelizeInternshipSchedule
+> {
+    public declare internship: InternshipTable;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare name: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare description: string;
+}
+
+@Table({
     tableName: 'internships',
     modelName: 'internships',
 })
-export class InternshipTable extends Model {
+export class InternshipTable extends Model<
+    SequelizeInternshipCreate,
+    SequelizeInternship
+> {
     public declare student: StudentTable;
     public declare supervisor: SupervisorTable;
     public declare organization: OrganizationTable;
+    public declare schedule: InternshipSchedule[];
 
     @AllowNull(false)
-    @Column
-    public declare studentId: number;
-
-    @AllowNull(false)
-    @Column
-    public declare supervisorId: number;
-
-    @AllowNull(false)
-    @Column
-    public declare organizationId: number;
+    @NotEmpty
+    @Column(DataTypes.STRING)
+    public declare status: string;
 
     @AllowNull(false)
     @NotEmpty
     @Column
-    public declare companySupervisorName: string;
-
-    @AllowNull(false)
-    @NotEmpty
-    @Validate({
-        isEmail: true,
-    })
-    @Column
-    public declare companySupervisorEmail: string;
+    public declare division: string;
 
     @AllowNull(false)
     @NotEmpty
     @Column
-    public declare companySupervisorPosition: string;
+    public declare classification: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare monthlyStipend: number;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare transportationAid: number;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare workSituation: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare periodStartDate: Date;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare periodExpectedEndDate: Date;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare organizationSupervisorName: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Validate({ isEmail: true })
+    @Column
+    public declare organizationSupervisorEmail: string;
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column
+    public declare organizationSupervisorPosition: string;
 }

@@ -10,7 +10,7 @@ class UserService {
         newPassword: string
     ): Promise<User> {
         const conn = await DatabaseResolver.getConnection();
-        const user = await conn.updateUserPasswordByEmail(
+        const user = await conn.saveUserPasswordByEmail(
             email,
             await hashService.encryptPasswordAsync(newPassword)
         );

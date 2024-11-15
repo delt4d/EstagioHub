@@ -1,0 +1,35 @@
+# @name start-new-internship
+# @prompt token
+POST {{baseUrl}}/internship/start-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "classification": "mandatory",
+    "division": "Desenvolvimento",
+    "monthlyStipend": 5000,
+    "organizationCnpj": "19131243000197",
+    "organizationSupervisor": {
+        "email": "supervisor@example.com",
+        "name": "Supervisor da empresa",
+        "position": "supervisor"
+    },
+    "period": {
+        "startDate": "2022-01-01",
+        "expectedEndDate": "2022-12-31"
+    },
+    "schedule": [],
+    "studentId": 1,
+    "supervisorId": 1,
+    "transportationAid": 3,
+    "weeklyHours": {
+        "mondayToFriday": { 
+            "startTime": 8, 
+            "endTime": 12 
+        },
+        "mondayToFridaySecondary": null,
+        "saturday": null
+    },
+    "workSituation": "onsite"
+}

@@ -1,6 +1,7 @@
 import { SearchStudentsDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
 import { Admin } from '../../models/admin';
+import { Internship } from '../../models/internship';
 import { ResetPasswordToken } from '../../models/reset-password-token';
 import { Student } from '../../models/student';
 import { Supervisor } from '../../models/supervisor';
@@ -28,6 +29,11 @@ export interface DatabaseConnection {
         userid: number
     ): Promise<AccessToken | undefined>;
 
+    // cadastrar um novo estágio
+    saveNewInternship(
+        internship: Omit<Internship, 'status'>
+    ): Promise<Internship | undefined>;
+
     // salvar reset-password token
     saveNewResetPasswordToken(
         email: string,
@@ -52,10 +58,16 @@ export interface DatabaseConnection {
     // obter um administrador pelo nome ou email
     findAdminByNameOrEmail(nameOrEmail: string): Promise<Admin | undefined>;
 
+    // obter orientador pelo id
+    findSupervisorById(id: number): Promise<Supervisor | undefined>;
+
     // obter um orientador pelo email
     findSupervisorByEmail(email: string): Promise<Supervisor | undefined>;
 
-    // obter um estudente pelo email
+    // obter um estudante pelo id
+    findStudentById(id: number): Promise<Student | undefined>;
+
+    // obter um estudante pelo email
     findStudentByEmail(email: string): Promise<Student | undefined>;
 
     // obter reset-password token não expirado
@@ -63,6 +75,9 @@ export interface DatabaseConnection {
         email: string,
         token: string
     ): Promise<ResetPasswordToken | undefined>;
+
+    // verifica se o estudante está estágiando
+    verifyStudentIsInterning(studentId: number): Promise<boolean | undefined>;
 
     // obter usuários à partir de uma busca e paginição
     searchStudents(data: SearchStudentsDto): Promise<Student[] | undefined>;
@@ -75,8 +90,8 @@ export interface DatabaseConnection {
         token: string
     ): Promise<ResetPasswordToken | undefined>;
 
-    // atualizar senha
-    updateUserPasswordByEmail(
+    // atualizar senha pelo email
+    saveUserPasswordByEmail(
         email: string,
         newPassword: string
     ): Promise<User | undefined>;

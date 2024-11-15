@@ -1,6 +1,7 @@
 import { Address } from './address';
 
 export type Organization = {
+    id?: number;
     cnpj: string;
     corporateName: string; // razão social
     businessName: string; // nome fantasia

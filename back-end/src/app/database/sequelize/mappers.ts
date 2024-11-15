@@ -1,5 +1,12 @@
 import { AccessToken } from '../../../models/access-token';
 import { Admin } from '../../../models/admin';
+import {
+    Classification,
+    Internship,
+    InternshipStatus,
+    WorkSituation,
+} from '../../../models/internship';
+import { Organization } from '../../../models/organization';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
 import { Supervisor } from '../../../models/supervisor';
@@ -10,6 +17,8 @@ import { Mapper } from '../../utils';
 import {
     AccessTokenTable,
     AdminTable,
+    InternshipTable,
+    OrganizationTable,
     ResetPasswordTable as ResetPasswordTokenTable,
     StudentTable,
     SupervisorTable,
@@ -73,6 +82,75 @@ const resetPasswordTokenMapper: Mapper<
     token: 'token',
 };
 
+const organizationMapper: Mapper<OrganizationTable, Organization> = {
+    id: 'id',
+    cnpj: 'cnpj',
+    corporateName: 'corporateName',
+    businessName: 'businessName',
+    address: 'address',
+    phone1: 'phone1',
+    phone2: 'phone2',
+    website: 'website',
+    whatsapp: 'whatsapp',
+};
+
+const internshipMapper: Mapper<InternshipTable, Internship> = {
+    id: 'id',
+    student: (src) => mapSequelizeStudentToModel(src.student),
+    supervisor: (src) => mapSequelizeSupervisorToModel(src.supervisor),
+    status: (src) => {
+        const statusMap: Record<string, InternshipStatus> = {
+            awaiting_initial_approval: InternshipStatus.AwaitingInitialApproval,
+            awaiting_internship_approval:
+                InternshipStatus.AwaitingInternshipApproval,
+            in_progress: InternshipStatus.InProgress,
+            completed: InternshipStatus.Completed,
+            rejected: InternshipStatus.Rejected,
+            closed: InternshipStatus.Closed,
+        };
+
+        return statusMap[src.status];
+    },
+    organization: (src) => mapSequelizeOrganizationToModel(src.organization),
+    organizationSupervisor: (src) => ({
+        email: src.organizationSupervisorEmail,
+        name: src.organizationSupervisorName,
+        position: src.organizationSupervisorPosition,
+    }),
+    division: 'division',
+    classification: (src) => {
+        const classificationMap: Record<string, Classification> = {
+            mandatory: Classification.Mandatory,
+            optional: Classification.NonMandatory,
+        };
+        return classificationMap[src.classification];
+    },
+    monthlyStipend: 'monthlyStipend',
+    transportationAid: 'transportationAid',
+    workSituation: (src) => {
+        const workSituationMap: Record<string, WorkSituation> = {
+            onsite: WorkSituation.Onsite,
+            hybrid: WorkSituation.Hybrid,
+            remote: WorkSituation.Remote,
+        };
+        return workSituationMap[src.workSituation];
+    },
+    period: (src) => ({
+        startDate: src.periodStartDate,
+        expectedEndDate: src.periodExpectedEndDate,
+    }),
+    // TODO: trocar depois pelos valores
+    schedule: () => [],
+    weeklyHours: (source) => ({
+        mondayToFriday: {
+            startTime: 8,
+            endTime: 12,
+        },
+        mondayToFridaySecondary: undefined,
+        saturday: undefined,
+    }),
+};
+
 export const mapSequelizeAdminToModel = (entity: AdminTable) =>
     mapObject(entity, adminMapper);
 
@@ -93,3 +171,11 @@ export const mapSequelizeResetPasswordTokenToModel = (
 
 export const mapSequelizeUserToModel = (entity: UserTable) =>
     mapObject(entity, userMapper);
+
+export const mapSequelizeOrganizationToModel = (entity: OrganizationTable) =>
+    mapObject(entity, organizationMapper);
+
+export const mapSequelizeInternshipToModel = (
+    entity: InternshipTable,
+    ignoreError: boolean = false
+) => mapObject(entity, internshipMapper, ignoreError);

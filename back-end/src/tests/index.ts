@@ -284,7 +284,7 @@ const models = {
             },
             academicClass: {
                 courseName: 'Administration',
-                schedulePeriod: ClassPeriod.Morning,
+                classPeriod: ClassPeriod.Morning,
             },
             address: {
                 street: '123 Main St',
@@ -311,7 +311,7 @@ const models = {
             },
             academicClass: {
                 courseName: 'Marketing',
-                schedulePeriod: ClassPeriod.Afternoon,
+                classPeriod: ClassPeriod.Afternoon,
             },
             address: {
                 street: '456 Another St',

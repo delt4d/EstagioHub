@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import 'express-async-errors';
 import adminRoutes from './admin';
+import internshipRoutes from './internship';
 import logoutRoutes from './logout';
 import organizationRoutes from './organizaton';
 import studentRoutes from './student';
@@ -16,6 +17,7 @@ export default function () {
     routes.use('/student', studentRoutes);
     routes.use('/logout', logoutRoutes);
     routes.use('/organization', organizationRoutes);
+    routes.use('/internship', internshipRoutes);
 
     return routes;
 }
