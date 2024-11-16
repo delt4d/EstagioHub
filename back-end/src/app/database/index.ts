@@ -2,7 +2,7 @@ import { SearchInternshipsDto } from '../../dtos/internship';
 import { SearchStudentsDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
 import { Admin } from '../../models/admin';
-import { Internship } from '../../models/internship';
+import { Internship, InternshipStatus } from '../../models/internship';
 import { ResetPasswordToken } from '../../models/reset-password-token';
 import { Student } from '../../models/student';
 import { Supervisor } from '../../models/supervisor';
@@ -82,6 +82,15 @@ export interface DatabaseConnection {
 
     // obter usuários à partir de uma busca e paginição
     searchStudents(data: SearchStudentsDto): Promise<Student[] | undefined>;
+
+    // obter estágio por id
+    findInternshipById(id: number): Promise<Internship | undefined>;
+
+    // alterar status de um estágio
+    updateInternshipStatus(
+        internshipId: number,
+        newStatus: InternshipStatus
+    ): Promise<Internship | undefined>;
 
     // obter estágios à partir de uma busca e paginção
     searchInternshipts(

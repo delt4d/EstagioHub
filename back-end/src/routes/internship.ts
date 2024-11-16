@@ -23,4 +23,32 @@ routes.get(
     controller.searchInternships
 );
 
+routes.get(
+    '/:id',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
+    controller.getInternshipById
+);
+
+routes.post(
+    '/:id/cancel-new-internship',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Student, UserRole.Supervisor),
+    controller.cancelNewInternship
+);
+
+routes.post(
+    '/:id/approve-new-internship',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Supervisor),
+    controller.approveNewInternship
+);
+
+routes.post(
+    '/:id/reject-new-internship',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Supervisor),
+    controller.rejectNewInternship
+);
+
 export default routes;

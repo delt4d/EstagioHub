@@ -3,12 +3,24 @@ import { Student } from './student';
 import { Supervisor } from './supervisor';
 
 export enum InternshipStatus {
+    // quando o estágio é recém criado com as informações básicas
     AwaitingInitialApproval = 'awaiting_initial_approval',
+    // quando o orientador vê que todas as informações iniciais são válidas
+    // os documentos de estágio são requeridos neste momento
     AwaitingInternshipApproval = 'awaiting_internship_approval',
+    // durante o período de estágio
     InProgress = 'in_progress',
+    // quando o estágio terminou
     Completed = 'completed',
+    // estágio foi rejeitado
+    // o aluno precisa verificar e corrigir as informações
     Rejected = 'rejected',
+    // o estágio foi fechado devido a algum problema, como desistência,
+    // morte, demissão, etc...
     Closed = 'closed',
+    // quando o aluno ou orientador cancelam uma solicitação
+    // de início de estágio
+    Canceled = 'canceled',
 }
 
 export enum WorkSituation {

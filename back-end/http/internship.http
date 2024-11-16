@@ -45,3 +45,39 @@ GET {{baseUrl}}/internship?searchTerm={{searchTerm}}&limit={{limit}}&offset={{of
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
+
+###
+# @name findInternshipByID
+# @prompt token
+# @prompt id
+GET {{baseUrl}}/internship/{{id}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name cancelInternshipRequest
+# @prompt token
+# @prompt id
+POST {{baseUrl}}//internship/{{id}}/cancel-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name approveInternshipRequest
+# @prompt token
+# @prompt id
+POST {{baseUrl}}//internship/{{id}}/approve-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name rejectInternshipRequest
+# @prompt token
+# @prompt id
+POST {{baseUrl}}//internship/{{id}}/reject-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}

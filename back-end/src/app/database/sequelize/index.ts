@@ -317,6 +317,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                     !(
                         internship.status in
                         [
+                            InternshipStatus.Canceled,
                             InternshipStatus.Closed,
                             InternshipStatus.Rejected,
                             InternshipStatus.Completed,
@@ -442,6 +443,45 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+    async updateInternshipStatus(
+        internshipId: number,
+        newStatus: InternshipStatus
+    ): Promise<Internship | undefined> {
+        try {
+            const model = await InternshipTable.findByPk(internshipId);
+            if (!model) return;
+
+            await model.update({ status: newStatus });
+
+            return mapSequelizeInternshipToModel(model, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+    async findInternshipById(id: number): Promise<Internship | undefined> {
+        try {
+            const model = await InternshipTable.findByPk(id, {
+                include: [
+                    {
+                        model: StudentTable,
+                        include: [UserTable, AddressTable],
+                    },
+                    {
+                        model: SupervisorTable,
+                        include: [UserTable],
+                    },
+                    OrganizationTable,
+                    InternshipScheduleTable,
+                ],
+            });
+
+            if (!model) return;
+
+            return mapSequelizeInternshipToModel(model);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
     async saveNewInternship(
         internship: Omit<Internship, 'status'>
     ): Promise<Internship | undefined> {
@@ -486,6 +526,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 where: Sequelize.where(
                     Sequelize.fn(
                         'concat',
+                        // TODO: verificar como incluir estes campos
                         // column('students.fullName'),
                         // '%',
                         // column('students.users.email'),
