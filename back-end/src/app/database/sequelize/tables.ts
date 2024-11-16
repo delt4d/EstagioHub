@@ -24,35 +24,39 @@ import { Supervisor } from '../../../models/supervisor';
 import { User } from '../../../models/user';
 import config from '../../config';
 
-// sequelize models
+type BaseSequelizeModel<T, F extends keyof any = never> = Omit<T, F> & {
+    [P in F]: number;
+};
+
+type CreationType<T, OmitKeys extends keyof T | 'id' = 'id'> = Omit<
+    T,
+    OmitKeys
+>;
+
+// Sequelize model types
 type SequelizeUser = User;
-type SequelizeAdmin = Omit<Admin, 'user'> & {
-    userId: number;
-};
-type SequelizeSupervisor = Omit<Supervisor, 'user'> & {
-    userId: number;
-};
-type SequelizeStudent = Omit<Student, 'user' | 'address'> & {
-    addressId: number;
-    userId: number;
-};
+type SequelizeAdmin = BaseSequelizeModel<Admin, 'userId'>;
+type SequelizeSupervisor = BaseSequelizeModel<Supervisor, 'userId'>;
+type SequelizeStudent = BaseSequelizeModel<
+    Omit<Student, 'user' | 'address'>,
+    'userId' | 'addressId'
+>;
 type SequelizeResetPasswordToken = ResetPasswordToken;
 type SequelizeAddress = Address;
 type SequelizeAcademicClass = AcademicClass;
 type SequelizeInternshipSchedule = InternshipSchedule;
-type SequelizeOrganization = Omit<Organization, 'address'> & {
-    addressId: number;
-};
-type SequelizeAccessToken = Omit<AccessToken, 'user'> & {
-    userId: number;
-};
-type SequelizeInternship = Omit<
-    Internship,
-    'student' | 'supervisor' | 'organization'
+type SequelizeOrganization = BaseSequelizeModel<
+    Omit<Organization, 'address'>,
+    'addressId'
+>;
+type SequelizeAccessToken = BaseSequelizeModel<
+    Omit<AccessToken, 'user'>,
+    'userId'
+>;
+type SequelizeInternship = BaseSequelizeModel<
+    Omit<Internship, 'student' | 'supervisor' | 'organization'>,
+    'studentId' | 'supervisorId' | 'organizationId'
 > & {
-    studentId: number;
-    supervisorId: number;
-    organizationId: number;
     periodStartDate: Date;
     periodExpectedEndDate: Date;
     organizationSupervisorName: string;
@@ -61,28 +65,29 @@ type SequelizeInternship = Omit<
     schedule: InternshipSchedule[];
 };
 
-// sequelize model create
-type SequelizeUserCreate = Omit<SequelizeUser, 'id'>;
-type SequelizeAdminCreate = Omit<SequelizeAdmin, 'id' | 'userId'>;
-type SequelizeStudentCreate = Omit<
+// Creation types
+type SequelizeUserCreate = CreationType<SequelizeUser>;
+type SequelizeAdminCreate = CreationType<SequelizeAdmin, 'id' | 'userId'>;
+type SequelizeStudentCreate = CreationType<
     SequelizeStudent,
     'id' | 'userId' | 'addressId'
 >;
-type SequelizeAcademicClassCreate = Omit<SequelizeAcademicClass, 'id'>;
-type SequelizeInternshipCreate = Omit<
+type SequelizeAcademicClassCreate = CreationType<SequelizeAcademicClass>;
+type SequelizeInternshipCreate = CreationType<
     SequelizeInternship,
     'id' | 'studentId' | 'supervisorId' | 'organizationId'
 >;
-type SequelizeInternshipScheduleCreate = Omit<
-    SequelizeInternshipSchedule,
-    'id'
+type SequelizeInternshipScheduleCreate =
+    CreationType<SequelizeInternshipSchedule>;
+type SequelizeSupervisorCreate = CreationType<
+    SequelizeSupervisor,
+    'id' | 'userId'
 >;
-type SequelizeSupervisorCreate = Omit<SequelizeSupervisor, 'id' | 'userId'>;
-type SequelizeAccessTokenCreate = Omit<
+type SequelizeAccessTokenCreate = CreationType<
     SequelizeAccessToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
-type SequelizeResetPasswordTokenCreate = Omit<
+type SequelizeResetPasswordTokenCreate = CreationType<
     SequelizeResetPasswordToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
