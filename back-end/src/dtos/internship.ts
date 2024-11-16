@@ -18,3 +18,9 @@ export type InStartNewInternshipDto = Pick<
     // TODO: Supervisor ID must be the student's supervisor that is defined by the class of the student
     supervisorId: number;
 };
+
+export type SearchInternshipsDto = {
+    limit?: number;
+    offset?: number;
+    searchTerm: string;
+};

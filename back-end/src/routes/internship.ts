@@ -16,4 +16,11 @@ routes.post(
     controller.startNewInternship
 );
 
+routes.get(
+    '/',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
+    controller.searchInternships
+);
+
 export default routes;

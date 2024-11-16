@@ -5,6 +5,7 @@ Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
 
+# TODO: test with items in schedule
 {
     "classification": "mandatory",
     "division": "Desenvolvimento",
@@ -16,8 +17,8 @@ Authorization: Bearer {{token}}
         "position": "supervisor"
     },
     "period": {
-        "startDate": "2022-01-01",
-        "expectedEndDate": "2022-12-31"
+        "startDate": "2024-01-01",
+        "expectedEndDate": "2024-12-31"
     },
     "schedule": [],
     "studentId": 1,
@@ -33,3 +34,14 @@ Authorization: Bearer {{token}}
     },
     "workSituation": "onsite"
 }
+
+###
+# @name searchInternships
+# @prompt token
+# @prompt searchTerm
+# @prompt limit 10
+# @prompt offset 0
+GET {{baseUrl}}/internship?searchTerm={{searchTerm}}&limit={{limit}}&offset={{offset}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}

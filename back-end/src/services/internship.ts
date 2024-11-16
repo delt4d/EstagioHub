@@ -1,7 +1,10 @@
 import { DatabaseResolver } from '../app/database';
 import { BadRequestError, NotFoundError } from '../app/errors';
 import { toResult } from '../app/utils';
-import { InStartNewInternshipDto } from '../dtos/internship';
+import {
+    InStartNewInternshipDto,
+    SearchInternshipsDto,
+} from '../dtos/internship';
 import { Internship } from '../models/internship';
 import organizationService from './organization';
 import studentService from './student';
@@ -47,6 +50,13 @@ class InternshipService {
         conn.throwIfHasError();
 
         return internship!;
+    }
+
+    async searchInternships(search: SearchInternshipsDto) {
+        const conn = await DatabaseResolver.getConnection();
+        const internships = await conn.searchInternshipts(search);
+        conn.throwIfHasError();
+        return internships!;
     }
 }
 

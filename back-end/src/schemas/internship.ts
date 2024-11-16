@@ -1,5 +1,9 @@
 import Joi from 'joi';
-import { InStartNewInternshipDto } from '../dtos/internship';
+import config from '../app/config';
+import {
+    InStartNewInternshipDto,
+    SearchInternshipsDto,
+} from '../dtos/internship';
 
 export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
     // TODO: terminar... implementar validações e mensagens
@@ -35,4 +39,25 @@ export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
         }).allow(null),
     }).required(),
     workSituation: Joi.string().required(),
+});
+
+export const SearchInternshipSchema = Joi.object<SearchInternshipsDto>({
+    limit: Joi.number()
+        .integer()
+        .min(1)
+        .max(config.validations.maxSearchLimit)
+        .default(config.validations.defaultSearchLimit)
+        .messages({
+            'number.max': `O limite deve ser menor que ${config.validations.maxSearchLimit}`,
+            'number.min': 'O limite deve ser no mínimo 1',
+        }),
+    offset: Joi.number().integer().min(0).default(0),
+    searchTerm: Joi.string()
+        .allow('')
+        .max(config.validations.maxSearchTermLength)
+        .messages({
+            'number.max': `O termo não deve exceder ${config.validations.maxSearchTermLength} caracteres.`,
+            'number.min': 'O limite não deve ser menor que 0',
+        })
+        .required(),
 });

@@ -1,4 +1,4 @@
-import { DataTypes, Optional } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import {
     AllowNull,
     Column,
@@ -26,9 +26,16 @@ import config from '../../config';
 
 // sequelize models
 type SequelizeUser = User;
-type SequelizeAdmin = Omit<Admin, 'user'> & { userId: number };
-type SequelizeSupervisor = Omit<Supervisor, 'user'> & { userId: number };
-type SequelizeStudent = Omit<Student, 'user'> & { userId: number };
+type SequelizeAdmin = Omit<Admin, 'user'> & {
+    userId: number;
+};
+type SequelizeSupervisor = Omit<Supervisor, 'user'> & {
+    userId: number;
+};
+type SequelizeStudent = Omit<Student, 'user' | 'address'> & {
+    addressId: number;
+    userId: number;
+};
 type SequelizeResetPasswordToken = ResetPasswordToken;
 type SequelizeAddress = Address;
 type SequelizeAcademicClass = AcademicClass;
@@ -38,7 +45,6 @@ type SequelizeOrganization = Omit<Organization, 'address'> & {
 };
 type SequelizeAccessToken = Omit<AccessToken, 'user'> & {
     userId: number;
-    expiredAt?: Date;
 };
 type SequelizeInternship = Omit<
     Internship,
@@ -56,21 +62,27 @@ type SequelizeInternship = Omit<
 };
 
 // sequelize model create
-type SequelizeUserCreate = Optional<SequelizeUser, 'id'>;
-type SequelizeAdminCreate = Omit<Optional<SequelizeAdmin, 'id'>, 'userId'>;
-type SequelizeStudentCreate = Omit<Optional<SequelizeStudent, 'id'>, 'userId'>;
-type SequelizeAcademicClassCreate = SequelizeAcademicClass;
-type SequelizeInternshipCreate = SequelizeInternship;
-type SequelizeInternshipScheduleCreate = SequelizeInternshipSchedule;
-type SequelizeSupervisorCreate = Omit<
-    Optional<SequelizeSupervisor, 'id'>,
-    'userId'
+type SequelizeUserCreate = Omit<SequelizeUser, 'id'>;
+type SequelizeAdminCreate = Omit<SequelizeAdmin, 'id' | 'userId'>;
+type SequelizeStudentCreate = Omit<
+    SequelizeStudent,
+    'id' | 'userId' | 'addressId'
 >;
+type SequelizeAcademicClassCreate = Omit<SequelizeAcademicClass, 'id'>;
+type SequelizeInternshipCreate = Omit<
+    SequelizeInternship,
+    'id' | 'studentId' | 'supervisorId' | 'organizationId'
+>;
+type SequelizeInternshipScheduleCreate = Omit<
+    SequelizeInternshipSchedule,
+    'id'
+>;
+type SequelizeSupervisorCreate = Omit<SequelizeSupervisor, 'id' | 'userId'>;
 type SequelizeAccessTokenCreate = Omit<
     SequelizeAccessToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
-type SequelizeResetPasswordCreate = Omit<
+type SequelizeResetPasswordTokenCreate = Omit<
     SequelizeResetPasswordToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
@@ -81,7 +93,7 @@ type SequelizeResetPasswordCreate = Omit<
 })
 export class ResetPasswordTable extends Model<
     SequelizeResetPasswordToken,
-    SequelizeResetPasswordCreate
+    SequelizeResetPasswordTokenCreate
 > {
     @Index
     @Unique
@@ -244,6 +256,9 @@ export class StudentTable extends Model<
 
     @Column
     public declare whatsapp?: string;
+
+    @Column
+    public declare academicId?: string;
 }
 
 @Table({
@@ -251,8 +266,8 @@ export class StudentTable extends Model<
     modelName: 'academic-classes',
 })
 export class AcademicClassTable extends Model<
-    SequelizeAcademicClassCreate,
-    SequelizeAcademicClass
+    SequelizeAcademicClass,
+    SequelizeAcademicClassCreate
 > {
     @AllowNull(false)
     @NotEmpty
@@ -343,8 +358,8 @@ export class AddressTable extends Model<SequelizeAddress> {
     modelName: 'internship-schedules',
 })
 export class InternshipScheduleTable extends Model<
-    SequelizeInternshipScheduleCreate,
-    SequelizeInternshipSchedule
+    SequelizeInternshipSchedule,
+    SequelizeInternshipScheduleCreate
 > {
     public declare internship: InternshipTable;
 
@@ -364,8 +379,8 @@ export class InternshipScheduleTable extends Model<
     modelName: 'internships',
 })
 export class InternshipTable extends Model<
-    SequelizeInternshipCreate,
-    SequelizeInternship
+    SequelizeInternship,
+    SequelizeInternshipCreate
 > {
     public declare student: StudentTable;
     public declare supervisor: SupervisorTable;

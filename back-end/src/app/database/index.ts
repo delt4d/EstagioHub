@@ -1,3 +1,4 @@
+import { SearchInternshipsDto } from '../../dtos/internship';
 import { SearchStudentsDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
 import { Admin } from '../../models/admin';
@@ -81,6 +82,11 @@ export interface DatabaseConnection {
 
     // obter usuários à partir de uma busca e paginição
     searchStudents(data: SearchStudentsDto): Promise<Student[] | undefined>;
+
+    // obter estágios à partir de uma busca e paginção
+    searchInternshipts(
+        data: SearchInternshipsDto
+    ): Promise<Internship[] | undefined>;
 
     // invalidar um user-token
     invalidateAccessToken(token: string): Promise<AccessToken | undefined>;

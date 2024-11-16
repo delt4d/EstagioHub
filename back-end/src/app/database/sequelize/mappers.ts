@@ -42,8 +42,8 @@ const studentMapper: Mapper<StudentTable, Student> = {
     fullName: 'fullName',
     phone: 'phone',
     whatsapp: 'whatsapp',
+    academicId: 'academicId',
     academicClass: 'academicClass',
-    address: 'address',
     rg: 'rg',
     user: (src) => mapSequelizeUserToModel(src.user),
 };

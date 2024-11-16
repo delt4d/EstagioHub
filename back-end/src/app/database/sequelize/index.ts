@@ -1,6 +1,7 @@
 import { Op, DatabaseError as SequelizeDatabaseError } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { DatabaseConnection } from '..';
+import { SearchInternshipsDto } from '../../../dtos/internship';
 import { SearchStudentsDto } from '../../../dtos/student';
 import { AccessToken } from '../../../models/access-token';
 import { Admin } from '../../../models/admin';
@@ -449,9 +450,6 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 {
                     // TODO: verify other fields to map
                     ...internship,
-                    organizationId: internship.organization.id!,
-                    supervisorId: internship.supervisor.id!,
-                    studentId: internship.student.id!,
                     periodStartDate: internship.period.startDate,
                     periodExpectedEndDate: internship.period.expectedEndDate,
                     organizationSupervisorName:
@@ -474,6 +472,63 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             );
 
             return mapSequelizeInternshipToModel(model, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
+    async searchInternshipts(
+        data: SearchInternshipsDto
+    ): Promise<Internship[] | undefined> {
+        try {
+            const column = Sequelize.col;
+            const models = await InternshipTable.findAll({
+                where: Sequelize.where(
+                    Sequelize.fn(
+                        'concat',
+                        // column('students.fullName'),
+                        // '%',
+                        // column('students.users.email'),
+                        // '%',
+                        // column('supervisors.name'),
+                        // '%',
+                        // column('supervisors.users.email'),
+                        // '%',
+                        column('internships.organizationSupervisorName'),
+                        '%',
+                        column('internships.organizationSupervisorEmail'),
+                        '%',
+                        column('internships.monthlyStipend'),
+                        '%',
+                        column('internships.division')
+                    ),
+                    {
+                        [Op.like]: `%${data.searchTerm}%`,
+                    }
+                ),
+                include: [
+                    InternshipScheduleTable,
+                    OrganizationTable,
+                    {
+                        model: StudentTable,
+                        include: [UserTable, AddressTable],
+                    },
+                    {
+                        model: SupervisorTable,
+                        include: [UserTable],
+                    },
+                ],
+                limit: data.limit,
+                offset: data.offset,
+            });
+
+            const result: Internship[] = [];
+
+            for (let model of models) {
+                result.push(mapSequelizeInternshipToModel(model));
+            }
+
+            return result;
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
         }
