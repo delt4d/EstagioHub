@@ -15,16 +15,13 @@
     - [x] Busca por CNPJ (usando Brasil API)
 - [x] Retornar alunos (com funcionalidade de pesquisa)
 - [x] Retornar estágios (com funcionalidade de pesquisa)
-- [ ] Retornar documentos de estágio
-- [ ] Retornar documentos pendentes de estágio
 - [ ] Atualizar estágio (quando possível)
 
 ---
 
-- [ ] Cancelar solicitação de estágio
-- [ ] Enviar/Retornar documentos
+- [x] Cancelar solicitação de estágio
 - [ ] Encerrar estágio
-- [ ] Aprovar/Reprovar estágio
+- [x] Aprovar/Reprovar estágio
 - [ ] Marcar documento como entregue
 
 ---

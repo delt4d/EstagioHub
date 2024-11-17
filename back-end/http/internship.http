@@ -81,3 +81,12 @@ POST {{baseUrl}}//internship/{{id}}/reject-new-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
+
+###
+# @name closeInternshipRequest
+# @prompt token
+# @prompt id
+POST {{baseUrl}}//internship/{{id}}/close-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}

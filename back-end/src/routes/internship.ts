@@ -51,4 +51,11 @@ routes.post(
     controller.rejectNewInternship
 );
 
+routes.post(
+    '/:id/close-internship',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Supervisor),
+    controller.closeInternship
+);
+
 export default routes;

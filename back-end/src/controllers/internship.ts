@@ -63,11 +63,24 @@ export default class InternshipController {
     }
 
     async rejectNewInternship(req: Request, res: Response) {
+        // TODO: adicionar campo de justificativa, para que o aluno possa corrigir
+        // o que for necessário para começar o estágio
         const id = Number(req.params.id);
         await internshipService.rejectNewInternship(id);
         return res.send({
             success: true,
             message: 'A solicitação de estágio foi rejeitada.',
+        });
+    }
+
+    async closeInternship(req: Request, res: Response) {
+        // TODO: adicionar campo de justificativa,
+        // do porque o estágio foi encerrado
+        const id = Number(req.params.id);
+        await internshipService.closeInternship(id);
+        return res.send({
+            success: true,
+            message: 'O estágio foi encerrado.',
         });
     }
 }

@@ -84,7 +84,10 @@ class InternshipService {
             InternshipStatus.Canceled
         );
         conn.throwIfHasError();
-        return internship!;
+        if (!internship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+        return internship;
     }
 
     async approveNewInternship(id: number): Promise<Internship | never> {
@@ -100,7 +103,10 @@ class InternshipService {
         conn.throwIfHasError();
         // TODO: neste momento o upload dos documentos
         // necessários estará disponível
-        return internship!;
+        if (!internship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+        return internship;
     }
 
     async rejectNewInternship(id: number): Promise<Internship | never> {
@@ -114,7 +120,25 @@ class InternshipService {
             InternshipStatus.Rejected
         );
         conn.throwIfHasError();
-        return internship!;
+        if (!internship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+        return internship;
+    }
+
+    async closeInternship(id: number): Promise<Internship | never> {
+        // TODO: só deve rejeitar se o status atual do estágio
+        // for 'in_progress'
+        const conn = await DatabaseResolver.getConnection();
+        const internship = await conn.updateInternshipStatus(
+            id,
+            InternshipStatus.Closed
+        );
+        conn.throwIfHasError();
+        if (!internship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+        return internship;
     }
 }
 
