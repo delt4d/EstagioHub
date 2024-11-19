@@ -105,7 +105,7 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
                 InternshipStatus.AwaitingInternshipApproval,
             in_progress: InternshipStatus.InProgress,
             canceled: InternshipStatus.Canceled,
-            completed: InternshipStatus.Completed,
+            finished: InternshipStatus.Finished,
             rejected: InternshipStatus.Rejected,
             closed: InternshipStatus.Closed,
         };

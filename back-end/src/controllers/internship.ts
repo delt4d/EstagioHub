@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
-import { BadRequestError } from '../app/errors';
+import { BadRequestError, UnhandledError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
+import { toResult } from '../app/utils';
+import { UserRole } from '../models/user-role';
+import { ReasonSchema } from '../schemas';
 import {
     SearchInternshipSchema,
     StartNewInternshipSchema,
 } from '../schemas/internship';
+import emailService from '../services/email';
 import internshipService from '../services/internship';
 
 export default class InternshipController {
@@ -12,8 +16,6 @@ export default class InternshipController {
         // TODO: se o usuário atual é um estudante,
         // atribuir o seu ID de estudante à req.body.studentId
         const data = validateSchema(StartNewInternshipSchema, req.body);
-
-        // TODO: add to a mapper later
         const internship = await internshipService.startNewInternship(data);
 
         return res.send({
@@ -46,28 +48,71 @@ export default class InternshipController {
 
     async cancelNewInternship(req: Request, res: Response) {
         const id = Number(req.params.id);
-        await internshipService.cancelNewInternship(id);
+        const data = validateSchema(ReasonSchema, req.body);
+        const internship = await internshipService.cancelNewInternship(id);
+        const currentUser = req.user!;
+
+        if (currentUser.role !== UserRole.Student) {
+            const result = toResult(
+                emailService.sendToStudentInternshipRequestIsCanceled(
+                    internship,
+                    data.reason
+                )
+            );
+
+            await result.orElseThrowAsync((err) => {
+                throw new UnhandledError(
+                    err.message,
+                    'O estágio foi cancelado com sucesso, mas não foi possível notificar o aluno.'
+                );
+            });
+        }
+
         return res.send({
             success: true,
-            message: 'Solicitação de cancelamento de estágio cancelada.',
+            message: 'A solicitação de estágio foi cancelada.',
         });
     }
 
     async approveNewInternship(req: Request, res: Response) {
         const id = Number(req.params.id);
-        await internshipService.approveNewInternship(id);
+        const internship = await internshipService.approveNewInternship(id);
+        const emailResult = toResult(
+            emailService.sendToStudentInternshipRequestIsApproved(internship)
+        );
+
+        await emailResult.orElseThrowAsync((err) => {
+            throw new UnhandledError(
+                err.message,
+                'A solicitação de estágio foi aprovada com sucesso, mas não foi possível notificar o aluno. Notifique-o e confirme o recebimento de todos os documentos necessários para iniciar o estágio.'
+            );
+        });
+
         return res.send({
             success: true,
             message:
-                'A solicitação de estágio foi aprovada com sucesso. Aguardando envio dos documentos de estágio.',
+                'A solicitação de estágio foi aprovada com sucesso. Confirme o recebimento de todos os documentos necessários para iniciar o estágio.',
         });
     }
 
     async rejectNewInternship(req: Request, res: Response) {
-        // TODO: adicionar campo de justificativa, para que o aluno possa corrigir
-        // o que for necessário para começar o estágio
         const id = Number(req.params.id);
-        await internshipService.rejectNewInternship(id);
+        const data = validateSchema(ReasonSchema, req.body);
+        const internship = await internshipService.rejectNewInternship(id);
+        const emailResult = toResult(
+            emailService.sendToStudentInternshipRequestIsRejected(
+                internship,
+                data.reason
+            )
+        );
+
+        await emailResult.orElseThrowAsync((err) => {
+            throw new UnhandledError(
+                err.message,
+                'A solicitação de estágio foi rejeitada, mas não foi possível notificar o aluno. Notifique-o.'
+            );
+        });
+
         return res.send({
             success: true,
             message: 'A solicitação de estágio foi rejeitada.',
@@ -75,10 +120,18 @@ export default class InternshipController {
     }
 
     async closeInternship(req: Request, res: Response) {
-        // TODO: adicionar campo de justificativa,
-        // do porque o estágio foi encerrado
         const id = Number(req.params.id);
-        await internshipService.closeInternship(id);
+        const data = validateSchema(ReasonSchema, req.body);
+        // TODO: a justificatica será salva no banco também
+        const internship = await internshipService.closeInternship(id);
+
+        await toResult(
+            emailService.sendToStudentInternshipIsClosed(
+                internship,
+                data.reason
+            )
+        ).waitAsync();
+
         return res.send({
             success: true,
             message: 'O estágio foi encerrado.',

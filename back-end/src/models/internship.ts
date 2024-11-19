@@ -8,19 +8,19 @@ export enum InternshipStatus {
     // quando o orientador vê que todas as informações iniciais são válidas
     // os documentos de estágio são requeridos neste momento
     AwaitingInternshipApproval = 'awaiting_internship_approval',
-    // durante o período de estágio
-    InProgress = 'in_progress',
-    // quando o estágio terminou
-    Completed = 'completed',
-    // estágio foi rejeitado
+    // solicitação de estágio foi rejeitado
     // o aluno precisa verificar e corrigir as informações
     Rejected = 'rejected',
-    // o estágio foi fechado devido a algum problema, como desistência,
-    // morte, demissão, etc...
-    Closed = 'closed',
     // quando o aluno ou orientador cancelam uma solicitação
     // de início de estágio
     Canceled = 'canceled',
+    // durante o período de estágio
+    InProgress = 'in_progress',
+    // quando o estágio terminou
+    Finished = 'finished',
+    // o estágio estava em andamento mas foi fechado devido a algum problema, como desistência,
+    // morte, demissão, etc...
+    Closed = 'closed',
 }
 
 export enum WorkSituation {

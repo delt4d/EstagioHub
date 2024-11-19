@@ -35,6 +35,11 @@ export interface DatabaseConnection {
         internship: Omit<Internship, 'status'>
     ): Promise<Internship | undefined>;
 
+    saveInternship(
+        id: number,
+        data: Partial<Internship>
+    ): Promise<Internship | undefined>;
+
     // salvar reset-password token
     saveNewResetPasswordToken(
         email: string,

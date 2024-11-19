@@ -77,10 +77,15 @@ Authorization: Bearer {{token}}
 # @name rejectInternshipRequest
 # @prompt token
 # @prompt id
+# @prompt reason
 POST {{baseUrl}}/internship/{{id}}/reject-new-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
+
+{
+    "reason": "{{reason}}"
+}
 
 ###
 # @name closeInternshipRequest

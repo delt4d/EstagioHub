@@ -24,3 +24,7 @@ export type SearchInternshipsDto = {
     offset?: number;
     searchTerm: string;
 };
+
+export type ReasonDto = {
+    reason: string;
+};

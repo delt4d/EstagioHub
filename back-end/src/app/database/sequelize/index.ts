@@ -320,7 +320,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                             InternshipStatus.Canceled,
                             InternshipStatus.Closed,
                             InternshipStatus.Rejected,
-                            InternshipStatus.Completed,
+                            InternshipStatus.Finished,
                         ]
                     )
                 ) {
@@ -512,6 +512,36 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             );
 
             return mapSequelizeInternshipToModel(model, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
+    async saveInternship(
+        id: number,
+        data: Partial<Internship>
+    ): Promise<Internship | undefined> {
+        try {
+            const model = await InternshipTable.findByPk(id, {
+                include: [
+                    InternshipScheduleTable,
+                    OrganizationTable,
+                    {
+                        model: StudentTable,
+                        include: [UserTable, AddressTable],
+                    },
+                    {
+                        model: SupervisorTable,
+                        include: [UserTable],
+                    },
+                ],
+            });
+
+            if (!model) return;
+
+            await model.update(data);
+
+            return mapSequelizeInternshipToModel(model);
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
         }

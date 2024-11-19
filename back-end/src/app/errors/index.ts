@@ -73,6 +73,10 @@ export class UnhandledError extends Error {
 
         this.userFriendlyMessage = userFriendlyMessage;
     }
+
+    static withFriendlyMessage(message: string): UnhandledError {
+        return new UnhandledError(message, message);
+    }
 }
 
 export class DatabaseError extends Error {

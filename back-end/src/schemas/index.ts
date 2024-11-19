@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import config from '../app/config';
+import { ReasonDto } from '../dtos/internship';
 
 const NameSchemaNoMessages = Joi.string()
     .pattern(/^[a-zA-Z ]+$/)
@@ -75,4 +76,8 @@ export const RepeatPasswordSchema = Joi.any()
 export const ResetPasswordTokenSchema = Joi.string().required().messages({
     'any.required': config.messages.invalidResetPasswordToken,
     'string.empty': config.messages.invalidResetPasswordToken,
+});
+
+export const ReasonSchema = Joi.object<ReasonDto>({
+    reason: Joi.string().allow(''),
 });
