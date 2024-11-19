@@ -59,7 +59,7 @@ Authorization: Bearer {{token}}
 # @name cancelInternshipRequest
 # @prompt token
 # @prompt id
-POST {{baseUrl}}//internship/{{id}}/cancel-new-internship
+POST {{baseUrl}}/internship/{{id}}/cancel-new-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
@@ -68,7 +68,7 @@ Authorization: Bearer {{token}}
 # @name approveInternshipRequest
 # @prompt token
 # @prompt id
-POST {{baseUrl}}//internship/{{id}}/approve-new-internship
+POST {{baseUrl}}/internship/{{id}}/approve-new-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
@@ -77,7 +77,7 @@ Authorization: Bearer {{token}}
 # @name rejectInternshipRequest
 # @prompt token
 # @prompt id
-POST {{baseUrl}}//internship/{{id}}/reject-new-internship
+POST {{baseUrl}}/internship/{{id}}/reject-new-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
@@ -86,7 +86,55 @@ Authorization: Bearer {{token}}
 # @name closeInternshipRequest
 # @prompt token
 # @prompt id
-POST {{baseUrl}}//internship/{{id}}/close-internship
+POST {{baseUrl}}/internship/{{id}}/close-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
+
+###
+# @name uploadInternshipStartDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/upload-start-document
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="Anexo_05_Plano_de_Atividades_Ficha_de_Inicio-20200306140329.doc"
+Content-Type: application/msword
+
+< ./static/Anexo_05_Plano_de_Atividades_Ficha_de_Inicio-20200306140329.doc
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# @name uploadInternshipProgressDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/upload-progress-document
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="Anexo_08_Modelo_de_Relatorio_de_Progresso-20200214144029.doc"
+Content-Type: application/msword
+
+< ./static/Anexo_08_Modelo_de_Relatorio_de_Progresso-20200214144029.doc
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# @name uploadInternshipEndDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/upload-end-document
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="Anexo_10_Modelo_de_Relatorio_Final-20200214143725.doc"
+Content-Type: application/msword
+
+< ./static/Anexo_10_Modelo_de_Relatorio_Final-20200214143725.doc
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

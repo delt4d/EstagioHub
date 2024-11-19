@@ -6,6 +6,7 @@ import {
     SearchInternshipsDto,
 } from '../dtos/internship';
 import { Internship, InternshipStatus } from '../models/internship';
+import emailService from './email';
 import organizationService from './organization';
 import studentService from './student';
 
@@ -138,6 +139,76 @@ class InternshipService {
         if (!internship) {
             throw new NotFoundError('Estágio não encontrado.');
         }
+        return internship;
+    }
+
+    async uploadInternshipStartDoc(
+        internshipId: number,
+        document: Buffer
+    ): Promise<Internship | never> {
+        const internship =
+            await internshipService.getInternshipById(internshipId);
+
+        if (internship.status === InternshipStatus.AwaitingInitialApproval) {
+            throw new BadRequestError(
+                'Estágio ainda não recebeu a aprovação inicial do orientador.'
+            );
+        }
+        if (internship.status !== InternshipStatus.AwaitingInternshipApproval) {
+            throw new BadRequestError(
+                'Este documento não precisa ser enviado. O estágio já passou do estado de aprovação.'
+            );
+        }
+
+        await emailService.sendInternshipStartDoc(
+            internship.supervisor,
+            document
+        );
+
+        return internship;
+    }
+
+    async uploadInternshipProgressDoc(
+        internshipId: number,
+        document: Buffer
+    ): Promise<Internship | never> {
+        const internship =
+            await internshipService.getInternshipById(internshipId);
+
+        if (internship.status !== InternshipStatus.InProgress) {
+            throw new BadRequestError('O Estágio não precisa deste documento.');
+        }
+
+        await emailService.sendInternshipProgressDoc(
+            internship.supervisor,
+            document
+        );
+
+        return internship;
+    }
+
+    async uploadInternshipEndDoc(
+        internshipId: number,
+        document: Buffer
+    ): Promise<Internship | never> {
+        const internship =
+            await internshipService.getInternshipById(internshipId);
+
+        if (
+            internship.status !== InternshipStatus.Completed &&
+            internship.status !== InternshipStatus.Canceled &&
+            internship.status !== InternshipStatus.Closed
+        ) {
+            throw new BadRequestError(
+                'O Estágio não precisa deste documento. O estágio já passou do estado de conclusão.'
+            );
+        }
+
+        await emailService.sendInternshipEndDoc(
+            internship.supervisor,
+            document
+        );
+
         return internship;
     }
 }

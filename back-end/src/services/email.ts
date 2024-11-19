@@ -1,11 +1,24 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import config from '../app/config';
+import { Supervisor } from '../models/supervisor';
 import { User } from '../models/user';
 
 interface EmailService {
     sendNewUserEmail(user: User): Promise<void>;
     sendResetPasswordEmail(user: User, token: string): Promise<void>;
+    sendInternshipStartDoc(
+        supervisor: Supervisor,
+        document: Buffer
+    ): Promise<void>;
+    sendInternshipProgressDoc(
+        supervisor: Supervisor,
+        document: Buffer
+    ): Promise<void>;
+    sendInternshipEndDoc(
+        supervisor: Supervisor,
+        document: Buffer
+    ): Promise<void>;
 }
 
 class NodeMailerService implements EmailService {
@@ -67,6 +80,57 @@ class NodeMailerService implements EmailService {
             `,
         });
     }
+
+    async sendInternshipStartDoc(
+        supervisor: Supervisor,
+        document: Buffer
+    ): Promise<void> {
+        await this.transporter.sendMail({
+            from: config.project.emailOptions.sender,
+            to: supervisor.user.email,
+            subject: 'Documento de Início de Estágio',
+            attachments: [
+                {
+                    filename: 'documento_inicial_de_estagio.pdf',
+                    content: document,
+                },
+            ],
+        });
+    }
+
+    async sendInternshipProgressDoc(
+        supervisor: Supervisor,
+        document: Buffer
+    ): Promise<void> {
+        await this.transporter.sendMail({
+            from: config.project.emailOptions.sender,
+            to: supervisor.user.email,
+            subject: 'Documento de Progresso do Estágio',
+            attachments: [
+                {
+                    filename: 'documento_de_progresso_de_estagio.pdf',
+                    content: document,
+                },
+            ],
+        });
+    }
+
+    async sendInternshipEndDoc(
+        supervisor: Supervisor,
+        document: Buffer
+    ): Promise<void> {
+        await this.transporter.sendMail({
+            from: config.project.emailOptions.sender,
+            to: supervisor.user.email,
+            subject: 'Documento de Término do Estágio',
+            attachments: [
+                {
+                    filename: 'documento_de_conclusao_de_estagio.pdf',
+                    content: document,
+                },
+            ],
+        });
+    }
 }
 
 class FakeMailerService implements EmailService {
@@ -74,6 +138,29 @@ class FakeMailerService implements EmailService {
 
     constructor() {
         this.logger = config.external.logger;
+    }
+
+    async sendInternshipStartDoc(
+        supervisor: Supervisor,
+        _: Buffer
+    ): Promise<void> {
+        this.logger(
+            `A internship document was sent to "${supervisor.user.email}"`
+        );
+    }
+
+    async sendInternshipProgressDoc(
+        supervisor: Supervisor,
+        _: Buffer
+    ): Promise<void> {
+        this.logger(`Progress document was sent to "${supervisor.user.email}"`);
+    }
+
+    async sendInternshipEndDoc(
+        supervisor: Supervisor,
+        _: Buffer
+    ): Promise<void> {
+        this.logger(`End document was sent to "${supervisor.user.email}"`);
     }
 
     async sendNewUserEmail(user: User): Promise<void> {

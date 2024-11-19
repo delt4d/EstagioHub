@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from 'multer';
 import {
     ensureIsAuthenticated,
     ensureIsAuthorized,
@@ -8,6 +9,8 @@ import { UserRole } from '../models/user-role';
 
 const controller = new InternshipController();
 const routes = Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 routes.post(
     '/start-new-internship',
@@ -56,6 +59,30 @@ routes.post(
     ensureIsAuthenticated,
     ensureIsAuthorized(UserRole.Supervisor),
     controller.closeInternship
+);
+
+routes.post(
+    '/:id/upload-start-document',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Student),
+    upload.single('document'),
+    controller.uploadInternshipStartDoc
+);
+
+routes.post(
+    '/:id/upload-progress-document',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Student),
+    upload.single('document'),
+    controller.uploadInternshipProgressDoc
+);
+
+routes.post(
+    '/:id/upload-end-document',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Student),
+    upload.single('document'),
+    controller.uploadInternshipEndDoc
 );
 
 export default routes;

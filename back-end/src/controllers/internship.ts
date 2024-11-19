@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { BadRequestError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import {
     SearchInternshipSchema,
@@ -81,6 +82,66 @@ export default class InternshipController {
         return res.send({
             success: true,
             message: 'O estágio foi encerrado.',
+        });
+    }
+
+    async uploadInternshipStartDoc(req: Request, res: Response) {
+        const id = Number(req.params.id);
+        const doc = req.file;
+
+        if (!doc) {
+            throw new BadRequestError('Nenhum documento foi recebido.');
+        }
+
+        const internship = await internshipService.uploadInternshipStartDoc(
+            id,
+            doc.buffer
+        );
+
+        return res.send({
+            success: true,
+            message: 'Documento enviado com sucesso!',
+            internship, // TODO: add mapper
+        });
+    }
+
+    async uploadInternshipProgressDoc(req: Request, res: Response) {
+        const id = Number(req.params.id);
+        const doc = req.file;
+
+        if (!doc) {
+            throw new BadRequestError('Nenhum documento foi recebido.');
+        }
+
+        const internship = await internshipService.uploadInternshipProgressDoc(
+            id,
+            doc.buffer
+        );
+
+        return res.send({
+            success: true,
+            message: 'Documento enviado com sucesso!',
+            internship, // TODO: add mapper
+        });
+    }
+
+    async uploadInternshipEndDoc(req: Request, res: Response) {
+        const id = Number(req.params.id);
+        const doc = req.file;
+
+        if (!doc) {
+            throw new BadRequestError('Nenhum documento foi recebido.');
+        }
+
+        const internship = await internshipService.uploadInternshipEndDoc(
+            id,
+            doc.buffer
+        );
+
+        return res.send({
+            success: true,
+            message: 'Documento enviado com sucesso!',
+            internship, // TODO: add mapper
         });
     }
 }
