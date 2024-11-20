@@ -36,9 +36,7 @@ class InternshipService {
         conn.throwIfHasError();
 
         if (!supervisor) {
-            throw new NotFoundError(
-                'Orientador não encotrado na base de dados.'
-            );
+            throw new NotFoundError('Orientador não encotrado.');
         }
 
         const organization = await toResult(
@@ -91,11 +89,12 @@ class InternshipService {
         const isInternshipWaitingApproval = [
             InternshipStatus.AwaitingInitialApproval,
             InternshipStatus.AwaitingInternshipApproval,
+            InternshipStatus.Rejected,
         ].includes(internship.status);
 
         if (!isInternshipWaitingApproval) {
             throw new BadRequestError(
-                'Este estágio não pode mais ser cancelado.'
+                'Este estágio não pode ser cancelado no momento.'
             );
         }
 
@@ -122,14 +121,12 @@ class InternshipService {
             throw new NotFoundError('Estágio não encontrado.');
         }
 
-        const isInternshipWaitingApproval = [
-            InternshipStatus.AwaitingInitialApproval,
-            InternshipStatus.AwaitingInternshipApproval,
-        ].includes(internship.status);
+        const isInternshipAwaitingApproval =
+            internship.status === InternshipStatus.AwaitingInitialApproval;
 
-        if (!isInternshipWaitingApproval) {
+        if (!isInternshipAwaitingApproval) {
             throw new BadRequestError(
-                'Este estágio não pode mais ser cancelado.'
+                'Este estágio não pode ser aprovado no momento.'
             );
         }
 
@@ -163,7 +160,7 @@ class InternshipService {
 
         if (!isInternshipWaitingApproval) {
             throw new BadRequestError(
-                'Este estágio não pode mais ser cancelado.'
+                'Este estágio não pode ser rejeitado no momento.'
             );
         }
 
@@ -217,14 +214,9 @@ class InternshipService {
         const internship =
             await internshipService.getInternshipById(internshipId);
 
-        if (internship.status === InternshipStatus.AwaitingInitialApproval) {
-            throw new BadRequestError(
-                'Estágio ainda não recebeu a aprovação inicial do orientador.'
-            );
-        }
         if (internship.status !== InternshipStatus.AwaitingInternshipApproval) {
             throw new BadRequestError(
-                'Este documento não precisa ser enviado. O estágio já passou do estado de aprovação.'
+                'Este documento só deve ser enviado quando solicitado, com o estágio aprovado.'
             );
         }
 
@@ -244,7 +236,9 @@ class InternshipService {
             await internshipService.getInternshipById(internshipId);
 
         if (internship.status !== InternshipStatus.InProgress) {
-            throw new BadRequestError('O Estágio não precisa deste documento.');
+            throw new BadRequestError(
+                'Este documento só deve ser enviado quando solicitado, com o estágio em andamento.'
+            );
         }
 
         await emailService.sendInternshipProgressDoc(
@@ -267,7 +261,7 @@ class InternshipService {
 
         if (!isInternshipFinished) {
             throw new BadRequestError(
-                'O Estágio não precisa deste documento, pois está fechado ou necessita de alterações.'
+                'Este documento só deve ser enviado quando solicitado, com o estágio concluído.'
             );
         }
 
@@ -311,9 +305,10 @@ class InternshipService {
 
             if (isInternshipEndedOrCanceled) {
                 throw new BadRequestError(
-                    'Este estágio não pode ter suas informações alteradas porque ele está fechado.'
+                    'Este estágio não pode ter suas informações alteradas porque ele foi encerrado.'
                 );
             }
+
             throw new BadRequestError(
                 'Você não está autorizado a alterar as informações deste estágio'
             );
