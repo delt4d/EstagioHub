@@ -3,6 +3,7 @@ import { BadRequestError, NotFoundError, UnhandledError } from '../app/errors';
 import { toResult } from '../app/utils';
 import {
     InStartNewInternshipDto,
+    ReasonDto,
     SearchInternshipsDto,
 } from '../dtos/internship';
 import { Internship, InternshipStatus } from '../models/internship';
@@ -59,7 +60,7 @@ class InternshipService {
         search: SearchInternshipsDto
     ): Promise<Internship[] | never> {
         const conn = await DatabaseResolver.getConnection();
-        const internships = await conn.searchInternshipts(search);
+        const internships = await conn.searchInternships(search);
         conn.throwIfHasError();
         return internships!;
     }
@@ -80,73 +81,133 @@ class InternshipService {
         const conn = await DatabaseResolver.getConnection();
         // TODO: se o orientador que está tentando cancelar,
         // deve ser verificado se ele tem permissão (é da mesma turma)
-        // TODO: só deve cancelar se o status atual do estágio for
-        // 'awaiting_initial_approval' ou 'awaiting_internship_approval'
-        const internship = await conn.updateInternshipStatus(
-            id,
-            InternshipStatus.Canceled
-        );
+        const internship = await conn.findInternshipById(id);
         conn.throwIfHasError();
+
         if (!internship) {
             throw new NotFoundError('Estágio não encontrado.');
         }
 
-        return internship;
+        const isInternshipWaitingApproval = [
+            InternshipStatus.AwaitingInitialApproval,
+            InternshipStatus.AwaitingInternshipApproval,
+        ].includes(internship.status);
+
+        if (!isInternshipWaitingApproval) {
+            throw new BadRequestError(
+                'Este estágio não pode mais ser cancelado.'
+            );
+        }
+
+        const updatedInternship = await conn.saveInternship(id, {
+            status: InternshipStatus.Canceled,
+        });
+        conn.throwIfHasError();
+
+        if (!updatedInternship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+
+        return updatedInternship;
     }
 
     async approveNewInternship(id: number): Promise<Internship | never> {
         const conn = await DatabaseResolver.getConnection();
         // TODO: se o orientador que está tentando aprovar,
         // deve ser verificado se ele tem permissão (é da mesma turma)
-        // TODO: só deve aprovar se o status atual do estágio for
-        // 'awaiting_initial_approval' ou 'awaiting_internship_approval'
-        const internship = await conn.updateInternshipStatus(
-            id,
-            InternshipStatus.AwaitingInternshipApproval
-        );
+        const internship = await conn.findInternshipById(id);
         conn.throwIfHasError();
-        // TODO: neste momento o upload dos documentos
-        // necessários estará disponível
+
         if (!internship) {
             throw new NotFoundError('Estágio não encontrado.');
         }
-        return internship;
+
+        const isInternshipWaitingApproval = [
+            InternshipStatus.AwaitingInitialApproval,
+            InternshipStatus.AwaitingInternshipApproval,
+        ].includes(internship.status);
+
+        if (!isInternshipWaitingApproval) {
+            throw new BadRequestError(
+                'Este estágio não pode mais ser cancelado.'
+            );
+        }
+
+        const updatedInternship = await conn.saveInternship(id, {
+            status: InternshipStatus.AwaitingInternshipApproval,
+        });
+        conn.throwIfHasError();
+        // TODO: neste momento o upload dos documentos
+        // necessários estará disponível
+        if (!updatedInternship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+        return updatedInternship;
     }
 
     async rejectNewInternship(id: number): Promise<Internship | never> {
         // TODO: se é o orientador que está tentando aprovar,
         // deve ser verificado se ele tem permissão (é da mesma turma)
-        // TODO: só deve rejeitar se o status atual do estágio for
-        // 'awaiting_initial_approval' ou 'awaiting_internship_approval'
         const conn = await DatabaseResolver.getConnection();
-        const internship = await conn.updateInternshipStatus(
-            id,
-            InternshipStatus.Rejected
-        );
+        const internship = await conn.findInternshipById(id);
         conn.throwIfHasError();
 
         if (!internship) {
             throw new NotFoundError('Estágio não encontrado.');
         }
 
-        return internship;
+        const isInternshipWaitingApproval = [
+            InternshipStatus.AwaitingInitialApproval,
+            InternshipStatus.AwaitingInternshipApproval,
+        ].includes(internship.status);
+
+        if (!isInternshipWaitingApproval) {
+            throw new BadRequestError(
+                'Este estágio não pode mais ser cancelado.'
+            );
+        }
+
+        const updatedInternship = await conn.saveInternship(id, {
+            status: InternshipStatus.Rejected,
+        });
+        conn.throwIfHasError();
+
+        if (!updatedInternship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+
+        return updatedInternship;
     }
 
-    async closeInternship(id: number): Promise<Internship | never> {
-        // TODO: mudar, só deve trancar se o status atual do estágio
-        // for 'in_progress'
+    async closeInternship(
+        id: number,
+        data: ReasonDto
+    ): Promise<Internship | never> {
         const conn = await DatabaseResolver.getConnection();
-        const internship = await conn.updateInternshipStatus(
-            id,
-            InternshipStatus.Closed
-        );
+        const internship = await conn.findInternshipById(id);
         conn.throwIfHasError();
 
         if (!internship) {
             throw new NotFoundError('Estágio não encontrado.');
         }
 
-        return internship;
+        if (internship.status !== InternshipStatus.InProgress) {
+            throw new BadRequestError(
+                'O estágio deve estar em andamento para poder ser encerrado.'
+            );
+        }
+
+        const updatedInternship = await conn.saveInternship(id, {
+            status: InternshipStatus.Closed,
+            internshipCloseReason: data.reason,
+        });
+        conn.throwIfHasError();
+
+        if (!updatedInternship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+
+        return updatedInternship;
     }
 
     async uploadInternshipStartDoc(

@@ -62,6 +62,7 @@ type SequelizeInternship = BaseSequelizeModel<
     organizationSupervisorName: string;
     organizationSupervisorEmail: string;
     organizationSupervisorPosition: string;
+    internshipCloseReason?: string;
     schedule: InternshipSchedule[];
 };
 
@@ -396,6 +397,10 @@ export class InternshipTable extends Model<
     @NotEmpty
     @Column(DataTypes.STRING)
     public declare status: string;
+
+    @AllowNull(true)
+    @Column
+    public declare internshipCloseReason: string;
 
     @AllowNull(false)
     @NotEmpty

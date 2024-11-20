@@ -27,10 +27,13 @@ Authorization: Bearer {{token}}
     "weeklyHours": {
         "mondayToFriday": { 
             "startTime": 8, 
-            "endTime": 12 
+            "endTime": 11.40
         },
         "mondayToFridaySecondary": null,
-        "saturday": null
+        "saturday": {
+            "startTime": 9,
+            "endTime": 12
+        }
     },
     "workSituation": "onsite"
 }
@@ -59,10 +62,15 @@ Authorization: Bearer {{token}}
 # @name cancelInternshipRequest
 # @prompt token
 # @prompt id
+# @prompt reason
 POST {{baseUrl}}/internship/{{id}}/cancel-new-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
+
+{
+    "reason": "{{reason}}"
+}
 
 ###
 # @name approveInternshipRequest
@@ -91,10 +99,15 @@ Authorization: Bearer {{token}}
 # @name closeInternshipRequest
 # @prompt token
 # @prompt id
+# @prompt reason
 POST {{baseUrl}}/internship/{{id}}/close-internship
 Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
+
+{
+    "reason": "{{reason}}"
+}
 
 ###
 # @name uploadInternshipStartDocument

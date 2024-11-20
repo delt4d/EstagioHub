@@ -122,8 +122,7 @@ export default class InternshipController {
     async closeInternship(req: Request, res: Response) {
         const id = Number(req.params.id);
         const data = validateSchema(ReasonSchema, req.body);
-        // TODO: a justificatica será salva no banco também
-        const internship = await internshipService.closeInternship(id);
+        const internship = await internshipService.closeInternship(id, data);
 
         await toResult(
             emailService.sendToStudentInternshipIsClosed(

@@ -62,4 +62,5 @@ export type Internship = {
         expectedEndDate: Date; // data previsão para término
     };
     schedule: InternshipSchedule[];
+    internshipCloseReason?: string;
 };

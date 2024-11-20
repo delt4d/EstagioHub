@@ -443,21 +443,6 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
-    async updateInternshipStatus(
-        internshipId: number,
-        newStatus: InternshipStatus
-    ): Promise<Internship | undefined> {
-        try {
-            const model = await InternshipTable.findByPk(internshipId);
-            if (!model) return;
-
-            await model.update({ status: newStatus });
-
-            return mapSequelizeInternshipToModel(model, true);
-        } catch (err) {
-            this.error = err as SequelizeDatabaseError;
-        }
-    }
     async findInternshipById(id: number): Promise<Internship | undefined> {
         try {
             const model = await InternshipTable.findByPk(id, {
@@ -538,6 +523,9 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             });
 
             if (!model) return;
+            if (data.status && data.status !== InternshipStatus.Closed) {
+                data.internshipCloseReason = undefined;
+            }
 
             await model.update(data);
 
@@ -547,7 +535,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         }
     }
 
-    async searchInternshipts(
+    async searchInternships(
         data: SearchInternshipsDto
     ): Promise<Internship[] | undefined> {
         try {
@@ -557,14 +545,10 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                     Sequelize.fn(
                         'concat',
                         // TODO: verificar como incluir estes campos
-                        // column('students.fullName'),
-                        // '%',
-                        // column('students.users.email'),
-                        // '%',
-                        // column('supervisors.name'),
-                        // '%',
-                        // column('supervisors.users.email'),
-                        // '%',
+                        // column('students.fullName'), '%',
+                        // column('students.users.email'), '%',
+                        // column('supervisors.name'), '%',
+                        // column('supervisors.users.email'), '%',
                         column('internships.organizationSupervisorName'),
                         '%',
                         column('internships.organizationSupervisorEmail'),
@@ -593,13 +577,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 offset: data.offset,
             });
 
-            const result: Internship[] = [];
-
-            for (let model of models) {
-                result.push(mapSequelizeInternshipToModel(model));
-            }
-
-            return result;
+            return models.map((m) => mapSequelizeInternshipToModel(m));
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
         }

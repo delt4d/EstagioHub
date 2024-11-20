@@ -128,6 +128,7 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
     },
     monthlyStipend: 'monthlyStipend',
     transportationAid: 'transportationAid',
+    internshipCloseReason: 'internshipCloseReason',
     workSituation: (src) => {
         const workSituationMap: Record<string, WorkSituation> = {
             onsite: WorkSituation.Onsite,
