@@ -544,11 +544,14 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 where: Sequelize.where(
                     Sequelize.fn(
                         'concat',
-                        // TODO: verificar como incluir estes campos
-                        // column('students.fullName'), '%',
-                        // column('students.users.email'), '%',
-                        // column('supervisors.name'), '%',
-                        // column('supervisors.users.email'), '%',
+                        column('student.fullName'),
+                        '%',
+                        column('student.user.email'),
+                        '%',
+                        column('supervisor.name'),
+                        '%',
+                        column('supervisor.user.email'),
+                        '%',
                         column('internships.organizationSupervisorName'),
                         '%',
                         column('internships.organizationSupervisorEmail'),
@@ -561,6 +564,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                         [Op.like]: `%${data.searchTerm}%`,
                     }
                 ),
+                subQuery: false,
                 include: [
                     InternshipScheduleTable,
                     OrganizationTable,
