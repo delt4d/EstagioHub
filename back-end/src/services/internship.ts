@@ -2,9 +2,9 @@ import { DatabaseResolver } from '../app/database';
 import { BadRequestError, NotFoundError, UnhandledError } from '../app/errors';
 import { toResult } from '../app/utils';
 import {
+    InReasonDto,
+    InSearchInternshipsDto,
     InStartNewInternshipDto,
-    ReasonDto,
-    SearchInternshipsDto,
 } from '../dtos/internship';
 import { Internship, InternshipStatus } from '../models/internship';
 import { User } from '../models/user';
@@ -55,7 +55,7 @@ class InternshipService {
     }
 
     async searchInternships(
-        search: SearchInternshipsDto
+        search: InSearchInternshipsDto
     ): Promise<Internship[] | never> {
         const conn = await DatabaseResolver.getConnection();
         const internships = await conn.searchInternships(search);
@@ -178,7 +178,7 @@ class InternshipService {
 
     async closeInternship(
         id: number,
-        data: ReasonDto
+        data: InReasonDto
     ): Promise<Internship | never> {
         const conn = await DatabaseResolver.getConnection();
         const internship = await conn.findInternshipById(id);

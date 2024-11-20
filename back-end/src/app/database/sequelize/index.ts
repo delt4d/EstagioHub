@@ -1,7 +1,7 @@
 import { Op, DatabaseError as SequelizeDatabaseError } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { DatabaseConnection } from '..';
-import { SearchInternshipsDto } from '../../../dtos/internship';
+import { InSearchInternshipsDto } from '../../../dtos/internship';
 import { SearchStudentsDto } from '../../../dtos/student';
 import { AccessToken } from '../../../models/access-token';
 import { Admin } from '../../../models/admin';
@@ -536,7 +536,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
     }
 
     async searchInternships(
-        data: SearchInternshipsDto
+        data: InSearchInternshipsDto
     ): Promise<Internship[] | undefined> {
         try {
             const column = Sequelize.col;

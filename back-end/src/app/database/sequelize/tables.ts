@@ -12,86 +12,30 @@ import {
     Unique,
     Validate,
 } from 'sequelize-typescript';
-import { AccessToken } from '../../../models/access-token';
-import { Address } from '../../../models/address';
-import { Admin } from '../../../models/admin';
-import { AcademicClass } from '../../../models/institution';
-import { Internship, InternshipSchedule } from '../../../models/internship';
-import { Organization } from '../../../models/organization';
-import { ResetPasswordToken } from '../../../models/reset-password-token';
-import { Student } from '../../../models/student';
-import { Supervisor } from '../../../models/supervisor';
-import { User } from '../../../models/user';
+import { InternshipSchedule } from '../../../models/internship';
 import config from '../../config';
-
-type BaseSequelizeModel<T, F extends keyof any = never> = Omit<T, F> & {
-    [P in F]: number;
-};
-
-type CreationType<T, OmitKeys extends keyof T | 'id' = 'id'> = Omit<
-    T,
-    OmitKeys
->;
-
-// Sequelize model types
-type SequelizeUser = User;
-type SequelizeAdmin = BaseSequelizeModel<Admin, 'userId'>;
-type SequelizeSupervisor = BaseSequelizeModel<Supervisor, 'userId'>;
-type SequelizeStudent = BaseSequelizeModel<
-    Omit<Student, 'user' | 'address'>,
-    'userId' | 'addressId'
->;
-type SequelizeResetPasswordToken = ResetPasswordToken;
-type SequelizeAddress = Address;
-type SequelizeAcademicClass = AcademicClass;
-type SequelizeInternshipSchedule = InternshipSchedule;
-type SequelizeOrganization = BaseSequelizeModel<
-    Omit<Organization, 'address'>,
-    'addressId'
->;
-type SequelizeAccessToken = BaseSequelizeModel<
-    Omit<AccessToken, 'user'>,
-    'userId'
->;
-type SequelizeInternship = BaseSequelizeModel<
-    Omit<Internship, 'student' | 'supervisor' | 'organization'>,
-    'studentId' | 'supervisorId' | 'organizationId'
-> & {
-    periodStartDate: Date;
-    periodExpectedEndDate: Date;
-    organizationSupervisorName: string;
-    organizationSupervisorEmail: string;
-    organizationSupervisorPosition: string;
-    internshipCloseReason?: string;
-    schedule: InternshipSchedule[];
-};
-
-// Creation types
-type SequelizeUserCreate = CreationType<SequelizeUser>;
-type SequelizeAdminCreate = CreationType<SequelizeAdmin, 'id' | 'userId'>;
-type SequelizeStudentCreate = CreationType<
-    SequelizeStudent,
-    'id' | 'userId' | 'addressId'
->;
-type SequelizeAcademicClassCreate = CreationType<SequelizeAcademicClass>;
-type SequelizeInternshipCreate = CreationType<
-    SequelizeInternship,
-    'id' | 'studentId' | 'supervisorId' | 'organizationId'
->;
-type SequelizeInternshipScheduleCreate =
-    CreationType<SequelizeInternshipSchedule>;
-type SequelizeSupervisorCreate = CreationType<
-    SequelizeSupervisor,
-    'id' | 'userId'
->;
-type SequelizeAccessTokenCreate = CreationType<
+import {
+    SequelizeAcademicClass,
+    SequelizeAcademicClassCreate,
     SequelizeAccessToken,
-    'id' | 'expiresAt' | 'expiredAt'
->;
-type SequelizeResetPasswordTokenCreate = CreationType<
+    SequelizeAccessTokenCreate,
+    SequelizeAddress,
+    SequelizeAdmin,
+    SequelizeAdminCreate,
+    SequelizeInternship,
+    SequelizeInternshipCreate,
+    SequelizeInternshipSchedule,
+    SequelizeInternshipScheduleCreate,
+    SequelizeOrganization,
     SequelizeResetPasswordToken,
-    'id' | 'expiresAt' | 'expiredAt'
->;
+    SequelizeResetPasswordTokenCreate,
+    SequelizeStudent,
+    SequelizeStudentCreate,
+    SequelizeSupervisor,
+    SequelizeSupervisorCreate,
+    SequelizeUser,
+    SequelizeUserCreate,
+} from './types';
 
 @Table({
     tableName: 'reset-password-tokens',

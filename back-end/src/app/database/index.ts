@@ -1,4 +1,4 @@
-import { SearchInternshipsDto } from '../../dtos/internship';
+import { InSearchInternshipsDto } from '../../dtos/internship';
 import { SearchStudentsDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
 import { Admin } from '../../models/admin';
@@ -95,7 +95,7 @@ export interface DatabaseConnection {
     findInternshipById(id: number): Promise<Internship | undefined>;
     // obter estágios à partir de uma busca e paginção
     searchInternships(
-        data: SearchInternshipsDto
+        data: InSearchInternshipsDto
     ): Promise<Internship[] | undefined>;
 }
 

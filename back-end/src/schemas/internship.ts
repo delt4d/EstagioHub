@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import config from '../app/config';
 import {
+    InSearchInternshipsDto,
     InStartNewInternshipDto,
-    SearchInternshipsDto,
 } from '../dtos/internship';
 
 export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
@@ -41,7 +41,7 @@ export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
     workSituation: Joi.string().required(),
 });
 
-export const SearchInternshipSchema = Joi.object<SearchInternshipsDto>({
+export const SearchInternshipSchema = Joi.object<InSearchInternshipsDto>({
     limit: Joi.number()
         .integer()
         .min(1)

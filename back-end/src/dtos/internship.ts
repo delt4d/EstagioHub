@@ -15,16 +15,17 @@ export type InStartNewInternshipDto = Pick<
     studentId: number;
     organizationCnpj: string;
 
-    // TODO: Supervisor ID must be the student's supervisor that is defined by the class of the student
+    // TODO: Supervisor ID must be the student's supervisor
+    // that is defined by the class of the student
     supervisorId: number;
 };
 
-export type SearchInternshipsDto = {
+export type InSearchInternshipsDto = {
     limit?: number;
     offset?: number;
     searchTerm: string;
 };
 
-export type ReasonDto = {
+export type InReasonDto = {
     reason: string;
 };

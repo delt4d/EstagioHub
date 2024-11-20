@@ -40,6 +40,22 @@ export type InternshipSchedule = {
     description: string; // Descrição da atividade
 };
 
+export type InternshipWeeklyHour = {
+    startTime: number;
+    endTime: number;
+};
+
+export type InternshipWeeklyHours = {
+    mondayToFriday: InternshipWeeklyHour; // Horário de segunda a sexta
+    mondayToFridaySecondary?: InternshipWeeklyHour; // Horário adicional de segunda a sexta
+    saturday?: InternshipWeeklyHour; // Horário aos sábados (opcional)
+};
+
+export type InternshipPeriod = {
+    startDate: Date; // data de início
+    expectedEndDate: Date; // data previsão para término
+};
+
 export type Internship = {
     id?: number;
     student: Student;
@@ -52,15 +68,8 @@ export type Internship = {
     monthlyStipend: number; // valor mensal bolsa do estágio
     transportationAid: number; // valor auxílio transporte
     workSituation: WorkSituation; // situação de trabalho (presencial, semi presencial, remota)
-    weeklyHours: {
-        mondayToFriday: { startTime: number; endTime: number }; // Horário de segunda a sexta
-        mondayToFridaySecondary?: { startTime: number; endTime: number }; // Horário adicional de segunda a sexta
-        saturday?: { startTime: number; endTime: number }; // Horário aos sábados (opcional)
-    };
-    period: {
-        startDate: Date; // data de início
-        expectedEndDate: Date; // data previsão para término
-    };
+    weeklyHours: InternshipWeeklyHours;
+    period: InternshipPeriod;
     schedule: InternshipSchedule[];
     internshipCloseReason?: string;
 };

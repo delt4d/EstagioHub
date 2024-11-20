@@ -142,15 +142,7 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
         expectedEndDate: src.periodExpectedEndDate,
     }),
     // TODO: trocar depois pelos valores
-    schedule: () => [],
-    weeklyHours: (source) => ({
-        mondayToFriday: {
-            startTime: 8,
-            endTime: 12,
-        },
-        mondayToFridaySecondary: undefined,
-        saturday: undefined,
-    }),
+    schedule: 'schedule',
 };
 
 export const mapSequelizeAdminToModel = (entity: AdminTable) =>

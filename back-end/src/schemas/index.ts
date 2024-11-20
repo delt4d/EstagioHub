@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import config from '../app/config';
-import { ReasonDto } from '../dtos/internship';
+import { InReasonDto } from '../dtos/internship';
 
 const NameSchemaNoMessages = Joi.string()
     .pattern(/^[a-zA-Z ]+$/)
@@ -78,6 +78,6 @@ export const ResetPasswordTokenSchema = Joi.string().required().messages({
     'string.empty': config.messages.invalidResetPasswordToken,
 });
 
-export const ReasonSchema = Joi.object<ReasonDto>({
+export const ReasonSchema = Joi.object<InReasonDto>({
     reason: Joi.string().allow(''),
 });
