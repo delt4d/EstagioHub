@@ -32,7 +32,7 @@ export enum WorkSituation {
 export enum InternshipDocumentType {
     Start = 'start',
     Progress = 'progress',
-    Completion = 'completion',
+    Finished = 'finished',
 }
 
 export enum Classification {
@@ -44,6 +44,7 @@ export interface InternshipDocument {
     id?: number;
     name: string;
     approvedAt?: Date;
+    internshipId: number;
     type: InternshipDocumentType;
 }
 

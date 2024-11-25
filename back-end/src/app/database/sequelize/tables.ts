@@ -15,6 +15,7 @@ import {
 import {
     InternshipDocumentType,
     InternshipSchedule,
+    InternshipStatus,
     InternshipTasks,
 } from '../../../models/internship';
 import config from '../../config';
@@ -339,6 +340,7 @@ export class InternshipDocumentTable extends Model<
     SequelizeInternshipDocumentCreate
 > {
     public declare internship: InternshipTable;
+    public declare internshipId: number;
 
     @AllowNull(false)
     @Unique
@@ -348,6 +350,7 @@ export class InternshipDocumentTable extends Model<
     public declare name: string;
 
     @AllowNull(true)
+    @Default(null)
     @Column
     public declare approvedAt: Date;
 
@@ -377,7 +380,7 @@ export class InternshipTable extends Model<
     @AllowNull(false)
     @NotEmpty
     @Column(DataTypes.STRING)
-    public declare status: string;
+    public declare status: InternshipStatus;
 
     @AllowNull(true)
     @Column

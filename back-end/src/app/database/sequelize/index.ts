@@ -5,7 +5,11 @@ import { InSearchInternshipsDto } from '../../../dtos/internship';
 import { SearchStudentsDto } from '../../../dtos/student';
 import { AccessToken } from '../../../models/access-token';
 import { Admin } from '../../../models/admin';
-import { Internship, InternshipStatus } from '../../../models/internship';
+import {
+    Internship,
+    InternshipDocument,
+    InternshipStatus,
+} from '../../../models/internship';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
 import { Supervisor } from '../../../models/supervisor';
@@ -16,6 +20,7 @@ import { DatabaseError } from '../../errors';
 import {
     mapSequelizeAccessTokenToModel,
     mapSequelizeAdminToModel,
+    mapSequelizeInternshipDocumentToModel,
     mapSequelizeInternshipToModel,
     mapSequelizeResetPasswordTokenToModel,
     mapSequelizeStudentToModel,
@@ -178,6 +183,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async getAdmins(): Promise<Admin[]> {
         try {
             const admins = await AdminTable.findAll({
@@ -190,6 +196,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             return [];
         }
     }
+
     async findAdminByNameOrEmail(
         nameOrEmail: string
     ): Promise<Admin | undefined> {
@@ -214,6 +221,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async saveNewSupervisor(
         supervisor: Supervisor
     ): Promise<Supervisor | undefined> {
@@ -231,6 +239,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findSupervisorById(id: number): Promise<Supervisor | undefined> {
         try {
             const model = await SupervisorTable.findByPk(id, {
@@ -244,6 +253,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findSupervisorByEmail(
         email: string
     ): Promise<Supervisor | undefined> {
@@ -262,6 +272,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async saveNewStudent(student: Student): Promise<Student | undefined> {
         try {
             student.user.role = UserRole.Student;
@@ -277,6 +288,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findStudentById(id: number): Promise<Student | undefined> {
         try {
             const model = await StudentTable.findByPk(id, {
@@ -290,6 +302,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findStudentByEmail(email: string): Promise<Student | undefined> {
         try {
             const model = await StudentTable.findOne({
@@ -306,6 +319,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async verifyStudentIsInterning(
         studentId: number
     ): Promise<boolean | undefined> {
@@ -335,6 +349,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async searchStudents(
         data: SearchStudentsDto
     ): Promise<Student[] | undefined> {
@@ -361,6 +376,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async saveNewAccessToken(
         token: string,
         userId: number
@@ -376,6 +392,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async invalidateAccessToken(
         token: string
     ): Promise<AccessToken | undefined> {
@@ -394,6 +411,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findUserByValidAccessToken(token: string): Promise<User | undefined> {
         try {
             const model = await AccessTokenTable.findOne({
@@ -417,6 +435,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findUserById(id: number): Promise<User | undefined> {
         try {
             const model = await UserTable.findByPk(id);
@@ -426,6 +445,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findUserByEmail(email: string): Promise<User | undefined> {
         try {
             const model = await UserTable.findOne({ where: { email } });
@@ -435,6 +455,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async verifyIfEmailIsInUse(email: string): Promise<boolean | undefined> {
         try {
             const count = await UserTable.count({
@@ -445,6 +466,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
     async findInternshipById(id: number): Promise<Internship | undefined> {
         try {
             const model = await InternshipTable.findByPk(id, {
@@ -469,6 +491,20 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             this.error = err as SequelizeDatabaseError;
         }
     }
+
+    async findInternshipDocuments(
+        internshipId: number
+    ): Promise<InternshipDocument[] | undefined> {
+        try {
+            const models = await InternshipDocumentTable.findAll({
+                where: { internshipId },
+            });
+            return models.map(mapSequelizeInternshipDocumentToModel);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
     async saveNewInternship(
         internship: Omit<Internship, 'status'>
     ): Promise<Internship | undefined> {
@@ -500,6 +536,31 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             return mapSequelizeInternshipToModel(model, true);
         } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
+    async saveNewInternshipDocuments(
+        documents: Omit<InternshipDocument, 'approvedAt'>[]
+    ): Promise<InternshipDocument[] | undefined> {
+        const transaction = await this.sequelize.transaction();
+
+        try {
+            const models: InternshipDocumentTable[] = [];
+
+            for (let document of documents) {
+                const model = await InternshipDocumentTable.create(document, {
+                    transaction,
+                });
+
+                models.push(model);
+            }
+
+            transaction.commit();
+
+            return models.map(mapSequelizeInternshipDocumentToModel);
+        } catch (err) {
+            transaction.rollback();
             this.error = err as SequelizeDatabaseError;
         }
     }

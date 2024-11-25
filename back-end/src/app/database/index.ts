@@ -2,7 +2,7 @@ import { InSearchInternshipsDto } from '../../dtos/internship';
 import { SearchStudentsDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
 import { Admin } from '../../models/admin';
-import { Internship } from '../../models/internship';
+import { Internship, InternshipDocument } from '../../models/internship';
 import { ResetPasswordToken } from '../../models/reset-password-token';
 import { Student } from '../../models/student';
 import { Supervisor } from '../../models/supervisor';
@@ -86,6 +86,10 @@ export interface DatabaseConnection {
     saveNewInternship(
         internship: Omit<Internship, 'status' | 'documents'>
     ): Promise<Internship | undefined>;
+    // cadastrar um novo documento de estágio
+    saveNewInternshipDocuments(
+        documents: Omit<InternshipDocument, 'approvedAt'>[]
+    ): Promise<InternshipDocument[] | undefined>;
     // atualizar um estágio
     saveInternship(
         id: number,
@@ -93,6 +97,10 @@ export interface DatabaseConnection {
     ): Promise<Internship | undefined>;
     // obter estágio por id
     findInternshipById(id: number): Promise<Internship | undefined>;
+    // obter lista de documentos
+    findInternshipDocuments(
+        internshipId: number
+    ): Promise<InternshipDocument[] | undefined>;
     // obter estágios à partir de uma busca e paginção
     searchInternships(
         data: InSearchInternshipsDto

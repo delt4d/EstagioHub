@@ -3,6 +3,8 @@ import { Admin } from '../../../models/admin';
 import {
     Classification,
     Internship,
+    InternshipDocument,
+    InternshipDocumentType,
     InternshipStatus,
     WorkSituation,
 } from '../../../models/internship';
@@ -17,6 +19,7 @@ import { Mapper } from '../../utils';
 import {
     AccessTokenTable,
     AdminTable,
+    InternshipDocumentTable,
     InternshipTable,
     OrganizationTable,
     ResetPasswordTable as ResetPasswordTokenTable,
@@ -94,6 +97,25 @@ const organizationMapper: Mapper<OrganizationTable, Organization> = {
     whatsapp: 'whatsapp',
 };
 
+const internshipDocumentMapper: Mapper<
+    InternshipDocumentTable,
+    InternshipDocument
+> = {
+    id: 'id',
+    name: 'name',
+    type: (src) => {
+        const typeMap: Record<string, InternshipDocumentType> = {
+            start: InternshipDocumentType.Start,
+            progress: InternshipDocumentType.Progress,
+            finished: InternshipDocumentType.Finished,
+        };
+
+        return typeMap[src.type];
+    },
+    approvedAt: 'approvedAt',
+    internshipId: (src) => src.internship.id,
+};
+
 const internshipMapper: Mapper<InternshipTable, Internship> = {
     id: 'id',
     division: 'division',
@@ -169,6 +191,10 @@ export const mapSequelizeUserToModel = (entity: UserTable) =>
 
 export const mapSequelizeOrganizationToModel = (entity: OrganizationTable) =>
     mapObject(entity, organizationMapper);
+
+export const mapSequelizeInternshipDocumentToModel = (
+    entity: InternshipDocumentTable
+) => mapObject(entity, internshipDocumentMapper);
 
 export const mapSequelizeInternshipToModel = (
     entity: InternshipTable,

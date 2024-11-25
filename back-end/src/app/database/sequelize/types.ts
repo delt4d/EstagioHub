@@ -26,7 +26,7 @@ type CreationType<T, OmitKeys extends keyof T | 'id' = 'id'> = Omit<
 >;
 
 // Sequelize model types
-export type SequelizeUser = User;
+export type SequelizeUser = BaseSequelizeModel<User>;
 export type SequelizeAdmin = BaseSequelizeModel<
     Admin,
     'user',
@@ -75,12 +75,17 @@ export type SequelizeInternship = BaseSequelizeModel<
         tasks: InternshipTasks[];
     }
 >;
-export type SequelizeInternshipDocument =
-    BaseSequelizeModel<InternshipDocument>;
+export type SequelizeInternshipDocument = BaseSequelizeModel<
+    InternshipDocument,
+    'id' | 'internshipId',
+    {
+        internshipId: number;
+    }
+>;
 export type SequelizeInternshipTime = BaseSequelizeModel<InternshipSchedule>;
 
 // Creation types
-export type SequelizeUserCreate = CreationType<SequelizeUser>;
+export type SequelizeUserCreate = CreationType<SequelizeUser, 'id'>;
 export type SequelizeAdminCreate = CreationType<
     SequelizeAdmin,
     'id' | 'userId'
@@ -100,8 +105,10 @@ export type SequelizeSupervisorCreate = CreationType<
     SequelizeSupervisor,
     'id' | 'userId'
 >;
-export type SequelizeInternshipDocumentCreate =
-    CreationType<SequelizeInternshipDocument>;
+export type SequelizeInternshipDocumentCreate = CreationType<
+    SequelizeInternshipDocument,
+    'id'
+>;
 export type SequelizeAccessTokenCreate = CreationType<
     SequelizeAccessToken,
     'id' | 'expiresAt' | 'expiredAt'
