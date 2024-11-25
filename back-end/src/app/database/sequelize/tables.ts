@@ -13,6 +13,7 @@ import {
     Validate,
 } from 'sequelize-typescript';
 import {
+    InternshipDocumentType,
     InternshipSchedule,
     InternshipTasks,
 } from '../../../models/internship';
@@ -27,6 +28,8 @@ import {
     SequelizeAdminCreate,
     SequelizeInternship,
     SequelizeInternshipCreate,
+    SequelizeInternshipDocument,
+    SequelizeInternshipDocumentCreate,
     SequelizeinternshipTasks,
     SequelizeinternshipTasksCreate,
     SequelizeOrganization,
@@ -310,7 +313,7 @@ export class AddressTable extends Model<SequelizeAddress> {
     tableName: 'Internship-tasks',
     modelName: 'Internship-tasks',
 })
-export class internshipTasksTable extends Model<
+export class InternshipTasksTable extends Model<
     SequelizeinternshipTasks,
     SequelizeinternshipTasksCreate
 > {
@@ -328,6 +331,36 @@ export class internshipTasksTable extends Model<
 }
 
 @Table({
+    tableName: 'internship-documents',
+    modelName: 'internship-documents',
+})
+export class InternshipDocumentTable extends Model<
+    SequelizeInternshipDocument,
+    SequelizeInternshipDocumentCreate
+> {
+    public declare internship: InternshipTable;
+
+    @AllowNull(false)
+    @Unique
+    @Index
+    @IsLowercase
+    @Column
+    public declare name: string;
+
+    @AllowNull(true)
+    @Column
+    public declare approvedAt: Date;
+
+    @AllowNull(false)
+    @Column
+    public declare internshipId: number;
+
+    @AllowNull(false)
+    @Column(DataTypes.STRING)
+    public declare type: InternshipDocumentType;
+}
+
+@Table({
     tableName: 'internships',
     modelName: 'internships',
 })
@@ -338,6 +371,7 @@ export class InternshipTable extends Model<
     public declare student: StudentTable;
     public declare supervisor: SupervisorTable;
     public declare organization: OrganizationTable;
+    public declare documents: InternshipDocumentTable[];
 
     @AllowNull(false)
     @NotEmpty

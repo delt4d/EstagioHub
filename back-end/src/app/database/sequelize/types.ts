@@ -4,6 +4,7 @@ import { Admin } from '../../../models/admin';
 import { AcademicClass } from '../../../models/institution';
 import {
     Internship,
+    InternshipDocument,
     InternshipSchedule,
     InternshipTasks,
 } from '../../../models/internship';
@@ -54,6 +55,8 @@ export type SequelizeInternship = BaseSequelizeModel<
     internshipCloseReason?: string;
     tasks: InternshipTasks[];
 };
+export type SequelizeInternshipDocument =
+    BaseSequelizeModel<InternshipDocument>;
 export type SequelizeInternshipTime = BaseSequelizeModel<InternshipSchedule>;
 
 // Creation types
@@ -77,6 +80,8 @@ export type SequelizeSupervisorCreate = CreationType<
     SequelizeSupervisor,
     'id' | 'userId'
 >;
+export type SequelizeInternshipDocumentCreate =
+    CreationType<SequelizeInternshipDocument>;
 export type SequelizeAccessTokenCreate = CreationType<
     SequelizeAccessToken,
     'id' | 'expiresAt' | 'expiredAt'

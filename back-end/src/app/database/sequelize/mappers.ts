@@ -96,6 +96,10 @@ const organizationMapper: Mapper<OrganizationTable, Organization> = {
 
 const internshipMapper: Mapper<InternshipTable, Internship> = {
     id: 'id',
+    division: 'division',
+    internshipSchedule: 'internshipSchedule',
+    tasks: 'tasks',
+    documents: 'documents',
     student: (src) => mapSequelizeStudentToModel(src.student),
     supervisor: (src) => mapSequelizeSupervisorToModel(src.supervisor),
     status: (src) => {
@@ -118,7 +122,6 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
         name: src.organizationSupervisorName,
         position: src.organizationSupervisorPosition,
     }),
-    division: 'division',
     classification: (src) => {
         const classificationMap: Record<string, Classification> = {
             mandatory: Classification.Mandatory,
@@ -141,8 +144,6 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
         startDate: src.periodStartDate,
         expectedEndDate: src.periodExpectedEndDate,
     }),
-    internshipSchedule: 'internshipSchedule',
-    tasks: 'tasks',
 };
 
 export const mapSequelizeAdminToModel = (entity: AdminTable) =>

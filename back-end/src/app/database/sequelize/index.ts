@@ -27,8 +27,9 @@ import {
     AccessTokenTable,
     AddressTable,
     AdminTable,
+    InternshipDocumentTable,
     InternshipTable,
-    internshipTasksTable,
+    InternshipTasksTable,
     OrganizationTable,
     ResetPasswordTable,
     StudentTable,
@@ -48,7 +49,8 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         AddressTable,
         OrganizationTable,
         InternshipTable,
-        internshipTasksTable,
+        InternshipTasksTable,
+        InternshipDocumentTable,
     ];
     private static sequelize: Sequelize;
     private _error?: SequelizeDatabaseError;
@@ -456,7 +458,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                         include: [UserTable],
                     },
                     OrganizationTable,
-                    internshipTasksTable,
+                    InternshipTasksTable,
                 ],
             });
 
@@ -487,7 +489,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 },
                 {
                     include: [
-                        internshipTasksTable,
+                        InternshipTasksTable,
                         {
                             model: OrganizationTable,
                             include: [AddressTable],
@@ -509,7 +511,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         try {
             const model = await InternshipTable.findByPk(id, {
                 include: [
-                    internshipTasksTable,
+                    InternshipTasksTable,
                     OrganizationTable,
                     {
                         model: StudentTable,
@@ -566,7 +568,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 ),
                 subQuery: false,
                 include: [
-                    internshipTasksTable,
+                    InternshipTasksTable,
                     OrganizationTable,
                     {
                         model: StudentTable,
@@ -639,8 +641,12 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             OrganizationTable.hasMany(InternshipTable);
 
             // Internship-tasks and internship association
-            internshipTasksTable.belongsTo(InternshipTable);
-            InternshipTable.hasMany(internshipTasksTable);
+            InternshipTasksTable.belongsTo(InternshipTable);
+            InternshipTable.hasMany(InternshipTasksTable);
+
+            // Internship-documents and internship association
+            InternshipDocumentTable.belongsTo(InternshipTable);
+            InternshipTable.hasMany(InternshipDocumentTable);
 
             // sync
             if (config.project.environment !== 'production')

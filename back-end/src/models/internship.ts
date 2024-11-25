@@ -29,9 +29,21 @@ export enum WorkSituation {
     Remote = 'remote',
 }
 
+export enum InternshipDocumentType {
+    Start = 'start',
+    Progress = 'progress',
+    Completion = 'completion',
+}
+
 export enum Classification {
     Mandatory = 'mandatory',
     NonMandatory = 'non_mandatory',
+}
+
+export interface InternshipDocument {
+    name: string;
+    approvedAt?: Date;
+    type: InternshipDocumentType;
 }
 
 export type InternshipTasks = {
@@ -71,5 +83,6 @@ export type Internship = {
     internshipSchedule: InternshipSchedule;
     period: InternshipPeriod;
     tasks: InternshipTasks[];
+    documents: InternshipDocument[];
     internshipCloseReason?: string;
 };
