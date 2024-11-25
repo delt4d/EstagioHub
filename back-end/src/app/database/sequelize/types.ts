@@ -14,9 +14,11 @@ import { Student } from '../../../models/student';
 import { Supervisor } from '../../../models/supervisor';
 import { User } from '../../../models/user';
 
-type BaseSequelizeModel<T, F extends keyof any = never> = Omit<T, F> & {
-    [P in F]: number;
-};
+type BaseSequelizeModel<
+    T,
+    OmittedKeys extends keyof T = never,
+    AddedProps extends Record<string, any> = {},
+> = Omit<T, OmittedKeys> & AddedProps;
 
 type CreationType<T, OmitKeys extends keyof T | 'id' = 'id'> = Omit<
     T,
@@ -25,36 +27,54 @@ type CreationType<T, OmitKeys extends keyof T | 'id' = 'id'> = Omit<
 
 // Sequelize model types
 export type SequelizeUser = User;
-export type SequelizeAdmin = BaseSequelizeModel<Admin, 'userId'>;
-export type SequelizeSupervisor = BaseSequelizeModel<Supervisor, 'userId'>;
+export type SequelizeAdmin = BaseSequelizeModel<
+    Admin,
+    'user',
+    { userId: number }
+>;
+export type SequelizeSupervisor = BaseSequelizeModel<
+    Supervisor,
+    'user',
+    { userId: number }
+>;
 export type SequelizeStudent = BaseSequelizeModel<
-    Omit<Student, 'user' | 'address'>,
-    'userId' | 'addressId'
+    Student,
+    'user' | 'address',
+    {
+        userId: number;
+        addressId: number;
+    }
 >;
 export type SequelizeResetPasswordToken = ResetPasswordToken;
 export type SequelizeAddress = Address;
 export type SequelizeAcademicClass = AcademicClass;
-export type SequelizeinternshipTasks = InternshipTasks;
+export type SequelizeInternshipTasks = InternshipTasks;
 export type SequelizeOrganization = BaseSequelizeModel<
-    Omit<Organization, 'address'>,
-    'addressId'
+    Organization,
+    'address',
+    { addressId: number }
 >;
 export type SequelizeAccessToken = BaseSequelizeModel<
-    Omit<AccessToken, 'user'>,
-    'userId'
+    AccessToken,
+    'user',
+    { userId: number }
 >;
 export type SequelizeInternship = BaseSequelizeModel<
-    Omit<Internship, 'student' | 'supervisor' | 'organization'>,
-    'studentId' | 'supervisorId' | 'organizationId'
-> & {
-    periodStartDate: Date;
-    periodExpectedEndDate: Date;
-    organizationSupervisorName: string;
-    organizationSupervisorEmail: string;
-    organizationSupervisorPosition: string;
-    internshipCloseReason?: string;
-    tasks: InternshipTasks[];
-};
+    Internship,
+    'student' | 'supervisor' | 'organization',
+    {
+        studentId: number;
+        supervisorId: number;
+        organizationId: number;
+        periodStartDate: Date;
+        periodExpectedEndDate: Date;
+        organizationSupervisorName: string;
+        organizationSupervisorEmail: string;
+        organizationSupervisorPosition: string;
+        internshipCloseReason?: string;
+        tasks: InternshipTasks[];
+    }
+>;
 export type SequelizeInternshipDocument =
     BaseSequelizeModel<InternshipDocument>;
 export type SequelizeInternshipTime = BaseSequelizeModel<InternshipSchedule>;
@@ -75,7 +95,7 @@ export type SequelizeInternshipCreate = CreationType<
     'id' | 'studentId' | 'supervisorId' | 'organizationId'
 >;
 export type SequelizeinternshipTasksCreate =
-    CreationType<SequelizeinternshipTasks>;
+    CreationType<SequelizeInternshipTasks>;
 export type SequelizeSupervisorCreate = CreationType<
     SequelizeSupervisor,
     'id' | 'userId'
@@ -90,5 +110,7 @@ export type SequelizeResetPasswordTokenCreate = CreationType<
     SequelizeResetPasswordToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
-export type SequelizeInternshipTimeCreate =
-    CreationType<SequelizeInternshipTime>;
+export type SequelizeInternshipTimeCreate = CreationType<
+    SequelizeInternshipTime,
+    'id'
+>;

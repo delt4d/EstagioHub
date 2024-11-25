@@ -41,6 +41,7 @@ export enum Classification {
 }
 
 export interface InternshipDocument {
+    id?: number;
     name: string;
     approvedAt?: Date;
     type: InternshipDocumentType;

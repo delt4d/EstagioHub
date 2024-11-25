@@ -30,7 +30,7 @@ import {
     SequelizeInternshipCreate,
     SequelizeInternshipDocument,
     SequelizeInternshipDocumentCreate,
-    SequelizeinternshipTasks,
+    SequelizeInternshipTasks,
     SequelizeinternshipTasksCreate,
     SequelizeOrganization,
     SequelizeResetPasswordToken,
@@ -314,7 +314,7 @@ export class AddressTable extends Model<SequelizeAddress> {
     modelName: 'Internship-tasks',
 })
 export class InternshipTasksTable extends Model<
-    SequelizeinternshipTasks,
+    SequelizeInternshipTasks,
     SequelizeinternshipTasksCreate
 > {
     public declare internship: InternshipTable;
