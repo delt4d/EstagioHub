@@ -142,7 +142,8 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
         expectedEndDate: src.periodExpectedEndDate,
     }),
     // TODO: trocar depois pelos valores
-    schedule: 'schedule',
+    internshipSchedule: 'internshipSchedule',
+    tasks: 'tasks',
 };
 
 export const mapSequelizeAdminToModel = (entity: AdminTable) =>

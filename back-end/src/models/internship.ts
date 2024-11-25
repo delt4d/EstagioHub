@@ -34,21 +34,21 @@ export enum Classification {
     NonMandatory = 'non_mandatory',
 }
 
-export type InternshipSchedule = {
+export type InternshipTasks = {
     id?: number;
     name: string; // Nome da atividade
     description: string; // Descrição da atividade
 };
 
-export type InternshipWeeklyHour = {
+export type InternshipScheduleTimeRange = {
     startTime: number;
     endTime: number;
 };
 
-export type InternshipWeeklyHours = {
-    mondayToFriday: InternshipWeeklyHour; // Horário de segunda a sexta
-    mondayToFridaySecondary?: InternshipWeeklyHour; // Horário adicional de segunda a sexta
-    saturday?: InternshipWeeklyHour; // Horário aos sábados (opcional)
+export type InternshipSchedule = {
+    mondayToFriday: InternshipScheduleTimeRange; // Horário de segunda a sexta
+    mondayToFridaySecondary?: InternshipScheduleTimeRange; // Horário adicional de segunda a sexta
+    saturday?: InternshipScheduleTimeRange; // Horário aos sábados (opcional)
 };
 
 export type InternshipPeriod = {
@@ -68,8 +68,8 @@ export type Internship = {
     monthlyStipend: number; // valor mensal bolsa do estágio
     transportationAid: number; // valor auxílio transporte
     workSituation: WorkSituation; // situação de trabalho (presencial, semi presencial, remota)
-    weeklyHours: InternshipWeeklyHours;
+    internshipSchedule: InternshipSchedule;
     period: InternshipPeriod;
-    schedule: InternshipSchedule[];
+    tasks: InternshipTasks[];
     internshipCloseReason?: string;
 };

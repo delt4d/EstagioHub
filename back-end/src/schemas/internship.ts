@@ -20,11 +20,11 @@ export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
         startDate: Joi.date().required(),
         expectedEndDate: Joi.date().required(),
     }).required(),
-    schedule: Joi.array().required(),
+    tasks: Joi.array().required(),
     studentId: Joi.number().required(),
     supervisorId: Joi.number().required(),
     transportationAid: Joi.number().required(),
-    weeklyHours: Joi.object({
+    internshipSchedule: Joi.object({
         mondayToFriday: Joi.object({
             startTime: Joi.number().required(),
             endTime: Joi.number().required(),

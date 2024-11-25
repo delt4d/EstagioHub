@@ -8,9 +8,9 @@ export type InStartNewInternshipDto = Pick<
     | 'monthlyStipend'
     | 'transportationAid'
     | 'workSituation'
-    | 'weeklyHours'
+    | 'internshipSchedule'
     | 'period'
-    | 'schedule'
+    | 'tasks'
 > & {
     studentId: number;
     organizationCnpj: string;

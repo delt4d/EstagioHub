@@ -26,6 +26,8 @@ routes.get(
     controller.searchInternships
 );
 
+// TODO: adicionar rota para os estágios do próprio aluno
+
 routes.get(
     '/:id',
     ensureIsAuthenticated,

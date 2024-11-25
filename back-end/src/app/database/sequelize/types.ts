@@ -2,7 +2,11 @@ import { AccessToken } from '../../../models/access-token';
 import { Address } from '../../../models/address';
 import { Admin } from '../../../models/admin';
 import { AcademicClass } from '../../../models/institution';
-import { Internship, InternshipSchedule } from '../../../models/internship';
+import {
+    Internship,
+    InternshipSchedule,
+    InternshipTasks,
+} from '../../../models/internship';
 import { Organization } from '../../../models/organization';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
 import { Student } from '../../../models/student';
@@ -29,7 +33,7 @@ export type SequelizeStudent = BaseSequelizeModel<
 export type SequelizeResetPasswordToken = ResetPasswordToken;
 export type SequelizeAddress = Address;
 export type SequelizeAcademicClass = AcademicClass;
-export type SequelizeInternshipSchedule = InternshipSchedule;
+export type SequelizeinternshipTasks = InternshipTasks;
 export type SequelizeOrganization = BaseSequelizeModel<
     Omit<Organization, 'address'>,
     'addressId'
@@ -48,8 +52,9 @@ export type SequelizeInternship = BaseSequelizeModel<
     organizationSupervisorEmail: string;
     organizationSupervisorPosition: string;
     internshipCloseReason?: string;
-    schedule: InternshipSchedule[];
+    tasks: InternshipTasks[];
 };
+export type SequelizeInternshipTime = BaseSequelizeModel<InternshipSchedule>;
 
 // Creation types
 export type SequelizeUserCreate = CreationType<SequelizeUser>;
@@ -66,8 +71,8 @@ export type SequelizeInternshipCreate = CreationType<
     SequelizeInternship,
     'id' | 'studentId' | 'supervisorId' | 'organizationId'
 >;
-export type SequelizeInternshipScheduleCreate =
-    CreationType<SequelizeInternshipSchedule>;
+export type SequelizeinternshipTasksCreate =
+    CreationType<SequelizeinternshipTasks>;
 export type SequelizeSupervisorCreate = CreationType<
     SequelizeSupervisor,
     'id' | 'userId'
@@ -80,3 +85,5 @@ export type SequelizeResetPasswordTokenCreate = CreationType<
     SequelizeResetPasswordToken,
     'id' | 'expiresAt' | 'expiredAt'
 >;
+export type SequelizeInternshipTimeCreate =
+    CreationType<SequelizeInternshipTime>;

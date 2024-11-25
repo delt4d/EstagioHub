@@ -12,7 +12,10 @@ import {
     Unique,
     Validate,
 } from 'sequelize-typescript';
-import { InternshipSchedule } from '../../../models/internship';
+import {
+    InternshipSchedule,
+    InternshipTasks,
+} from '../../../models/internship';
 import config from '../../config';
 import {
     SequelizeAcademicClass,
@@ -24,8 +27,8 @@ import {
     SequelizeAdminCreate,
     SequelizeInternship,
     SequelizeInternshipCreate,
-    SequelizeInternshipSchedule,
-    SequelizeInternshipScheduleCreate,
+    SequelizeinternshipTasks,
+    SequelizeinternshipTasksCreate,
     SequelizeOrganization,
     SequelizeResetPasswordToken,
     SequelizeResetPasswordTokenCreate,
@@ -227,7 +230,7 @@ export class AcademicClassTable extends Model<
     @AllowNull(false)
     @NotEmpty
     @Column(DataTypes.STRING)
-    public declare schedulePeriod: string;
+    public declare tasksPeriod: string;
 }
 
 @Table({
@@ -304,12 +307,12 @@ export class AddressTable extends Model<SequelizeAddress> {
 }
 
 @Table({
-    tableName: 'internship-schedules',
-    modelName: 'internship-schedules',
+    tableName: 'Internship-taskss',
+    modelName: 'Internship-taskss',
 })
-export class InternshipScheduleTable extends Model<
-    SequelizeInternshipSchedule,
-    SequelizeInternshipScheduleCreate
+export class internshipTasksTable extends Model<
+    SequelizeinternshipTasks,
+    SequelizeinternshipTasksCreate
 > {
     public declare internship: InternshipTable;
 
@@ -335,7 +338,11 @@ export class InternshipTable extends Model<
     public declare student: StudentTable;
     public declare supervisor: SupervisorTable;
     public declare organization: OrganizationTable;
-    public declare schedule: InternshipSchedule[];
+
+    @AllowNull(false)
+    @NotEmpty
+    @Column(DataTypes.JSON)
+    public declare tasks: InternshipTasks[];
 
     @AllowNull(false)
     @NotEmpty
@@ -345,6 +352,10 @@ export class InternshipTable extends Model<
     @AllowNull(true)
     @Column
     public declare internshipCloseReason: string;
+
+    @AllowNull(false)
+    @Column(DataTypes.JSON)
+    public declare internshipSchedule: InternshipSchedule;
 
     @AllowNull(false)
     @NotEmpty
