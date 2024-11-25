@@ -20,16 +20,20 @@ Authorization: Bearer {{token}}
         "startDate": "2024-01-01",
         "expectedEndDate": "2024-12-31"
     },
-    "tasks": [{
-        "name": "task 1",
-        "description": "task 1 description"
-    }, {
-        "name": "task 2",
-        "description": "task 2 description"
-    }, {
-        "name": "task 3",
-        "description": "task 3 description"
-    }],
+    "tasks": [
+        {
+            "name": "task 1",
+            "description": "task 1 description"
+        }, 
+        {
+            "name": "task 2",
+            "description": "task 2 description"
+        }, 
+        {
+            "name": "task 3",
+            "description": "task 3 description"
+        }
+    ],
     "studentId": 1,
     "supervisorId": 1,
     "transportationAid": 3,
