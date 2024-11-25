@@ -141,7 +141,6 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
         startDate: src.periodStartDate,
         expectedEndDate: src.periodExpectedEndDate,
     }),
-    // TODO: trocar depois pelos valores
     internshipSchedule: 'internshipSchedule',
     tasks: 'tasks',
 };

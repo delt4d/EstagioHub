@@ -307,8 +307,8 @@ export class AddressTable extends Model<SequelizeAddress> {
 }
 
 @Table({
-    tableName: 'Internship-taskss',
-    modelName: 'Internship-taskss',
+    tableName: 'Internship-tasks',
+    modelName: 'Internship-tasks',
 })
 export class internshipTasksTable extends Model<
     SequelizeinternshipTasks,
