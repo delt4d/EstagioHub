@@ -352,10 +352,6 @@ export class InternshipDocumentTable extends Model<
     public declare approvedAt: Date;
 
     @AllowNull(false)
-    @Column
-    public declare internshipId: number;
-
-    @AllowNull(false)
     @Column(DataTypes.STRING)
     public declare type: InternshipDocumentType;
 }

@@ -84,7 +84,7 @@ export interface DatabaseConnection {
     /// Internship-related operations
     // cadastrar um novo estágio
     saveNewInternship(
-        internship: Omit<Internship, 'status'>
+        internship: Omit<Internship, 'status' | 'documents'>
     ): Promise<Internship | undefined>;
     // atualizar um estágio
     saveInternship(
