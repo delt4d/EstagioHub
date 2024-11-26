@@ -9,13 +9,23 @@ export type SearchStudentsDto = {
     searchTerm: string;
 };
 
-export type OutStudentDto = Replace<Student, { user: OutUserDto }>;
+export type OutStudentDto = Replace<
+    Student,
+    {
+        user: OutUserDto;
+    }
+>;
 
 export const mapStudentOut = (student: Student): OutStudentDto => {
-    // TODO: adicionar demais campos
     const mapper: Mapper<Student, OutStudentDto> = {
         id: 'id',
         fullName: 'fullName',
+        academicClass: 'academicClass',
+        academicId: 'academicId',
+        phone: 'phone',
+        whatsapp: 'whatsapp',
+        rg: 'rg',
+        address: 'address',
         user: (source) => mapUserOut(source.user),
     };
 

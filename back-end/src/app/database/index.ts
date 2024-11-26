@@ -102,13 +102,16 @@ export interface DatabaseConnection {
         documentId: number
     ): Promise<Internship | undefined>;
     // confirmar recebimento de um documento
-    confirmInternshipDocument(
-        documentId: number
-    ): Promise<InternshipDocument | undefined>;
     // obter lista de documentos
     findInternshipDocuments(
         internshipId: number
     ): Promise<InternshipDocument[] | undefined>;
+    findInternshipsByStudentId(
+        studentId: number
+    ): Promise<Internship[] | undefined>;
+    confirmInternshipDocument(
+        documentId: number
+    ): Promise<InternshipDocument | undefined>;
     // obter estágios à partir de uma busca e paginção
     searchInternships(
         data: InSearchInternshipsDto

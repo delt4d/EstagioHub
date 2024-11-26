@@ -5,7 +5,6 @@ Content-Type: application/json
 Access-Control-Allow-Credentials: true
 Authorization: Bearer {{token}}
 
-# TODO: test with items in tasks
 {
     "classification": "mandatory",
     "division": "Desenvolvimento",
@@ -178,3 +177,20 @@ Content-Type: application/msword
 
 < ./static/Anexo_10_Modelo_de_Relatorio_Final-20200214143725.doc
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# @name findStudentInternshipsById
+# @prompt token
+# @prompt studentId
+GET {{baseUrl}}/internship/student/{{studentId}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name findCurrentStudentInternships
+# @prompt token
+GET {{baseUrl}}/internship/student/me
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}

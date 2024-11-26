@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BadRequestError, UnhandledError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import { toResult } from '../app/utils';
+import { mapInternshipOut } from '../dtos/internship';
 import { InternshipStatus } from '../models/internship';
 import { UserRole } from '../models/user-role';
 import { ReasonSchema } from '../schemas';
@@ -21,7 +22,7 @@ export default class InternshipController {
 
         return res.send({
             success: true,
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
             message:
                 'A solicitação de inicio de estágio foi realizado. Aguardando aprovação do orientador.',
         });
@@ -34,16 +35,37 @@ export default class InternshipController {
         return res.send({
             ...data,
             success: true,
-            internships, // TODO: add mapper
+            internship: internships.map((internship) =>
+                mapInternshipOut(internship, true)
+            ),
         });
     }
 
     async getInternshipById(req: Request, res: Response) {
         const id = Number(req.params.id);
         const internship = await internshipService.getInternshipById(id);
+
         return res.send({
             success: true,
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
+        });
+    }
+
+    async getInternshipsByStudentId(req: Request, res: Response) {
+        const id = Number(req.params.id) ?? req.user?.id;
+
+        if (!id || isNaN(id)) {
+            throw new BadRequestError('ID do estudante inválido.');
+        }
+
+        const internships =
+            await internshipService.getInternishipsByStudentId(id);
+
+        return res.send({
+            success: true,
+            internship: internships.map((internship) =>
+                mapInternshipOut(internship, true)
+            ),
         });
     }
 
@@ -91,7 +113,7 @@ export default class InternshipController {
 
         return res.send({
             success: true,
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
             message:
                 'A solicitação de estágio foi aprovada com sucesso. Confirme o recebimento de todos os documentos necessários para iniciar o estágio.',
         });
@@ -153,15 +175,15 @@ export default class InternshipController {
             return res.send({
                 success: true,
                 message:
-                    'Último documento marcado como recebido! O estágio está autorizado para iniciar.',
-                internship: startedInternship, // TODO: add mapper
+                    'Documento marcado como recebido! O estágio está autorizado para iniciar.',
+                internship: mapInternshipOut(startedInternship, true),
             });
         }
 
         return res.send({
             success: true,
             message: 'Documento marcado como recebido!',
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
         });
     }
 
@@ -181,7 +203,7 @@ export default class InternshipController {
         return res.send({
             success: true,
             message: 'Documento enviado com sucesso!',
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
         });
     }
 
@@ -201,7 +223,7 @@ export default class InternshipController {
         return res.send({
             success: true,
             message: 'Documento enviado com sucesso!',
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
         });
     }
 
@@ -221,7 +243,7 @@ export default class InternshipController {
         return res.send({
             success: true,
             message: 'Documento enviado com sucesso!',
-            internship, // TODO: add mapper
+            internship: mapInternshipOut(internship, true),
         });
     }
 }

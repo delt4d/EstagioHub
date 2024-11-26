@@ -488,7 +488,6 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         try {
             const model = await InternshipTable.create(
                 {
-                    // TODO: verify other fields to map
                     ...internship,
                     periodStartDate: internship.period.startDate,
                     periodExpectedEndDate: internship.period.expectedEndDate,
@@ -555,6 +554,32 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             if (!model) return;
 
             return mapSequelizeInternshipToModel(model.internship, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
+    async findInternshipsByStudentId(
+        studentId: number
+    ): Promise<Internship[] | undefined> {
+        try {
+            const models = await InternshipTable.findAll({
+                where: { studentId },
+                include: [
+                    InternshipTasksTable,
+                    {
+                        model: StudentTable,
+                        include: [UserTable, AddressTable],
+                    },
+                    {
+                        model: SupervisorTable,
+                        include: [UserTable],
+                    },
+                    OrganizationTable,
+                ],
+            });
+
+            return models.map((model) => mapSequelizeInternshipToModel(model));
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
         }

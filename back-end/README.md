@@ -22,7 +22,7 @@
 - [x] Cancelar solicitação de estágio
 - [x] Encerrar estágio
 - [x] Aprovar/Reprovar estágio
-- [ ] Marcar documento como entregue
+- [x] Marcar documento como entregue
 
 ---
 

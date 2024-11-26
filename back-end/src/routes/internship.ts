@@ -25,8 +25,19 @@ routes.get(
     ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
     controller.searchInternships
 );
+routes.get(
+    '/student/me',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Student),
+    controller.getInternshipsByStudentId
+);
 
-// TODO: adicionar rota para trazer os estágios do próprio aluno
+routes.get(
+    '/student/:id',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
+    controller.getInternshipsByStudentId
+);
 
 routes.get(
     '/:id',

@@ -82,6 +82,15 @@ class InternshipService {
         return internship!;
     }
 
+    async getInternishipsByStudentId(
+        studentId: number
+    ): Promise<Internship[] | never> {
+        const conn = await DatabaseResolver.getConnection();
+        const internships = await conn.findInternshipsByStudentId(studentId);
+        conn.throwIfHasError();
+        return internships!;
+    }
+
     async cancelNewInternship(id: number): Promise<Internship | never> {
         const conn = await DatabaseResolver.getConnection();
         // TODO: se o orientador que está tentando cancelar,
