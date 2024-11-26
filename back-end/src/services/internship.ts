@@ -10,6 +10,7 @@ import { Internship, InternshipStatus } from '../models/internship';
 import { User } from '../models/user';
 import { UserRole } from '../models/user-role';
 import emailService from './email';
+import internshipDocumentService from './internship-document';
 import organizationService from './organization';
 import studentService from './student';
 
@@ -134,11 +135,16 @@ class InternshipService {
             status: InternshipStatus.AwaitingInternshipApproval,
         });
         conn.throwIfHasError();
-        // TODO: neste momento o upload dos documentos
-        // necessários estará disponível
+
         if (!updatedInternship) {
             throw new NotFoundError('Estágio não encontrado.');
         }
+
+        updatedInternship.documents =
+            await internshipDocumentService.createStartingInternshipDocuments(
+                internship.id!
+            );
+
         return updatedInternship;
     }
 
