@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BadRequestError, UnhandledError } from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import { toResult } from '../app/utils';
+import { InternshipStatus } from '../models/internship';
 import { UserRole } from '../models/user-role';
 import { ReasonSchema } from '../schemas';
 import {
@@ -90,6 +91,7 @@ export default class InternshipController {
 
         return res.send({
             success: true,
+            internship, // TODO: add mapper
             message:
                 'A solicitação de estágio foi aprovada com sucesso. Confirme o recebimento de todos os documentos necessários para iniciar o estágio.',
         });
@@ -134,6 +136,32 @@ export default class InternshipController {
         return res.send({
             success: true,
             message: 'O estágio foi encerrado.',
+        });
+    }
+
+    async confirmInternshipDocument(req: Request, res: Response) {
+        const id = Number(req.params.id);
+        const internship = await internshipService.getInternshipByDocument(id);
+
+        await internshipService.confirmInternshipDocument(id);
+
+        if (internship.status === InternshipStatus.AwaitingInternshipApproval) {
+            const startedInternship = await internshipService.startInternship(
+                internship.id!
+            );
+
+            return res.send({
+                success: true,
+                message:
+                    'Último documento marcado como recebido! O estágio está autorizado para iniciar.',
+                internship: startedInternship, // TODO: add mapper
+            });
+        }
+
+        return res.send({
+            success: true,
+            message: 'Documento marcado como recebido!',
+            internship, // TODO: add mapper
         });
     }
 

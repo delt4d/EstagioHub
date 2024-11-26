@@ -97,6 +97,14 @@ export interface DatabaseConnection {
     ): Promise<Internship | undefined>;
     // obter estágio por id
     findInternshipById(id: number): Promise<Internship | undefined>;
+    // obter estágio pelo id de um documento
+    findInternshipByDocument(
+        documentId: number
+    ): Promise<Internship | undefined>;
+    // confirmar recebimento de um documento
+    confirmInternshipDocument(
+        documentId: number
+    ): Promise<InternshipDocument | undefined>;
     // obter lista de documentos
     findInternshipDocuments(
         internshipId: number

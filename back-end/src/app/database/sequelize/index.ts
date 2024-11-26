@@ -544,6 +544,42 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         }
     }
 
+    async findInternshipByDocument(
+        documentId: number
+    ): Promise<Internship | undefined> {
+        try {
+            const model = await InternshipDocumentTable.findByPk(documentId, {
+                include: [InternshipTable],
+            });
+
+            if (!model) return;
+
+            return mapSequelizeInternshipToModel(model.internship, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
+    async confirmInternshipDocument(
+        documentId: number
+    ): Promise<InternshipDocument | undefined> {
+        try {
+            const model = await InternshipDocumentTable.findByPk(documentId);
+
+            if (!model) return;
+
+            await model.update({
+                confirmedAt: model.confirmedAt
+                    ? Sequelize.literal('NULL')
+                    : new Date(),
+            });
+
+            return mapSequelizeInternshipDocumentToModel(model);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
     async saveInternship(
         id: number,
         data: Partial<Internship>

@@ -6,7 +6,11 @@ import {
     InSearchInternshipsDto,
     InStartNewInternshipDto,
 } from '../dtos/internship';
-import { Internship, InternshipStatus } from '../models/internship';
+import {
+    Internship,
+    InternshipDocument,
+    InternshipStatus,
+} from '../models/internship';
 import { User } from '../models/user';
 import { UserRole } from '../models/user-role';
 import emailService from './email';
@@ -213,6 +217,52 @@ class InternshipService {
         }
 
         return updatedInternship;
+    }
+
+    async startInternship(internshipId: number): Promise<Internship | never> {
+        const conn = await DatabaseResolver.getConnection();
+        const internship = await conn.saveInternship(internshipId, {
+            status: InternshipStatus.InProgress,
+        });
+
+        conn.throwIfHasError();
+
+        if (!internship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+
+        return internship;
+    }
+
+    async confirmInternshipDocument(
+        internshipDocumentId: number
+    ): Promise<InternshipDocument | never> {
+        const conn = await DatabaseResolver.getConnection();
+        const internshipDocument =
+            await conn.confirmInternshipDocument(internshipDocumentId);
+
+        conn.throwIfHasError();
+
+        if (!internshipDocument) {
+            throw new NotFoundError('Documento de estágio não encontrado.');
+        }
+
+        return internshipDocument;
+    }
+
+    async getInternshipByDocument(
+        internshipDocumentId: number
+    ): Promise<Internship | never> {
+        const conn = await DatabaseResolver.getConnection();
+        const internship =
+            await conn.findInternshipByDocument(internshipDocumentId);
+
+        conn.throwIfHasError();
+
+        if (!internship) {
+            throw new NotFoundError('Estágio não encontrado.');
+        }
+        return internship;
     }
 
     async uploadInternshipStartDoc(

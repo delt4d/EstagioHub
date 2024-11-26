@@ -26,7 +26,7 @@ routes.get(
     controller.searchInternships
 );
 
-// TODO: adicionar rota para os estágios do próprio aluno
+// TODO: adicionar rota para trazer os estágios do próprio aluno
 
 routes.get(
     '/:id',
@@ -61,6 +61,13 @@ routes.post(
     ensureIsAuthenticated,
     ensureIsAuthorized(UserRole.Supervisor),
     controller.closeInternship
+);
+
+routes.post(
+    '/:id/confirm-internship-document',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Supervisor),
+    controller.confirmInternshipDocument
 );
 
 routes.post(

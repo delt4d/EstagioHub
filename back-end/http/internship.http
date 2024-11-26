@@ -123,6 +123,15 @@ Authorization: Bearer {{token}}
 }
 
 ###
+# @name confirmInternshipDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/confirm-internship-document
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
 # @name uploadInternshipStartDocument
 # @prompt token
 # @prompt id
