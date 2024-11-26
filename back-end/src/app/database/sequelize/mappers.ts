@@ -112,8 +112,8 @@ const internshipDocumentMapper: Mapper<
 
         return typeMap[src.type];
     },
-    approvedAt: 'approvedAt',
-    internshipId: (src) => src.internship.id,
+    confirmedAt: 'confirmedAt',
+    internshipId: 'internshipId',
 };
 
 const internshipMapper: Mapper<InternshipTable, Internship> = {

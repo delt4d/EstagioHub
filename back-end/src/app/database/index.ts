@@ -88,7 +88,7 @@ export interface DatabaseConnection {
     ): Promise<Internship | undefined>;
     // cadastrar um novo documento de estágio
     saveNewInternshipDocuments(
-        documents: Omit<InternshipDocument, 'approvedAt'>[]
+        documents: Omit<InternshipDocument, 'confirmedAt'>[]
     ): Promise<InternshipDocument[] | undefined>;
     // atualizar um estágio
     saveInternship(

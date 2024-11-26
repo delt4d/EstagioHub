@@ -45,12 +45,12 @@ class InternshipDocumentService {
             {
                 internshipId,
                 type: InternshipDocumentType.Finished,
-                name: 'Relatório Final',
+                name: 'Avaliação de Desempenho',
             },
             {
                 internshipId,
                 type: InternshipDocumentType.Finished,
-                name: 'Avaliação de Desempenho',
+                name: 'Relatório Final',
             },
         ]);
 

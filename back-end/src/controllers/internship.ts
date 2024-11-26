@@ -10,6 +10,7 @@ import {
 } from '../schemas/internship';
 import emailService from '../services/email';
 import internshipService from '../services/internship';
+import internshipDocumentService from '../services/internship-document';
 
 export default class InternshipController {
     async startNewInternship(req: Request, res: Response) {
@@ -17,6 +18,11 @@ export default class InternshipController {
         // atribuir o seu ID de estudante à req.body.studentId
         const data = validateSchema(StartNewInternshipSchema, req.body);
         const internship = await internshipService.startNewInternship(data);
+
+        internship.documents =
+            await internshipDocumentService.createStartingInternshipDocuments(
+                internship.id!
+            );
 
         return res.send({
             success: true,

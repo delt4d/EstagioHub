@@ -43,7 +43,7 @@ export enum Classification {
 export interface InternshipDocument {
     id?: number;
     name: string;
-    approvedAt?: Date;
+    confirmedAt?: Date;
     internshipId: number;
     type: InternshipDocumentType;
 }

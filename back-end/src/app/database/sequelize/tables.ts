@@ -311,8 +311,8 @@ export class AddressTable extends Model<SequelizeAddress> {
 }
 
 @Table({
-    tableName: 'Internship-tasks',
-    modelName: 'Internship-tasks',
+    tableName: 'internship-tasks',
+    modelName: 'internship-tasks',
 })
 export class InternshipTasksTable extends Model<
     SequelizeInternshipTasks,
@@ -343,16 +343,14 @@ export class InternshipDocumentTable extends Model<
     public declare internshipId: number;
 
     @AllowNull(false)
-    @Unique
     @Index
-    @IsLowercase
     @Column
     public declare name: string;
 
     @AllowNull(true)
     @Default(null)
     @Column
-    public declare approvedAt: Date;
+    public declare confirmedAt: Date;
 
     @AllowNull(false)
     @Column(DataTypes.STRING)

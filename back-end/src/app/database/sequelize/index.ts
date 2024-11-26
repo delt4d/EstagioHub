@@ -43,7 +43,7 @@ import {
 } from './tables';
 
 export class SequelizeDatabaseConnection implements DatabaseConnection {
-    private static models = [
+    private static Models = [
         UserTable,
         AccessTokenTable,
         AdminTable,
@@ -62,29 +62,6 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
     private set error(err: SequelizeDatabaseError) {
         config.external.logger(err.message);
         this._error = err;
-    }
-
-    constructor() {
-        if (config.project.environment === 'production') {
-            this.sequelize = new Sequelize(config.project.databaseUrl);
-            return;
-        }
-
-        this.sequelize = new Sequelize({
-            dialect: 'sqlite',
-            storage: ':memory:',
-            logging: false,
-            repositoryMode: false,
-            pool:
-                config.project.environment !== 'test'
-                    ? {
-                          max: 5,
-                          min: 0,
-                          acquire: 3000,
-                          idle: 1000,
-                      }
-                    : undefined,
-        });
     }
 
     async saveNewResetPasswordToken(
@@ -541,7 +518,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
     }
 
     async saveNewInternshipDocuments(
-        documents: Omit<InternshipDocument, 'approvedAt'>[]
+        documents: Omit<InternshipDocument, 'confirmedAt'>[]
     ): Promise<InternshipDocument[] | undefined> {
         const transaction = await this.sequelize.transaction();
 
@@ -556,11 +533,13 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 models.push(model);
             }
 
-            transaction.commit();
+            const result = models.map(mapSequelizeInternshipDocumentToModel);
 
-            return models.map(mapSequelizeInternshipDocumentToModel);
+            await transaction.commit();
+
+            return result;
         } catch (err) {
-            transaction.rollback();
+            await transaction.rollback();
             this.error = err as SequelizeDatabaseError;
         }
     }
@@ -652,13 +631,42 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
     async init(): Promise<void> {
         try {
-            if (!this.sequelize)
-                throw new Error(config.messages.databaseImplNotDefined);
+            if (!this.sequelize) {
+                if (config.project.environment === 'production') {
+                    this.sequelize = new Sequelize(config.project.databaseUrl);
+                    return;
+                }
 
-            this.sequelize.addModels(SequelizeDatabaseConnection.models);
+                this.sequelize = new Sequelize({
+                    dialect: 'sqlite',
+                    storage: ':memory:',
+                    logging: false,
+                    repositoryMode: false,
+                    pool:
+                        config.project.environment !== 'test'
+                            ? {
+                                  max: 5,
+                                  min: 0,
+                                  acquire: 3000,
+                                  idle: 1000,
+                              }
+                            : undefined,
+                });
+            }
+
+            this.sequelize.addModels(SequelizeDatabaseConnection.Models);
 
             UserTable.addHook('beforeValidate', (model) => {
                 model.set('email', model.getDataValue('email').toLowerCase());
+            });
+
+            InternshipTable.addHook('beforeValidate', (model) => {
+                model.set(
+                    'organizationSupervisorEmail',
+                    model
+                        .getDataValue('organizationSupervisorEmail')
+                        .toLowerCase()
+                );
             });
 
             // user and user-tokens association
@@ -701,7 +709,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             InternshipTable.belongsTo(OrganizationTable);
             OrganizationTable.hasMany(InternshipTable);
 
-            // Internship-tasks and internship association
+            // internship-tasks and internship association
             InternshipTasksTable.belongsTo(InternshipTable);
             InternshipTable.hasMany(InternshipTasksTable);
 
@@ -711,7 +719,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             // sync
             if (config.project.environment !== 'production')
-                await this.sequelize.sync();
+                await this.sequelize.sync({ force: true });
 
             await this.sequelize.authenticate();
         } catch (err) {
