@@ -14,6 +14,8 @@ import internshipDocumentService from './internship-document';
 import organizationService from './organization';
 import studentService from './student';
 
+// TODO: Criar documentos de estágio de progresso a cada 6 meses e de conclusão quando o estágio terminar
+
 class InternshipService {
     async startNewInternship(
         data: InStartNewInternshipDto
