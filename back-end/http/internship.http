@@ -8,7 +8,7 @@ Authorization: Bearer {{token}}
 {
     "classification": "mandatory",
     "division": "Desenvolvimento",
-    "monthlyStipend": 5000,
+    "monthlyStipend": 5000, 
     "organizationCnpj": "19131243000197",
     "organizationSupervisor": {
         "email": "supervisor@example.com",
@@ -17,9 +17,9 @@ Authorization: Bearer {{token}}
     },
     "period": {
         "startDate": "2024-01-01",
-        "expectedEndDate": "2024-12-31"
+        "expectedEndDate": "2024-12-31" 
     },
-    "tasks": [
+    "tasks": [ 
         {
             "name": "task 1",
             "description": "task 1 description"
@@ -27,24 +27,20 @@ Authorization: Bearer {{token}}
         {
             "name": "task 2",
             "description": "task 2 description"
-        }, 
-        {
-            "name": "task 3",
-            "description": "task 3 description"
         }
     ],
     "studentId": 1,
     "supervisorId": 1,
     "transportationAid": 3,
-    "internshipSchedule": {
+    "internshipSchedule": { 
         "mondayToFriday": { 
             "startTime": 8, 
-            "endTime": 11.40
+            "endTime": 11.40 
         },
-        "mondayToFridaySecondary": null,
+        "mondayToFridaySecondary": null, 
         "saturday": {
             "startTime": 9,
-            "endTime": 12
+            "endTime": 12 
         }
     },
     "workSituation": "onsite"
