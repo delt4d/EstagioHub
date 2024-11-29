@@ -9,7 +9,7 @@ module.exports = {
                 model: 'addresses',
                 key: 'id',
             },
-            allowNull: false,
+            allowNull: true,
         });
     },
 
