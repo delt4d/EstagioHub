@@ -3,57 +3,52 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('students', {
+        await queryInterface.createTable('addresses', {
             id: {
                 type: Sequelize.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
                 allowNull: false,
             },
-            fullName: {
+            street: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            rg: {
+            city: {
                 type: Sequelize.STRING,
-                allowNull: true,
+                allowNull: false,
             },
-            phone: {
+            district: {
                 type: Sequelize.STRING,
-                allowNull: true,
+                allowNull: false,
             },
-            whatsapp: {
+            postalCode: {
                 type: Sequelize.STRING,
-                allowNull: true,
+                allowNull: false,
             },
-            academicId: {
+            state: {
                 type: Sequelize.STRING,
-                allowNull: true,
+                allowNull: false,
             },
-            userId: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: 'users',
-                    key: 'id',
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'SET NULL',
-                allowNull: true,
+            number: {
+                type: Sequelize.STRING,
+            },
+            additionalInfo: {
+                type: Sequelize.STRING,
             },
             createdAt: {
-                type: Sequelize.TIME,
+                type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: new Date(),
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
             updatedAt: {
-                type: Sequelize.TIME,
+                type: Sequelize.DATE,
                 allowNull: true,
-                defaultValue: null,
             },
         });
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('students');
+        await queryInterface.dropTable('addresses');
     },
 };

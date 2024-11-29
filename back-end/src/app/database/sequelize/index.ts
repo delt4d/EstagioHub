@@ -760,11 +760,8 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
     async init(): Promise<void> {
         try {
             if (!this.sequelize) {
-                if (config.project.environment === 'production') {
+                if (config.project.environment === 'production')
                     this.sequelize = new Sequelize(config.project.databaseUrl);
-                    return;
-                }
-
                 this.sequelize = new Sequelize({
                     dialect: 'sqlite',
                     storage: ':memory:',

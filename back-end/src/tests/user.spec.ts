@@ -25,9 +25,9 @@ describe('users', () => {
                     status: 200,
                     body: {
                         success: true,
-                        user: testing.models.getAdminWithoutPassword(
+                        data: testing.models.getAdminWithoutPassword(
                             testing.models.defaultAdmin
-                        ).user,
+                        ),
                     },
                 },
             };
