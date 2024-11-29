@@ -29,11 +29,11 @@ routes.get(
     '/student/me',
     ensureIsAuthenticated,
     ensureIsAuthorized(UserRole.Student),
-    controller.getInternshipsByStudentId
+    controller.getInternshipsByCurrentStudentId
 );
 
 routes.get(
-    '/student/:id',
+    '/student/by/:id',
     ensureIsAuthenticated,
     ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
     controller.getInternshipsByStudentId

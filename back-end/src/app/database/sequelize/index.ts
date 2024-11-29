@@ -759,28 +759,24 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
     async init(): Promise<void> {
         try {
-            if (!this.sequelize) {
-                if (config.project.environment === 'production') {
-                    this.sequelize = new Sequelize(config.project.databaseUrl);
-                    return;
-                }
-
-                this.sequelize = new Sequelize({
-                    dialect: 'sqlite',
-                    storage: ':memory:',
-                    logging: false,
-                    repositoryMode: false,
-                    pool:
-                        config.project.environment !== 'test'
-                            ? {
-                                  max: 5,
-                                  min: 0,
-                                  acquire: 3000,
-                                  idle: 1000,
-                              }
-                            : undefined,
-                });
-            }
+            this.sequelize =
+                this.sequelize || config.project.environment === 'production'
+                    ? new Sequelize(config.project.databaseUrl)
+                    : new Sequelize({
+                          dialect: 'sqlite',
+                          storage: ':memory:',
+                          logging: false,
+                          repositoryMode: false,
+                          pool:
+                              config.project.environment !== 'test'
+                                  ? {
+                                        max: 5,
+                                        min: 0,
+                                        acquire: 3000,
+                                        idle: 1000,
+                                    }
+                                  : undefined,
+                      });
 
             this.sequelize.addModels(SequelizeDatabaseConnection.Models);
 

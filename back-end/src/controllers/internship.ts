@@ -51,8 +51,21 @@ export default class InternshipController {
         });
     }
 
+    async getInternshipsByCurrentStudentId(req: Request, res: Response) {
+        const id = req.user?.id!;
+        const internships =
+            await internshipService.getInternishipsByStudentId(id);
+
+        return res.send({
+            success: true,
+            internships: internships.map((internship) =>
+                mapInternshipOut(internship, true)
+            ),
+        });
+    }
+
     async getInternshipsByStudentId(req: Request, res: Response) {
-        const id = Number(req.params.id) ?? req.user?.id;
+        const id = Number(req.params.id);
 
         if (!id || isNaN(id)) {
             throw new BadRequestError('ID do estudante inválido.');
@@ -63,7 +76,7 @@ export default class InternshipController {
 
         return res.send({
             success: true,
-            internship: internships.map((internship) =>
+            internships: internships.map((internship) =>
                 mapInternshipOut(internship, true)
             ),
         });

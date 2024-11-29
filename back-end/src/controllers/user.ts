@@ -26,9 +26,11 @@ export default class UserController {
             .orElseThrowAsync();
 
         return res.send({
-            ...data,
             success: true,
-            user: mapUserOut(currentUser),
+            data: {
+                ...data,
+                user: mapUserOut(currentUser),
+            },
         });
     }
 
