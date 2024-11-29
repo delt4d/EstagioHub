@@ -17,5 +17,17 @@ routes.get(
     ensureIsAuthorized(UserRole.Adm, UserRole.Supervisor),
     controller.searchStudents
 );
+routes.put(
+    '/',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Student),
+    controller.saveStudent
+);
+routes.put(
+    '/user/:id',
+    ensureIsAuthenticated,
+    ensureIsAuthorized(UserRole.Supervisor),
+    controller.saveStudentByUserId
+);
 
 export default routes;

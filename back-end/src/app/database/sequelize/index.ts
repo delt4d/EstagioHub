@@ -2,7 +2,7 @@ import { Op, DatabaseError as SequelizeDatabaseError } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { DatabaseConnection } from '..';
 import { InSearchInternshipsDto } from '../../../dtos/internship';
-import { SearchStudentsDto } from '../../../dtos/student';
+import { SearchStudentsDto, UpdateStudentDto } from '../../../dtos/student';
 import { AccessToken } from '../../../models/access-token';
 import { Admin } from '../../../models/admin';
 import {
@@ -167,7 +167,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 include: [UserTable],
             });
 
-            return admins.map(mapSequelizeAdminToModel);
+            return admins.map((model) => mapSequelizeAdminToModel(model));
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
             return [];
@@ -255,7 +255,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             student.user.role = UserRole.Student;
 
             const model = await StudentTable.create(student, {
-                include: [UserTable],
+                include: [UserTable, AddressTable],
             });
 
             const entity = mapSequelizeStudentToModel(model);
@@ -266,10 +266,32 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         }
     }
 
+    async saveStudentByUserId(
+        userId: number,
+        student: UpdateStudentDto
+    ): Promise<Student | undefined> {
+        try {
+            const model = await StudentTable.findOne({
+                where: { $userId$: userId },
+                include: [UserTable, AddressTable],
+            });
+
+            if (!model) return;
+
+            student.address.id = model.address.id;
+            await model.update(student);
+            await model.address.update(student.address);
+
+            return mapSequelizeStudentToModel(model, true);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
     async findStudentById(id: number): Promise<Student | undefined> {
         try {
             const model = await StudentTable.findByPk(id, {
-                include: [UserTable],
+                include: [UserTable, AddressTable],
             });
 
             if (!model) return;
@@ -286,7 +308,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 where: {
                     [Op.or]: [{ '$user.email$': email }],
                 },
-                include: [UserTable],
+                include: [UserTable, AddressTable],
             });
 
             if (!model) return;
@@ -343,12 +365,14 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                         [Op.like]: `%${data.searchTerm}%`,
                     }
                 ),
-                include: [UserTable],
+                include: [UserTable, AddressTable],
                 limit: data.limit,
                 offset: data.offset,
             });
 
-            return models.map(mapSequelizeStudentToModel);
+            return models.map((model) =>
+                mapSequelizeStudentToModel(model, true)
+            );
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
         }
@@ -423,6 +447,45 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         }
     }
 
+    async findUserAndAssocById(
+        id: number,
+        role: UserRole
+    ): Promise<Student | Supervisor | Admin | undefined> {
+        try {
+            let model: AdminTable | StudentTable | SupervisorTable | null;
+
+            switch (role) {
+                case UserRole.Adm:
+                    model = await AdminTable.findOne({
+                        where: { $userId$: id },
+                        include: [UserTable],
+                    });
+                    break;
+                case UserRole.Student:
+                    model = await StudentTable.findOne({
+                        where: { $userId$: id },
+                        include: [UserTable, AddressTable],
+                    });
+                    break;
+                case UserRole.Supervisor:
+                    model = await SupervisorTable.findOne({
+                        where: { $userId$: id },
+                        include: [UserTable],
+                    });
+                    break;
+            }
+
+            if (model instanceof SupervisorTable)
+                return mapSequelizeSupervisorToModel(model);
+            else if (model instanceof StudentTable)
+                return mapSequelizeStudentToModel(model);
+            else if (model instanceof AdminTable)
+                return mapSequelizeAdminToModel(model);
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
     async findUserByEmail(email: string): Promise<User | undefined> {
         try {
             const model = await UserTable.findOne({ where: { email } });
@@ -476,7 +539,9 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
             const models = await InternshipDocumentTable.findAll({
                 where: { internshipId },
             });
-            return models.map(mapSequelizeInternshipDocumentToModel);
+            return models.map((model) =>
+                mapSequelizeInternshipDocumentToModel(model)
+            );
         } catch (err) {
             this.error = err as SequelizeDatabaseError;
         }
@@ -532,7 +597,9 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 models.push(model);
             }
 
-            const result = models.map(mapSequelizeInternshipDocumentToModel);
+            const result = models.map((model) =>
+                mapSequelizeInternshipDocumentToModel(model)
+            );
 
             await transaction.commit();
 
@@ -717,66 +784,7 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
 
             this.sequelize.addModels(SequelizeDatabaseConnection.Models);
 
-            UserTable.addHook('beforeValidate', (model) => {
-                model.set('email', model.getDataValue('email').toLowerCase());
-            });
-
-            InternshipTable.addHook('beforeValidate', (model) => {
-                model.set(
-                    'organizationSupervisorEmail',
-                    model
-                        .getDataValue('organizationSupervisorEmail')
-                        .toLowerCase()
-                );
-            });
-
-            // user and user-tokens association
-            AccessTokenTable.belongsTo(UserTable);
-            UserTable.hasMany(AccessTokenTable);
-
-            // user and admin association
-            AdminTable.belongsTo(UserTable);
-            UserTable.hasOne(AdminTable);
-
-            // user and supervisor association
-            SupervisorTable.belongsTo(UserTable);
-            UserTable.hasOne(SupervisorTable);
-
-            // user and student association
-            StudentTable.belongsTo(UserTable);
-            UserTable.hasOne(StudentTable);
-
-            // student and address association
-            StudentTable.belongsTo(AddressTable);
-            AddressTable.hasMany(StudentTable);
-
-            // student and academic-class association
-            StudentTable.belongsTo(AcademicClassTable);
-            AcademicClassTable.hasMany(StudentTable);
-
-            // organization and address association
-            OrganizationTable.belongsTo(AddressTable);
-            AddressTable.hasMany(OrganizationTable);
-
-            // internship and student association
-            InternshipTable.belongsTo(StudentTable);
-            StudentTable.hasMany(InternshipTable);
-
-            // internship and supervisor association
-            InternshipTable.belongsTo(SupervisorTable);
-            SupervisorTable.hasMany(InternshipTable);
-
-            // internship and organization association
-            InternshipTable.belongsTo(OrganizationTable);
-            OrganizationTable.hasMany(InternshipTable);
-
-            // internship-tasks and internship association
-            InternshipTasksTable.belongsTo(InternshipTable);
-            InternshipTable.hasMany(InternshipTasksTable);
-
-            // Internship-documents and internship association
-            InternshipDocumentTable.belongsTo(InternshipTable);
-            InternshipTable.hasMany(InternshipDocumentTable);
+            configureTables();
 
             // sync
             if (config.project.environment !== 'production')
@@ -812,4 +820,65 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
     private set sequelize(seq: Sequelize) {
         SequelizeDatabaseConnection.sequelize = seq;
     }
+}
+
+function configureTables() {
+    UserTable.addHook('beforeValidate', (model) => {
+        model.set('email', model.getDataValue('email').toLowerCase());
+    });
+
+    InternshipTable.addHook('beforeValidate', (model) => {
+        model.set(
+            'organizationSupervisorEmail',
+            model.getDataValue('organizationSupervisorEmail').toLowerCase()
+        );
+    });
+
+    // user and user-tokens association
+    AccessTokenTable.belongsTo(UserTable);
+    UserTable.hasMany(AccessTokenTable);
+
+    // user and admin association
+    AdminTable.belongsTo(UserTable);
+    UserTable.hasOne(AdminTable);
+
+    // user and supervisor association
+    SupervisorTable.belongsTo(UserTable);
+    UserTable.hasOne(SupervisorTable);
+
+    // user and student association
+    StudentTable.belongsTo(UserTable);
+    UserTable.hasOne(StudentTable);
+
+    // student and address association
+    StudentTable.belongsTo(AddressTable);
+    AddressTable.hasOne(StudentTable);
+
+    // student and academic-class association
+    StudentTable.belongsTo(AcademicClassTable);
+    AcademicClassTable.hasMany(StudentTable);
+
+    // organization and address association
+    OrganizationTable.belongsTo(AddressTable);
+    AddressTable.hasOne(OrganizationTable);
+
+    // internship and student association
+    InternshipTable.belongsTo(StudentTable);
+    StudentTable.hasMany(InternshipTable);
+
+    // internship and supervisor association
+    InternshipTable.belongsTo(SupervisorTable);
+    SupervisorTable.hasMany(InternshipTable);
+
+    // internship and organization association
+    InternshipTable.belongsTo(OrganizationTable);
+    OrganizationTable.hasMany(InternshipTable);
+
+    // internship-tasks and internship association
+    InternshipTasksTable.belongsTo(InternshipTable);
+    InternshipTable.hasMany(InternshipTasksTable);
+
+    // Internship-documents and internship association
+    InternshipDocumentTable.belongsTo(InternshipTable);
+    InternshipTable.hasMany(InternshipDocumentTable);
 }

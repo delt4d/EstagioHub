@@ -8,7 +8,7 @@ export type Student = {
     rg?: string;
     phone?: string;
     user: User;
-    address?: Address;
+    address: Address;
     whatsapp?: string;
     academicClass?: AcademicClass;
     academicId?: string; // id do aluno na instituição

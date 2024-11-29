@@ -1,4 +1,5 @@
 export type Address = {
+    id?: number;
     street: string; // logradouro
     city: string; // município
     district: string; // bairro

@@ -25,6 +25,7 @@ import {
     SequelizeAccessToken,
     SequelizeAccessTokenCreate,
     SequelizeAddress,
+    SequelizeAddressCreate,
     SequelizeAdmin,
     SequelizeAdminCreate,
     SequelizeInternship,
@@ -277,29 +278,30 @@ export class OrganizationTable extends Model<SequelizeOrganization> {
     tableName: 'addresses',
     modelName: 'addresses',
 })
-export class AddressTable extends Model<SequelizeAddress> {
+export class AddressTable extends Model<
+    SequelizeAddress,
+    SequelizeAddressCreate
+> {
+    public declare user: UserTable;
+    public declare organization: OrganizationTable;
+
     @AllowNull(false)
-    @NotEmpty
     @Column
     public declare street: string;
 
     @AllowNull(false)
-    @NotEmpty
     @Column
     public declare city: string;
 
     @AllowNull(false)
-    @NotEmpty
     @Column
     public declare district: string;
 
     @AllowNull(false)
-    @NotEmpty
     @Column
     public declare postalCode: string;
 
     @AllowNull(false)
-    @NotEmpty
     @Column
     public declare state: string;
 

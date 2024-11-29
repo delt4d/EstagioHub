@@ -48,6 +48,7 @@ const studentMapper: Mapper<StudentTable, Student> = {
     academicId: 'academicId',
     academicClass: 'academicClass',
     rg: 'rg',
+    address: 'address',
     user: (src) => mapSequelizeUserToModel(src.user),
 };
 
@@ -168,14 +169,20 @@ const internshipMapper: Mapper<InternshipTable, Internship> = {
     }),
 };
 
-export const mapSequelizeAdminToModel = (entity: AdminTable) =>
-    mapObject(entity, adminMapper);
+export const mapSequelizeAdminToModel = (
+    entity: AdminTable,
+    ignoreError: boolean = false
+) => mapObject(entity, adminMapper, ignoreError);
 
-export const mapSequelizeSupervisorToModel = (entity: SupervisorTable) =>
-    mapObject(entity, supervisorMapper);
+export const mapSequelizeSupervisorToModel = (
+    entity: SupervisorTable,
+    ignoreError: boolean = false
+) => mapObject(entity, supervisorMapper, ignoreError);
 
-export const mapSequelizeStudentToModel = (entity: StudentTable) =>
-    mapObject(entity, studentMapper);
+export const mapSequelizeStudentToModel = (
+    entity: StudentTable,
+    ignoreError: boolean = false
+) => mapObject(entity, studentMapper, ignoreError);
 
 export const mapSequelizeAccessTokenToModel = (
     entity: AccessTokenTable,

@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import config from '../app/config';
-import { DatabaseError, NotFoundError, UnhandledError } from '../app/errors';
+import {
+    BadRequestError,
+    DatabaseError,
+    NotFoundError,
+    UnhandledError,
+} from '../app/errors';
 import { validateSchema } from '../app/helpers';
 import { toResult } from '../app/utils';
 import { mapStudentOut } from '../dtos/student';
@@ -9,6 +14,7 @@ import {
     SearchStudentsSchema,
     StudentLoginSchema,
     StudentRegisterSchema,
+    UpdateStudentSchema,
 } from '../schemas/student';
 import authService from '../services/auth';
 import emailService from '../services/email';
@@ -85,6 +91,36 @@ export default class StudentController {
             ...data,
             success: true,
             students: students.map(mapStudentOut),
+        });
+    }
+
+    async saveStudent(req: Request, res: Response) {
+        const currentUser = req.user!;
+        const data = validateSchema(UpdateStudentSchema, req.body);
+        const student = await studentService.saveStudentByUserId(
+            currentUser.id!,
+            data
+        );
+
+        return res.send({
+            success: true,
+            student: mapStudentOut(student),
+        });
+    }
+
+    async saveStudentByUserId(req: Request, res: Response) {
+        const data = validateSchema(UpdateStudentSchema, req.body);
+        const userId = Number(req.params.id);
+
+        if (isNaN(userId)) {
+            throw new BadRequestError('ID do estudante inválido.');
+        }
+
+        const student = await studentService.saveStudentByUserId(userId, data);
+
+        return res.send({
+            success: true,
+            student: mapStudentOut(student),
         });
     }
 }

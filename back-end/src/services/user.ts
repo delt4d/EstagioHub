@@ -1,7 +1,11 @@
 import config from '../app/config';
 import { DatabaseResolver } from '../app/database';
 import { BadRequestError, NotFoundError } from '../app/errors';
+import { Admin } from '../models/admin';
+import { Student } from '../models/student';
+import { Supervisor } from '../models/supervisor';
 import { User } from '../models/user';
+import { UserRole } from '../models/user-role';
 import hashService from './hash';
 
 class UserService {
@@ -31,6 +35,18 @@ class UserService {
         conn.throwIfHasError();
 
         return user;
+    }
+
+    async findUserAndAssocById(
+        userId: number,
+        role: UserRole
+    ): Promise<Student | Supervisor | Admin | undefined> {
+        const conn = await DatabaseResolver.getConnection();
+        const data = await conn.findUserAndAssocById(userId, role);
+
+        conn.throwIfHasError();
+
+        return data;
     }
 
     async findUserById(userId: number): Promise<User | undefined> {

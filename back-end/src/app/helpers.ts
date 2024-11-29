@@ -29,10 +29,11 @@ export function mapObject<From extends object, To extends object>(
 
 export function validateSchema<T>(
     validationSchema: Joi.Schema<T>,
-    value?: any
+    value: any,
+    stripUnknown: boolean = true
 ): T {
     const validationResult = validationSchema
-        .options({ stripUnknown: true })
+        .options({ stripUnknown })
         .validate(value);
 
     if (validationResult.error) {

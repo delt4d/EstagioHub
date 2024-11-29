@@ -1,5 +1,5 @@
 import { InSearchInternshipsDto } from '../../dtos/internship';
-import { SearchStudentsDto } from '../../dtos/student';
+import { SearchStudentsDto, UpdateStudentDto } from '../../dtos/student';
 import { AccessToken } from '../../models/access-token';
 import { Admin } from '../../models/admin';
 import { Internship, InternshipDocument } from '../../models/internship';
@@ -7,6 +7,7 @@ import { ResetPasswordToken } from '../../models/reset-password-token';
 import { Student } from '../../models/student';
 import { Supervisor } from '../../models/supervisor';
 import { User } from '../../models/user';
+import { UserRole } from '../../models/user-role';
 import { DatabaseError } from '../errors';
 import { SequelizeDatabaseConnection } from './sequelize';
 
@@ -34,6 +35,11 @@ export interface DatabaseConnection {
     /// Student-related operations
     // cadastrar novo aluno
     saveNewStudent(student: Student): Promise<Student | undefined>;
+    // atualizar estudante pelo id de usuário
+    saveStudentByUserId(
+        userId: number,
+        student: UpdateStudentDto
+    ): Promise<Student | undefined>;
     // obter um estudante pelo id
     findStudentById(id: number): Promise<Student | undefined>;
     // obter um estudante pelo email
@@ -46,6 +52,11 @@ export interface DatabaseConnection {
     /// User-related operations
     // obter um usuário pelo id
     findUserById(id: number): Promise<User | undefined>;
+    // obter um usuário e associação pelo id
+    findUserAndAssocById(
+        id: number,
+        role: UserRole
+    ): Promise<Student | Supervisor | Admin | undefined>;
     // obter um usuário pelo email
     findUserByEmail(email: string): Promise<User | undefined>;
     // verificar se um email está em uso

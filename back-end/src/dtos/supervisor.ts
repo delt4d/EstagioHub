@@ -10,6 +10,8 @@ export type OutSupervisorDto = Replace<
     }
 >;
 
+export type UpdateSupervisorDto = Omit<Supervisor, 'id' | 'user'>;
+
 export const mapSupervisorOut = (supervisor: Supervisor): OutSupervisorDto => {
     const mapper: Mapper<Supervisor, OutSupervisorDto> = {
         id: 'id',

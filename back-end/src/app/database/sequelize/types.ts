@@ -39,14 +39,15 @@ export type SequelizeSupervisor = BaseSequelizeModel<
 >;
 export type SequelizeStudent = BaseSequelizeModel<
     Student,
-    'user' | 'address',
+    never,
     {
         userId: number;
         addressId: number;
     }
 >;
-export type SequelizeResetPasswordToken = ResetPasswordToken;
-export type SequelizeAddress = Address;
+export type SequelizeResetPasswordToken =
+    BaseSequelizeModel<ResetPasswordToken>;
+export type SequelizeAddress = BaseSequelizeModel<Address>;
 export type SequelizeAcademicClass = AcademicClass;
 export type SequelizeInternshipTasks = InternshipTasks;
 export type SequelizeOrganization = BaseSequelizeModel<
@@ -94,6 +95,7 @@ export type SequelizeStudentCreate = CreationType<
     SequelizeStudent,
     'id' | 'userId' | 'addressId'
 >;
+export type SequelizeAddressCreate = CreationType<SequelizeAddress>;
 export type SequelizeAcademicClassCreate = CreationType<SequelizeAcademicClass>;
 export type SequelizeInternshipCreate = CreationType<
     SequelizeInternship,

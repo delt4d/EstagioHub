@@ -27,11 +27,90 @@ Access-Control-Allow-Credentials: true
 }
 
 ###
+# @name updateStudent
+# @prompt token
+# @prompt fullName
+# @prompt academicClass
+# @prompt academicId
+# @prompt phone
+# @prompt whatsapp
+# @prompt rg
+# @prompt street
+# @prompt city
+# @prompt district
+# @prompt postalCode
+# @prompt state
+# @prompt number
+# @prompt additionalInfo
+PUT {{baseUrl}}/student
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "fullName": "{{fullName}}",
+    "academicClass": "{{academicClass}}",
+    "academicId": "{{academicId}}",
+    "phone": "{{phone}}",
+    "whatsapp": "{{whatsapp}}",
+    "rg": "{{rg}}",
+    "address": {
+        "street": "{{street}}",          
+        "city": "{{city}}",             
+        "district": "{{district}}",     
+        "postalCode": "{{postalCode}}", 
+        "state": "{{state}}",           
+        "number": "{{number}}",         
+        "additionalInfo": "{{additionalInfo}}" 
+    }
+}
+
+###
+# @name updateStudentById
+# @prompt token
+# @prompt userId
+# @prompt fullName
+# @prompt academicClass
+# @prompt academicId
+# @prompt phone
+# @prompt whatsapp
+# @prompt rg
+# @prompt street
+# @prompt city
+# @prompt district
+# @prompt postalCode
+# @prompt state
+# @prompt number
+# @prompt additionalInfo
+PUT {{baseUrl}}/student/user/{{userId}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "fullName": "{{fullName}}",
+    "academicClass": "{{academicClass}}",
+    "academicId": "{{academicId}}",
+    "phone": "{{phone}}",
+    "whatsapp": "{{whatsapp}}",
+    "rg": "{{rg}}",
+    "address": {
+        "street": "{{street}}",         
+        "city": "{{city}}",              
+        "district": "{{district}}",      
+        "postalCode": "{{postalCode}}",  
+        "state": "{{state}}",           
+        "number": "{{number}}",          
+        "additionalInfo": "{{additionalInfo}}"
+    }
+}
+
+###
 # @name searchStudents
 # @prompt token
-# @prompt searchTerm
 # @prompt limit 10
 # @prompt offset 0
+# @prompt searchTerm
 GET {{baseUrl}}/student?searchTerm={{searchTerm}}&limit={{limit}}&offset={{offset}}
 Content-Type: application/json
 Access-Control-Allow-Credentials: true

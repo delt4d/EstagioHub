@@ -9,12 +9,15 @@ export type SearchStudentsDto = {
     searchTerm: string;
 };
 
-export type OutStudentDto = Replace<
-    Student,
+export type CreateStudentDto = Omit<Student, 'address'>;
+export type UpdateStudentDto = Replace<
+    Omit<Student, 'user'>,
     {
-        user: OutUserDto;
+        id: number;
     }
 >;
+
+export type OutStudentDto = Replace<Student, { user: OutUserDto }>;
 
 export const mapStudentOut = (student: Student): OutStudentDto => {
     const mapper: Mapper<Student, OutStudentDto> = {
