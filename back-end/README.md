@@ -27,7 +27,7 @@
 ---
 
 - [ ] Configurar notificações
-- [ ] Obter informações do usuário
-- [ ] Atualizar informações do usuário
+- [x] Obter informações do usuário
+- [x] Atualizar informações do usuário
 - [ ] Descadastrar usuário
 
