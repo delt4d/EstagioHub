@@ -175,7 +175,7 @@ Content-Type: application/msword
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
-# @name findStudentInternshipsById
+# @name findStudentInternshipsByUserId
 # @prompt token
 # @prompt studentId
 GET {{baseUrl}}/internship/student/by/{{studentId}}

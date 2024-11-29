@@ -1,5 +1,5 @@
 import { DatabaseResolver } from '../app/database';
-import { UnhandledError } from '../app/errors';
+import { NotFoundError } from '../app/errors';
 import {
     CreateStudentDto,
     SearchStudentsDto,
@@ -69,8 +69,8 @@ class StudentService {
         conn.throwIfHasError();
 
         if (!student) {
-            throw new UnhandledError(
-                'Não foi possível atualizar as informações do aluno.'
+            throw new NotFoundError(
+                'Não foi encontrado nenhum aluno com este ID.'
             );
         }
 
