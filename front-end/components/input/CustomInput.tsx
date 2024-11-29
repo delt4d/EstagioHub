@@ -34,14 +34,14 @@ onChangeText, secureTextEntry, ...props }) => {
         rightIcon={
           iconName === 'eye' ? (
             <Icon
-              type="font-awesome"
-              name={showPassword ? 'eye-slash' : 'eye'}
+              type="material-community"
+              name={showPassword ? 'eye-off' : 'eye'}
               onPress={togglePasswordVisibility}
               containerStyle={{ cursor: 'pointer'}}
               iconStyle={ styles.iconStyle }
             />
           ) : iconName ? (
-            <Icon type="font-awesome" name={iconName} />
+            <Icon type="material-community" name={iconName} />
           ) : undefined
         }
         errorStyle={styles.errorStyle}

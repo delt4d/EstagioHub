@@ -2,26 +2,45 @@ import React, { useState } from 'react';
 import { View, SafeAreaView, Text, Image } from 'react-native';
 import { Link } from 'expo-router';
 
+import { useRouter } from 'expo-router';
+
+import logo from '../../assets/images/LogoEstagioRed.png'
 import CustomButton from '../../components/button/CustomButton';
 import CustomInput from '../../components/input/CustomInput';
 import CustomCheckBox from '../../components/checkbox/CustomCheckBox';
 
-import { styles, signup } from '../styles';
+import { styles, cadastro } from '../styles';
 
-export default function SignUp() {
+import axios from 'axios';
+
+export default function Cadastro() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [nome, setNome] = useState('');
   const [emailError, setEmailError] = useState('');
   const [senhaError, setSenhaError] = useState('');
+  const [nomeError, setNomeError] = useState('');
 
-  const handleSignUp = () => {
+  const router = useRouter();
+
+  const handleCadastro = async () => {
     
     setEmailError('');
     setSenhaError('');
+    setNomeError('');
 
     if (email && senha) {
 
-      alert('Acessando o sistema');
+      try {
+        await axios.post('http://localhost:8000/api/v1/student/register', {
+          nome: nome, 
+          email: email,
+          senha: senha,
+        });
+        router.push('/login');
+      } catch (error) {
+        console.error(error);
+      }
     } 
     else 
     {
@@ -33,28 +52,33 @@ export default function SignUp() {
       {
         setSenhaError("Digite uma senha");
       }
+      if (!nome) 
+      {
+        setSenhaError("Digite um nome");
+      }
       alert('Por favor, preencha todos os campos');
+
     }
     
   };
 
   return (
-    <SafeAreaView style={signup.container}>
-      <View style={signup.innerContainer}>
+    <SafeAreaView style={cadastro.container}>
+      <View style={cadastro.innerContainer}>
         
         <Image 
-          source={require('../../assets/images/Logo1.png')}
-          style={signup.logoImage}
+          source={logo}
+          style={cadastro.logoImage}
           resizeMode="contain"
         />
 
-        <Text style={signup.header}>Bem vindo ao nosso sistema!</Text>
+        <Text style={cadastro.header}>Bem vindo ao nosso sistema!</Text>
 
         <CustomInput 
           label="Nome Completo"
           placeholder="Digite seu nome"
-          onChangeText={setEmail}
-          errorMessage={emailError}
+          onChangeText={setNome}
+          errorMessage={nomeError}
         />
 
         <CustomInput 
@@ -82,19 +106,19 @@ export default function SignUp() {
           errorMessage={senhaError}
         />
 
-        <View style={signup.viewCheckBox}>
+        <View style={cadastro.viewCheckBox}>
           <CustomCheckBox />
-          <Text style={signup.linkForgotPassword}>Estou de acordo com as </Text>
-          <Link style={styles.link} href={'/policies'}>politicas e diretrizes</Link>
+          <Text style={cadastro.linkRecuperarSenha}>Estou de acordo com as </Text>
+          <Link style={styles.link} href={'/politicas'}>politicas e diretrizes</Link>
         </View>
 
         <CustomButton 
-          title="Acessar o Sistema" 
+          title="Cadastrar-se" 
           type="primary" 
-          onPress={handleSignUp} 
+          onPress={handleCadastro} 
         />
         
-        <Text style={signup.linkText}> Já tem uma conta? <Link style={styles.link} href={'/signin'}>Acessar Agora</Link></Text>
+        <Text style={cadastro.linkText}> Já tem uma conta? <Link style={styles.link} href={'/login'}>Acessar Agora</Link></Text>
 
       </View>
     </SafeAreaView>

@@ -5,8 +5,8 @@ import CustomButton from '@/components/button/CustomButton';
 export default function HomeScreen() {
   return (
     <View>
-      <Link href='/signup/'>Registre-se</Link>
-      <Link href='/signin/'>Entrar</Link>
+      <Link href='/cadastro/'>Registre-se</Link>
+      <Link href='/login/'>Entrar</Link>
       <CustomButton title="PrimaryButton" type="primary" />
       <CustomButton title="SecondaryButton" type="secondary" />
     </View>

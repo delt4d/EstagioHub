@@ -6,12 +6,12 @@ import CustomButton from '../../components/button/CustomButton'
 
 import { styles } from '../styles';
 
-export default function Policies() {
+export default function Politicas() {
 
   const router = useRouter();
 
-  const PaginaSignUp = () => {
-    router.push('/signup');
+  const PaginaCadastro = () => {
+    router.push('/cadastro');
   };
 
   return (
@@ -25,7 +25,7 @@ export default function Policies() {
         <CustomButton 
           title="Voltar" 
           type="primary" 
-          onPress={PaginaSignUp} 
+          onPress={PaginaCadastro} 
         />
 
       </View>

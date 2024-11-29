@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { View, SafeAreaView, Text, Image } from 'react-native';
 import { Link } from 'expo-router';
 
+import logo from '../../assets/images/LogoEstagioRed.png'
 import CustomButton from '../../components/button/CustomButton';
 import CustomInput from '../../components/input/CustomInput';
 
-import { styles, signin } from '../styles';
+import { styles, login } from '../styles';
 
-export default function SignIn() {
+export default function Login() {
+  
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [emailError, setEmailError] = useState('');
   const [senhaError, setSenhaError] = useState('');
 
-  const handleSignIn = () => {
+  const handleLogin = () => {
     
     setEmailError('');
     setSenhaError('');
@@ -38,16 +40,16 @@ export default function SignIn() {
   };
 
   return (
-    <SafeAreaView style={signin.container}>
-      <View style={signin.innerContainer}>
+    <SafeAreaView style={login.container}>
+      <View style={login.innerContainer}>
         
         <Image 
-          source={require('../../assets/images/Logo1.png')}
-          style={signin.logoImage}
+          source={logo}
+          style={login.logoImage}
           resizeMode="contain"
         />
 
-        <Text style={signin.header}>Bem vindo ao nosso sistema!</Text>
+        <Text style={login.header}>Bem vindo ao nosso sistema!</Text>
 
         <CustomInput 
           label="Endereço de email"
@@ -65,15 +67,15 @@ export default function SignIn() {
           errorMessage={senhaError}
         />
 
-        <Text style={signin.linkForgotPassword}>Esqueceu sua senha? <Link style={styles.link} href={'/forgotPassword'}>Redefinir Senha</Link></Text>
+        <Text style={login.linkRecuperarSenha}>Esqueceu sua senha? <Link style={styles.link} href={'/recuperarSenha'}>Redefinir Senha</Link></Text>
 
         <CustomButton 
           title="Acessar o Sistema" 
           type="primary" 
-          onPress={handleSignIn} 
+          onPress={handleLogin} 
         />
         
-        <Text style={signin.linkText}>Ainda não tem uma conta? <Link style={styles.link} href={'/signup'}>Criar uma Conta</Link></Text>
+        <Text style={login.linkText}>Ainda não tem uma conta? <Link style={styles.link} href={'/cadastro'}>Criar uma Conta</Link></Text>
 
       </View>
     </SafeAreaView>

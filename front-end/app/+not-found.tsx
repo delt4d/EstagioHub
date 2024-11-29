@@ -4,7 +4,7 @@ import { StyleSheet, View, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-import logo from '../assets/images/logo2.png';
+import logo from '../assets/images/LogoWhite.png';
 
 export default function NotFoundScreen() {
   return (
