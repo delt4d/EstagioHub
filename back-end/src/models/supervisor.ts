@@ -5,5 +5,3 @@ export type Supervisor = {
     name: string;
     user: User;
 };
-
-export type SupervisorCollection = Supervisor[];

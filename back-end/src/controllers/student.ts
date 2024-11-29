@@ -1,9 +1,21 @@
 import { Request, Response } from 'express';
+import config from '../app/config';
+import {
+    BadRequestError,
+    DatabaseError,
+    NotFoundError,
+    UnhandledError,
+} from '../app/errors';
+import { validateSchema } from '../app/helpers';
+import { toResult } from '../app/utils';
+import { mapStudentOut } from '../dtos/student';
 import { Student } from '../models/student';
-import config from '../modules/config';
-import { toResult, validateSchema } from '../modules/config/utils';
-import { NotFoundError, UnhandledError } from '../modules/errors';
-import { StudentLoginSchema, StudentRegisterSchema } from '../schemas/student';
+import {
+    SearchStudentsSchema,
+    StudentLoginSchema,
+    StudentRegisterSchema,
+    UpdateStudentSchema,
+} from '../schemas/student';
 import authService from '../services/auth';
 import emailService from '../services/email';
 import studentService from '../services/student';
@@ -28,13 +40,17 @@ export default class StudentController {
 
         const accessToken = await toResult(
             authService.saveNewAccessToken(student.user.id!)
-        ).orElseThrowAsync(
-            (err) =>
-                new UnhandledError(
-                    err.message,
-                    'Não foi possível realizar o login, tente novamente mais tarde.'
-                )
-        );
+        ).orElseThrowAsync((err) => {
+            const friendlyMessage =
+                'Não foi possível realizar o login. Tente novamente mais tarde.';
+
+            if (err instanceof DatabaseError) {
+                err.changeFriendlyMessage(friendlyMessage);
+                return err;
+            }
+
+            return new UnhandledError(err.message, friendlyMessage);
+        });
 
         return res
             .status(200)
@@ -57,19 +73,54 @@ export default class StudentController {
                     password: data.password,
                 },
             })
-        ).orElseThrowAsync(
-            (error) =>
-                new UnhandledError(
-                    error.message,
-                    'Os dados foram preenchidos corretamente, mas não foi possível completar o registro.'
-                )
-        );
+        ).orElseThrowAsync();
 
         await toResult(emailService.sendNewUserEmail(student.user)).waitAsync();
 
         return res.status(201).send({
             success: true,
             message: config.messages.successfullRegister,
+        });
+    }
+
+    async searchStudents(req: Request, res: Response) {
+        const data = validateSchema(SearchStudentsSchema, req.query);
+        const students = await studentService.searchStudents(data);
+
+        return res.send({
+            ...data,
+            success: true,
+            students: students.map(mapStudentOut),
+        });
+    }
+
+    async saveStudent(req: Request, res: Response) {
+        const currentUser = req.user!;
+        const data = validateSchema(UpdateStudentSchema, req.body);
+        const student = await studentService.saveStudentByUserId(
+            currentUser.id!,
+            data
+        );
+
+        return res.send({
+            success: true,
+            student: mapStudentOut(student),
+        });
+    }
+
+    async saveStudentByUserId(req: Request, res: Response) {
+        const data = validateSchema(UpdateStudentSchema, req.body);
+        const userId = Number(req.params.id);
+
+        if (isNaN(userId)) {
+            throw new BadRequestError('ID do estudante inválido.');
+        }
+
+        const student = await studentService.saveStudentByUserId(userId, data);
+
+        return res.send({
+            success: true,
+            student: mapStudentOut(student),
         });
     }
 }

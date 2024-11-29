@@ -1,6 +1,6 @@
 import { Router } from 'express';
+import { ensureIsAuthenticated } from '../app/passport/ensure-is-auth';
 import UserController from '../controllers/user';
-import ensureIsAuthenticated from '../modules/passport/ensure-is-auth';
 
 const controller = new UserController();
 const routes = Router();

@@ -6,9 +6,9 @@ import session, { MemoryStore } from 'express-session';
 import slowDown from 'express-slow-down';
 import helmet from 'helmet';
 import validator from 'validator';
-import config from '../config';
-import configurePassport from '../passport';
-import routes from './routes';
+import routes from '../routes';
+import config from './config';
+import configurePassport from './passport';
 
 const app = express();
 const sessionOptions: session.SessionOptions = {
@@ -105,11 +105,14 @@ app.use(
 
         const statusCode =
             {
+                DatabaseError: 500,
                 UnauthorizedError: 401,
+                ForbiddenError: 403,
                 BadRequestError: 400,
                 NotFoundError: 404,
                 ValidationError: 400,
                 UnhandledError: 500,
+                TooManyRequestsError: 429,
             }[error.name] ?? 500;
 
         if (config.project.environment === 'development') {

@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require('../../dist/config/index.js').default;
+const config = require('../../dist/app/config/index.js').default;
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {

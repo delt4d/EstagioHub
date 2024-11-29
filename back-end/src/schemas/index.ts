@@ -1,5 +1,6 @@
 import Joi from 'joi';
-import config from '../modules/config';
+import config from '../app/config';
+import { InReasonDto } from '../dtos/internship';
 
 const NameSchemaNoMessages = Joi.string()
     .pattern(/^[a-zA-Z ]+$/)
@@ -16,6 +17,14 @@ const EmailSchemaNoMessages = Joi.string()
     .max(config.validations.maxEmailLength)
     .lowercase()
     .required();
+
+export const CnpjSchema = Joi.string()
+    .pattern(/^[0-9]+$/)
+    .messages({
+        'string.pattern.base': config.messages.invalidCnpj,
+        'any.required': config.messages.emptyCnpj,
+        'string.empty': config.messages.emptyCnpj,
+    });
 
 export const AdminNameSchema = AdminNameSchemaNoMessages.messages({
     'string.pattern.base': config.messages.invalidAdminName,
@@ -67,4 +76,8 @@ export const RepeatPasswordSchema = Joi.any()
 export const ResetPasswordTokenSchema = Joi.string().required().messages({
     'any.required': config.messages.invalidResetPasswordToken,
     'string.empty': config.messages.invalidResetPasswordToken,
+});
+
+export const ReasonSchema = Joi.object<InReasonDto>({
+    reason: Joi.string().allow(''),
 });

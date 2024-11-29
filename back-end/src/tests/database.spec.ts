@@ -1,6 +1,7 @@
 import timekeeper from 'timekeeper';
 import testing from '.';
-import { DatabaseConnection, DatabaseResolver } from '../modules/database';
+import { DatabaseConnection, DatabaseResolver } from '../app/database';
+import { pick } from '../app/utils';
 
 let dbConn: DatabaseConnection;
 
@@ -208,7 +209,10 @@ describe('database', () => {
         // should find a student by id
         it('should find a student by id', async () => {
             const expectedResult = {
-                student: testing.models.defaultStudent,
+                student: pick(testing.models.defaultStudent, [
+                    'fullName',
+                    'user',
+                ]),
             };
             const student = await testing.expectPromiseNotToBeUndefined(
                 dbConn.saveNewStudent(testing.models.defaultStudent)
@@ -221,7 +225,10 @@ describe('database', () => {
         // should save a new student
         it('should save a new student', async () => {
             const expectedResult = {
-                student: testing.models.defaultStudent,
+                student: pick(testing.models.defaultStudent, [
+                    'fullName',
+                    'user',
+                ]),
             };
             const student = await dbConn.saveNewStudent(
                 testing.models.defaultStudent
@@ -232,7 +239,10 @@ describe('database', () => {
         // should not save a new student with duplicated email
         it('should not save a new student with duplicated email', async () => {
             const expectedResult = {
-                student: testing.models.defaultStudent,
+                student: pick(testing.models.defaultStudent, [
+                    'fullName',
+                    'user',
+                ]),
             };
             const student = await dbConn.saveNewStudent(
                 testing.models.defaultStudent
@@ -247,7 +257,10 @@ describe('database', () => {
         // should find a student by email
         it('should find a student by email', async () => {
             const expectedResult = {
-                student: testing.models.defaultStudent,
+                student: pick(testing.models.defaultStudent, [
+                    'fullName',
+                    'user',
+                ]),
             };
             const student = await dbConn.saveNewStudent(
                 testing.models.defaultStudent
@@ -262,7 +275,10 @@ describe('database', () => {
         // should not find a student with wrong email
         it('should not find a student with wrong email', async () => {
             const expectedResult = {
-                student: testing.models.defaultStudent,
+                student: pick(testing.models.defaultStudent, [
+                    'fullName',
+                    'user',
+                ]),
             };
             const student = await dbConn.saveNewStudent(
                 testing.models.defaultStudent

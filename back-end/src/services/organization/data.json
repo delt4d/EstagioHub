@@ -1,0 +1,323 @@
+[
+    {
+        "cnpj": "19131243000197",
+        "corporateName": "Empresa Exemplo LTDA",
+        "businessName": "Exemplo Comércio",
+        "address": {
+            "street": "Rua das Flores",
+            "city": "São Paulo",
+            "district": "Centro",
+            "postalCode": "01001-000",
+            "state": "SP",
+            "number": "123",
+            "additionalInfo": "Próximo à praça central"
+        },
+        "phone1": "(11) 98765-4321",
+        "phone2": "(11) 91234-5678"
+    },
+    {
+        "cnpj": "23456789000102",
+        "corporateName": "Tech Solutions SA",
+        "businessName": "Tech Soluções",
+        "address": {
+            "street": "Avenida das Nações",
+            "city": "Rio de Janeiro",
+            "district": "Copacabana",
+            "postalCode": "22041-001",
+            "state": "RJ",
+            "number": "456"
+        },
+        "phone1": "(21) 99876-5432",
+        "phone2": null
+    },
+    {
+        "cnpj": "34567890000103",
+        "corporateName": "Alimentos Naturais ME",
+        "businessName": "NaturAlimentos",
+        "address": {
+            "street": "Estrada do Campo",
+            "city": "Belo Horizonte",
+            "district": "Santa Lúcia",
+            "postalCode": "30190-000",
+            "state": "MG",
+            "additionalInfo": "Ao lado do supermercado"
+        },
+        "phone1": "(31) 98432-7654",
+        "phone2": "(31) 97654-3210"
+    },
+    {
+        "cnpj": "45678901000104",
+        "corporateName": "Serviços Rápidos LTDA",
+        "businessName": "Fast Service",
+        "address": {
+            "street": "Rua do Comércio",
+            "city": "Curitiba",
+            "district": "Centro",
+            "postalCode": "80000-000",
+            "state": "PR",
+            "number": "77",
+            "additionalInfo": "Próximo ao shopping"
+        },
+        "phone1": "(41) 91234-5678",
+        "phone2": null
+    },
+    {
+        "cnpj": "56789012000105",
+        "corporateName": "Construtora Ideal",
+        "businessName": "Ideal Construções",
+        "address": {
+            "street": "Avenida Principal",
+            "city": "Fortaleza",
+            "district": "Aldeota",
+            "postalCode": "60160-000",
+            "state": "CE",
+            "number": "2150"
+        },
+        "phone1": "(85) 99988-1234",
+        "phone2": "(85) 98765-4321"
+    },
+    {
+        "cnpj": "67890123000106",
+        "corporateName": "Moda & Estilo SA",
+        "businessName": "Loja de Moda",
+        "address": {
+            "street": "Rua das Maravilhas",
+            "city": "Salvador",
+            "district": "Pituba",
+            "postalCode": "41800-000",
+            "state": "BA",
+            "number": "56",
+            "additionalInfo": "Em frente ao parque"
+        },
+        "phone1": "(71) 98877-6543",
+        "phone2": null
+    },
+    {
+        "cnpj": "78901234000107",
+        "corporateName": "Tecnologia Inovações ME",
+        "businessName": "InovaTech",
+        "address": {
+            "street": "Avenida das Indústrias",
+            "city": "Manaus",
+            "district": "Distrito Industrial",
+            "postalCode": "69000-000",
+            "state": "AM"
+        },
+        "phone1": "(92) 99456-7890",
+        "phone2": "(92) 91234-5678"
+    },
+    {
+        "cnpj": "89012345000108",
+        "corporateName": "Distribuidora Central LTDA",
+        "businessName": "Central Distribuição",
+        "address": {
+            "street": "Rua do Comércio",
+            "city": "Recife",
+            "district": "Boa Vista",
+            "postalCode": "50060-000",
+            "state": "PE",
+            "number": "900"
+        },
+        "phone1": "(81) 99876-5432",
+        "phone2": null
+    },
+    {
+        "cnpj": "90123456000109",
+        "corporateName": "Educação de Qualidade",
+        "businessName": "Educar Brasil",
+        "address": {
+            "street": "Rua dos Professores",
+            "city": "Porto Alegre",
+            "district": "Centro Histórico",
+            "postalCode": "90010-000",
+            "state": "RS",
+            "number": "300",
+            "additionalInfo": "Ao lado do museu"
+        },
+        "phone1": "(51) 98765-4321",
+        "phone2": "(51) 97654-3210"
+    },
+    {
+        "cnpj": "01234567000110",
+        "corporateName": "Saúde para Todos LTDA",
+        "businessName": "Clinica Vida",
+        "address": {
+            "street": "Avenida da Saúde",
+            "city": "Brasília",
+            "district": "Asa Norte",
+            "postalCode": "70000-000",
+            "state": "DF",
+            "number": "100"
+        },
+        "phone1": "(61) 91234-5678",
+        "phone2": null
+    },{
+        "cnpj": "12345678000101",
+        "corporateName": "Empresa Exemplo LTDA",
+        "businessName": "Exemplo Comércio",
+        "address": {
+            "street": "Rua das Flores",
+            "city": "São Paulo",
+            "district": "Centro",
+            "postalCode": "01001-000",
+            "state": "SP",
+            "number": "123",
+            "additionalInfo": "Próximo à praça central"
+        },
+        "phone1": "(11) 98765-4321",
+        "phone2": "(11) 91234-5678"
+    },
+    {
+        "cnpj": "23456789000102",
+        "corporateName": "Tech Solutions SA",
+        "businessName": "Tech Soluções",
+        "address": {
+            "street": "Avenida das Nações",
+            "city": "Rio de Janeiro",
+            "district": "Copacabana",
+            "postalCode": "22041-001",
+            "state": "RJ",
+            "number": "456"
+        },
+        "phone1": "(21) 99876-5432",
+        "phone2": null
+    },
+    {
+        "cnpj": "34567890000103",
+        "corporateName": "Digital Innovations LTDA",
+        "businessName": "Inova Digital",
+        "address": {
+            "street": "Rua do Progresso",
+            "city": "Campinas",
+            "district": "Taquaral",
+            "postalCode": "13076-010",
+            "state": "SP",
+            "number": "789"
+        },
+        "phone1": "(19) 99812-3456",
+        "phone2": "(19) 91234-9876"
+    },
+    {
+        "cnpj": "45678901000104",
+        "corporateName": "Alpha Systems EIRELI",
+        "businessName": "Alpha Sys",
+        "address": {
+            "street": "Avenida Paulista",
+            "city": "São Paulo",
+            "district": "Bela Vista",
+            "postalCode": "01310-000",
+            "state": "SP",
+            "number": "1000",
+            "additionalInfo": "Edifício Central"
+        },
+        "phone1": "(11) 97654-3210",
+        "phone2": "(11) 96543-2109"
+    },
+    {
+        "cnpj": "56789012000105",
+        "corporateName": "Global Traders Ltd",
+        "businessName": "G-Traders",
+        "address": {
+            "street": "Rua das Oliveiras",
+            "city": "Belo Horizonte",
+            "district": "Savassi",
+            "postalCode": "30140-150",
+            "state": "MG",
+            "number": "321"
+        },
+        "phone1": "(31) 98765-4321",
+        "phone2": "(31) 97654-3210"
+    },
+    {
+        "cnpj": "67890123000106",
+        "corporateName": "Construtora Progresso LTDA",
+        "businessName": "Prog Construções",
+        "address": {
+            "street": "Rua dos Jardins",
+            "city": "Curitiba",
+            "district": "Centro Cívico",
+            "postalCode": "80530-000",
+            "state": "PR",
+            "number": "654"
+        },
+        "phone1": "(41) 99234-5678",
+        "phone2": "(41) 99876-5432"
+    },
+    {
+        "cnpj": "78901234000107",
+        "corporateName": "EcoLife Ambiental Ltda",
+        "businessName": "Eco Life",
+        "address": {
+            "street": "Avenida dos Ecologistas",
+            "city": "Salvador",
+            "district": "Barra",
+            "postalCode": "40140-010",
+            "state": "BA",
+            "number": "11",
+            "additionalInfo": "Em frente ao parque"
+        },
+        "phone1": "(71) 99123-4567",
+        "phone2": null
+    },
+    {
+        "cnpj": "89012345000108",
+        "corporateName": "Gourmet Delícias EIRELI",
+        "businessName": "Delícias Gourmet",
+        "address": {
+            "street": "Rua das Especiarias",
+            "city": "Fortaleza",
+            "district": "Aldeota",
+            "postalCode": "60115-221",
+            "state": "CE",
+            "number": "102",
+            "additionalInfo": "Próximo ao shopping"
+        },
+        "phone1": "(85) 98765-1234",
+        "phone2": "(85) 91234-5678"
+    },
+    {
+        "cnpj": "90123456000109",
+        "corporateName": "Tecnologia Avançada Ltda",
+        "businessName": "Tech Avançada",
+        "address": {
+            "street": "Rua da Ciência",
+            "city": "Porto Alegre",
+            "district": "Cidade Baixa",
+            "postalCode": "90050-200",
+            "state": "RS",
+            "number": "503"
+        },
+        "phone1": "(51) 99456-7890",
+        "phone2": "(51) 99876-5432"
+    },
+    {
+        "cnpj": "01234567000110",
+        "corporateName": "Network Solutions SA",
+        "businessName": "Net Soluções",
+        "address": {
+            "street": "Rua dos Programadores",
+            "city": "Brasília",
+            "district": "Asa Norte",
+            "postalCode": "70710-000",
+            "state": "DF",
+            "number": "1101"
+        },
+        "phone1": "(61) 98712-3456",
+        "phone2": "(61) 91234-5678"
+    },
+    {
+        "cnpj": "02345678000111",
+        "corporateName": "Medicare Hospitalar Ltda",
+        "businessName": "Medicare",
+        "address": {
+            "street": "Rua dos Médicos",
+            "city": "Recife",
+            "district": "Boa Viagem",
+            "postalCode": "51020-210",
+            "state": "PE",
+            "number": "204"
+        },
+        "phone1": "(81) 99812-3456",
+        "phone2": "(81) 99234-5678"
+    }
+]

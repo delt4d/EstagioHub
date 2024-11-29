@@ -1,0 +1,192 @@
+# @name start-new-internship
+# @prompt token
+POST {{baseUrl}}/internship/start-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "classification": "mandatory",
+    "division": "Desenvolvimento",
+    "monthlyStipend": 5000, 
+    "organizationCnpj": "19131243000197",
+    "organizationSupervisor": {
+        "email": "supervisor@example.com",
+        "name": "Supervisor da empresa",
+        "position": "recruiter"
+    },
+    "period": {
+        "startDate": "2024-01-01",
+        "expectedEndDate": "2024-12-31" 
+    },
+    "tasks": [ 
+        {
+            "name": "task 1",
+            "description": "task 1 description"
+        }, 
+        {
+            "name": "task 2",
+            "description": "task 2 description"
+        }
+    ],
+    "studentId": 1,
+    "supervisorId": 1,
+    "transportationAid": 3,
+    "internshipSchedule": { 
+        "mondayToFriday": { 
+            "startTime": 8, 
+            "endTime": 11.40 
+        },
+        "mondayToFridaySecondary": null, 
+        "saturday": {
+            "startTime": 9,
+            "endTime": 12 
+        }
+    },
+    "workSituation": "onsite"
+}
+
+###
+# @name searchInternships
+# @prompt token
+# @prompt searchTerm
+# @prompt limit 10
+# @prompt offset 0
+GET {{baseUrl}}/internship?searchTerm={{searchTerm}}&limit={{limit}}&offset={{offset}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name findInternshipByID
+# @prompt token
+# @prompt id
+GET {{baseUrl}}/internship/{{id}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name cancelInternshipRequest
+# @prompt token
+# @prompt id
+# @prompt reason
+POST {{baseUrl}}/internship/{{id}}/cancel-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "reason": "{{reason}}"
+}
+
+###
+# @name approveInternshipRequest
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/approve-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name rejectInternshipRequest
+# @prompt token
+# @prompt id
+# @prompt reason
+POST {{baseUrl}}/internship/{{id}}/reject-new-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "reason": "{{reason}}"
+}
+
+###
+# @name closeInternshipRequest
+# @prompt token
+# @prompt id
+# @prompt reason
+POST {{baseUrl}}/internship/{{id}}/close-internship
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+{
+    "reason": "{{reason}}"
+}
+
+###
+# @name confirmInternshipDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/confirm-internship-document
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name uploadInternshipStartDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/upload-start-document
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="Anexo_05_Plano_de_Atividades_Ficha_de_Inicio-20200306140329.doc"
+Content-Type: application/msword
+
+< ./static/Anexo_05_Plano_de_Atividades_Ficha_de_Inicio-20200306140329.doc
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# @name uploadInternshipProgressDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/upload-progress-document
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="Anexo_08_Modelo_de_Relatorio_de_Progresso-20200214144029.doc"
+Content-Type: application/msword
+
+< ./static/Anexo_08_Modelo_de_Relatorio_de_Progresso-20200214144029.doc
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# @name uploadInternshipEndDocument
+# @prompt token
+# @prompt id
+POST {{baseUrl}}/internship/{{id}}/upload-end-document
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="Anexo_10_Modelo_de_Relatorio_Final-20200214143725.doc"
+Content-Type: application/msword
+
+< ./static/Anexo_10_Modelo_de_Relatorio_Final-20200214143725.doc
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# @name findStudentInternshipsById
+# @prompt token
+# @prompt studentId
+GET {{baseUrl}}/internship/student/{{studentId}}
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}
+
+###
+# @name findCurrentStudentInternships
+# @prompt token
+GET {{baseUrl}}/internship/student/me
+Content-Type: application/json
+Access-Control-Allow-Credentials: true
+Authorization: Bearer {{token}}

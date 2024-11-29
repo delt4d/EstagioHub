@@ -6,6 +6,7 @@
     "endOfLine": "lf",
     "singleAttributePerLine": true,
     "plugins": [
-        "prettier-plugin-organize-imports"
+        "prettier-plugin-organize-imports",
+        "prettier-plugin-organize-attributes"
     ]
 }

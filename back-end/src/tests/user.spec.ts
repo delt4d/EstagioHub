@@ -1,7 +1,7 @@
 import timekeeper from 'timekeeper';
 import testing from '.';
-import config from '../modules/config';
-import { DatabaseResolver } from '../modules/database';
+import config from '../app/config';
+import { DatabaseResolver } from '../app/database';
 
 describe('users', () => {
     beforeEach(async () => {
@@ -18,6 +18,7 @@ describe('users', () => {
         it('should return admin user data', async () => {
             const expectedResultValue = {
                 loginResponse: {
+                    message: config.messages.successfullLogin,
                     success: true,
                 },
                 meResponse: {

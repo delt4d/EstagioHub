@@ -1,8 +1,17 @@
-import Joi from 'joi';
-import { ValidationError } from '../errors';
-import { DeepPartial, MapperDictionary } from './helpers';
+export type MergeReplace<T, U> = Omit<T, keyof U> & U;
+export type Immutable<T> = { readonly [K in keyof T]: Immutable<T[K]> };
+export type DeepPartial<T> = {
+    [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+export type Mapper<From extends object, To extends object> = {
+    [K in keyof To]?: keyof From | ((source: From) => To[K]);
+};
+export type Replace<
+    T,
+    U extends { [K in keyof T]?: T[K] | unknown },
+> = MergeReplace<T, U>;
 
-type ValueOrError<T, E extends Error = Error> =
+export type ValueOrError<T, E extends Error = Error> =
     | {
           value: T;
           isError: false;
@@ -28,7 +37,7 @@ type ValueOrError<T, E extends Error = Error> =
           ) => ValueOrError<U, Error>;
       };
 
-type AsyncValueOrError<T, E extends Error = Error> = {
+export type AsyncValueOrError<T, E extends Error = Error> = {
     resolveAsync: () => Promise<ValueOrError<T, E>>;
     waitAsync: () => Promise<void>;
     getValueAsync: () => Promise<T | E>;
@@ -165,21 +174,14 @@ export function toResult<T, E extends Error = Error>(
     };
 }
 
-export function validateSchema<T>(
-    validationSchema: Joi.ObjectSchema<T>,
-    value?: any
-): T {
-    const validationResult = validationSchema.validate(value);
-
-    if (validationResult.error) {
-        throw new ValidationError(
-            validationResult.error.message,
-            validationResult.error.details,
-            validationResult.warning
-        );
-    }
-
-    return validationResult.value;
+export function deepFreeze<T extends object>(obj: T): Immutable<T> {
+    Object.keys(obj).forEach((key) => {
+        const prop = obj[key as keyof T];
+        if (typeof prop === 'object' && prop !== null) {
+            deepFreeze(prop);
+        }
+    });
+    return Object.freeze(obj);
 }
 
 export function deepMerge<T>(target: T, source: DeepPartial<T>): T {
@@ -203,28 +205,63 @@ export function deepMerge<T>(target: T, source: DeepPartial<T>): T {
     return target;
 }
 
-export function mapObject<From extends object, To extends object>(
-    sourceObject: From,
-    mapper: MapperDictionary<From, To>,
-    ignoreError: boolean = false
-): To {
-    const result: Partial<To> = {};
+export function is<T>(
+    value: unknown,
+    constructor: new (...args: any[]) => T
+): value is T {
+    return value instanceof constructor;
+}
 
-    for (const toKey in mapper) {
-        const fromKey = mapper[toKey];
+type DotNotation<T> = T extends object
+    ? {
+          [K in keyof T]: K extends string
+              ? T[K] extends Array<infer U>
+                  ? `${K}` | `${K}.${DotNotation<U>}`
+                  : `${K}` | `${K}.${DotNotation<T[K]>}`
+              : never;
+      }[keyof T]
+    : never;
 
-        if (typeof fromKey === 'function') {
-            try {
-                result[toKey] = fromKey(sourceObject);
-            } catch (err) {
-                if (!ignoreError) throw err;
+type NestedKeyOf<T> =
+    DotNotation<T> extends infer D ? (D extends string ? D : never) : never;
+
+export function pick<T>(obj: T, paths: NestedKeyOf<T>[]): Partial<T> {
+    const result: any = {};
+
+    for (const path of paths) {
+        const keys = (path as string).split('.');
+
+        function recursivePick(
+            currentObj: any,
+            currentResult: any,
+            keyIndex: number
+        ) {
+            const key = keys[keyIndex];
+            if (currentObj === undefined) return;
+
+            if (keyIndex === keys.length - 1) {
+                currentResult[key] = currentObj[key];
+                return;
             }
-        } else if (typeof fromKey === 'string' && fromKey in sourceObject) {
-            result[toKey] = sourceObject[
-                fromKey as keyof From
-            ] as unknown as To[typeof toKey];
+
+            if (Array.isArray(currentObj[key])) {
+                currentResult[key] = currentObj[key].map((item: any) => {
+                    const nestedResult: any = {};
+                    recursivePick(item, nestedResult, keyIndex + 1);
+                    return nestedResult;
+                });
+            } else {
+                if (!currentResult[key]) currentResult[key] = {};
+                recursivePick(
+                    currentObj[key],
+                    currentResult[key],
+                    keyIndex + 1
+                );
+            }
         }
+
+        recursivePick(obj, result, 0);
     }
 
-    return result as To;
+    return result;
 }

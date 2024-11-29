@@ -1,13 +1,13 @@
 import { randomUUID } from 'crypto';
 import supertest, { Response } from 'supertest';
+import app from '../app';
+import { deepMerge, DeepPartial, toResult } from '../app/utils';
 import { Admin } from '../models/admin';
+import { ClassPeriod } from '../models/institution';
 import { Student } from '../models/student';
 import { Supervisor } from '../models/supervisor';
 import { User } from '../models/user';
 import { UserRole } from '../models/user-role';
-import app from '../modules/app';
-import { DeepPartial } from '../modules/config/helpers';
-import { deepMerge, toResult } from '../modules/config/utils';
 import adminService from '../services/admin';
 import hashService from '../services/hash';
 import studentService from '../services/student';
@@ -42,15 +42,33 @@ const getUserWithoutPassword = (user: User): Omit<User, 'password'> => {
 
 const expectPromiseNotToReject = async <T>(promise: Promise<T>) => {
     const result = await toResult(promise).resolveAsync();
-    expect(result.isSuccess).toBe(true);
+
+    if (result.value instanceof Error) {
+        const errorDetails = JSON.stringify(
+            {
+                name: result.value.name,
+                message: result.value.message,
+            },
+            Object.getOwnPropertyNames(result.value),
+            2
+        );
+        throw new Error(
+            `Expected promise not to reject, but it rejected with: ${errorDetails}`
+        );
+    }
+
+    expect(result.value).not.toBeInstanceOf(Error);
     return result.orElseThrow();
 };
 
 const expectPromiseNotToBeUndefined = async <T>(promise: Promise<T>) => {
-    const result = await toResult(promise).resolveAsync();
-    expect(result.isSuccess).toBe(true);
-    expect(result.value).not.toBeUndefined();
-    return result.orElseThrow() as Exclude<T, undefined>;
+    const result = await expectPromiseNotToReject<T>(promise);
+    expect(result).not.toBeUndefined();
+    return result as Exclude<Awaited<T>, undefined>;
+    // const result = await toResult(promise).resolveAsync();
+    // expect(result.isSuccess).toBe(true);
+    // expect(result.value).not.toBeUndefined();
+    // return result.orElseThrow() as Exclude<T, undefined>;
 };
 
 const requests = {
@@ -130,11 +148,22 @@ const requests = {
                 repeatPassword: data.repeatPassword,
             });
         },
+        search(
+            access_token: string,
+            data: { searchTerm: string; limit: number; offset: number }
+        ) {
+            return requestWithSupertest.get('/api/v1/student').query({
+                access_token,
+                searchTerm: data.searchTerm,
+                limit: data.limit,
+                offset: data.offset,
+            });
+        },
     },
-    logout(token: string) {
+    logout(access_token: string) {
         return requestWithSupertest
-            .delete(`/api/v1/logout?access_token=${token}`)
-            .send();
+            .delete('/api/v1/logout')
+            .query({ access_token });
     },
 };
 
@@ -195,7 +224,7 @@ const models = {
         return {
             name: 'differentName23',
             user: {
-                email: 'differentEmail23@email.com',
+                email: 'differentemail23@email.com',
                 password: 'different_Password 123',
                 role: UserRole.Adm,
             },
@@ -253,6 +282,22 @@ const models = {
                 password: 'student-123pass__word',
                 role: UserRole.Student,
             },
+            academicClass: {
+                courseName: 'Administration',
+                classPeriod: ClassPeriod.Morning,
+            },
+            address: {
+                street: '123 Main St',
+                city: 'City Name',
+                district: 'Central',
+                postalCode: '12345-678',
+                state: 'StateName',
+                number: '123',
+                additionalInfo: 'Near the park',
+            },
+            phone: '123-456-7890',
+            whatsapp: '123-456-7890',
+            academicId: 'STU123456',
         };
     },
 
@@ -260,13 +305,28 @@ const models = {
         return {
             fullName: 'Different Student Name',
             user: {
-                email: 'anotherStudent_name123@email.com',
+                email: 'anotherstudent_name123@email.com',
                 password: 'anotherStudent123Password*',
                 role: UserRole.Student,
             },
+            academicClass: {
+                courseName: 'Marketing',
+                classPeriod: ClassPeriod.Afternoon,
+            },
+            address: {
+                street: '456 Another St',
+                city: 'Another City',
+                district: 'Downtown',
+                postalCode: '23456-789',
+                state: 'AnotherState',
+                number: '456',
+                additionalInfo: 'Near the mall',
+            },
+            phone: '987-654-3210',
+            whatsapp: '987-654-3210',
+            academicId: 'STU987654',
         };
     },
-
     async getStudentWithEncryptedPasswordAsync(student: Student | undefined) {
         expect(student).not.toBeUndefined();
         return this.custom<Student>(student!, {

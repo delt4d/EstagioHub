@@ -1,5 +1,5 @@
+import { DatabaseResolver } from '../app/database';
 import { Admin } from '../models/admin';
-import { DatabaseResolver } from '../modules/database';
 import hashService from './hash';
 
 export class AdminService {

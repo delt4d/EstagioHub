@@ -24,6 +24,8 @@ const messages = {
     nameOnlyLetters: 'O campo nome só pode ter letras.',
     wrongRepeatPassword: 'A confirmação de senha está incorreta',
     wrongPassword: 'A senha está incorreta!',
+    invalidCnpj: 'Este CNPJ não é válido. Use apenas números.',
+    emptyCnpj: 'O campo CNPJ é obrigatório.',
 
     // good
     welcomeMessage: 'Servidor ativo. API está disponível.',
@@ -41,19 +43,25 @@ const messages = {
         'Não foi possível completar a requisição porque ocorreu um erro inesperado!',
     tooManyRequests:
         'Muitas requisições foram enviadas em pouco tempo. Aguarde alguns minutos para continuar.',
-    notAuth: 'Você precisa estar autenticado para acessar este recurso!',
+    unauthenticated:
+        'Você precisa estar autenticado para acessar este recurso!',
+    unauthorized: 'Você não tem permissão para acessar este recurso!',
     invalidAccessToken:
         'Seu acesso não é válido! Tente fazer o login novamente.',
     invalidEmailOrResetPasswordToken:
         'O código de uso único ou o e-mail é inválido.',
     expiredResetPasswordToken: 'O código de uso único expirou.',
     invalidResetPasswordToken: 'O código de uso único é inválido',
-    invalidToken: 'Este token não é válido!',
+    organizationNotFoundWithCNPJ:
+        'Nenhum empresa foi encontrada com este CNPJ.',
 };
 
 const validations = {
     minPasswordLength: 8,
     maxEmailLength: 254,
+    maxSearchTermLength: 100,
+    maxSearchLimit: 100,
+    defaultSearchLimit: 10,
 };
 
 const project = (() => {
@@ -136,6 +144,12 @@ const external = {
             if (project.environment === 'test') return message;
             console.log('=>', message, ...optionalParams);
         };
+    },
+    brasilAPI: {
+        baseURL: 'https://brasilapi.com.br/api',
+    },
+    cnpjWS: {
+        baseURL: 'https://publica.cnpj.ws',
     },
 };
 

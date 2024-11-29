@@ -1,11 +1,10 @@
+import config from '../app/config';
+import { DatabaseResolver } from '../app/database';
+import { BadRequestError, NotFoundError } from '../app/errors';
+import { Replace, toResult } from '../app/utils';
 import { AccessToken } from '../models/access-token';
 import { ResetPasswordToken } from '../models/reset-password-token';
 import { User } from '../models/user';
-import config from '../modules/config';
-import { Replace } from '../modules/config/helpers';
-import { toResult } from '../modules/config/utils';
-import { DatabaseResolver } from '../modules/database';
-import { BadRequestError, NotFoundError } from '../modules/errors';
 import tokenService from './token';
 
 export class AuthService {
@@ -90,7 +89,7 @@ export class AuthService {
         conn.throwIfHasError();
 
         if (!resetPassToken) {
-            throw new NotFoundError(config.messages.invalidToken);
+            throw new NotFoundError(config.messages.invalidResetPasswordToken);
         }
 
         return resetPassToken;

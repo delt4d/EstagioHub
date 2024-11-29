@@ -1,5 +1,5 @@
 import { requestWithSupertest } from '.';
-import config from '../modules/config';
+import config from '../app/config';
 
 it('GET /healthcheck should return 200 status code', async () => {
     await requestWithSupertest.get('/healthcheck').expect(200);

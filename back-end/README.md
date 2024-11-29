@@ -10,6 +10,21 @@
 
 ---
 
+<<<<<<< HEAD
+- [x] Iniciar cadastro de estágio
+    - [x] Cadastro de estágio
+    - [x] Busca por CNPJ (usando Brasil API)
+- [x] Retornar alunos (com funcionalidade de pesquisa)
+- [x] Retornar estágios (com funcionalidade de pesquisa)
+- [x] Atualizar estágio (quando possível)
+
+---
+
+- [x] Cancelar solicitação de estágio
+- [x] Encerrar estágio
+- [x] Aprovar/Reprovar estágio
+- [x] Marcar documento como entregue
+=======
 - [ ] Iniciar cadastro de estágio
     - [ ] Cadastro de estágio
     - [ ] Busca por CNPJ (usando Brasil API)
@@ -27,11 +42,17 @@
 - [ ] Encerrar estágio
 - [ ] Aprovar/Reprovar estágio
 - [ ] Marcar documento como entregue
+>>>>>>> main
 
 ---
 
 - [ ] Configurar notificações
+<<<<<<< HEAD
+- [x] Obter informações do usuário
+- [x] Atualizar informações do usuário
+=======
 - [ ] Obter informações do usuário
 - [ ] Atualizar informações do usuário
+>>>>>>> main
 - [ ] Descadastrar usuário
 

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import config from '../app/config';
+import { DatabaseError, NotFoundError, UnhandledError } from '../app/errors';
+import { validateSchema } from '../app/helpers';
+import { toResult } from '../app/utils';
 import { Supervisor } from '../models/supervisor';
-import config from '../modules/config';
-import { toResult, validateSchema } from '../modules/config/utils';
-import { NotFoundError, UnhandledError } from '../modules/errors';
 import {
     SupervisorLoginSchema,
     SupervisorRegisterSchema,
@@ -11,7 +12,6 @@ import authService from '../services/auth';
 import emailService from '../services/email';
 import supervisorService from '../services/supervisor';
 import userService from '../services/user';
-
 export default class SupervisorController {
     async login(req: Request, res: Response) {
         const data = validateSchema(SupervisorLoginSchema, req.body);
@@ -31,13 +31,17 @@ export default class SupervisorController {
 
         const accessToken = await toResult(
             authService.saveNewAccessToken(supervisor.user.id!)
-        ).orElseThrowAsync(
-            (error) =>
-                new UnhandledError(
-                    error.message,
-                    'Não foi possível realizar o login, tente novamente mais tarde.'
-                )
-        );
+        ).orElseThrowAsync((err) => {
+            const friendlyMessage =
+                'Não foi possível realizar o login. Tente novamente mais tarde.';
+
+            if (err instanceof DatabaseError) {
+                err.changeFriendlyMessage(friendlyMessage);
+                return err;
+            }
+
+            return new UnhandledError(err.message, friendlyMessage);
+        });
 
         return res
             .status(200)
@@ -60,13 +64,7 @@ export default class SupervisorController {
                     password: data.password,
                 },
             })
-        ).orElseThrowAsync(
-            (error) =>
-                new UnhandledError(
-                    error.message,
-                    'Os dados foram preenchidos corretamente, mas não foi possível completar o registro.'
-                )
-        );
+        ).orElseThrowAsync();
 
         await toResult(
             emailService.sendNewUserEmail(supervisor.user)
