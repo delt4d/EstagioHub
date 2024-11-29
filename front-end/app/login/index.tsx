@@ -8,6 +8,8 @@ import CustomInput from '../../components/input/CustomInput';
 
 import { styles, login } from '../styles';
 
+import axiosRequest from '../../constants/axios';
+
 export default function Login() {
   
   const [email, setEmail] = useState('');
@@ -15,7 +17,10 @@ export default function Login() {
   const [emailError, setEmailError] = useState('');
   const [senhaError, setSenhaError] = useState('');
 
-  const handleLogin = () => {
+  const [sucessLogin, setSucessLogin] = useState(true);
+  const [loginMessage, setLoginMessage] = useState('');
+
+  const handleLogin = async () => {
     
     setEmailError('');
     setSenhaError('');
@@ -23,6 +28,19 @@ export default function Login() {
     if (email && senha) {
 
       alert('Acessando o sistema');
+      try{
+        const response =  await axiosRequest({
+            url:'/student/login',
+            method:'POST',
+            data:{"email": email,
+            "password": senha},
+          })
+           response.data
+         setSucessLogin(true);
+      } catch {
+        setSucessLogin(false);
+
+      }
     } 
     else 
     {
