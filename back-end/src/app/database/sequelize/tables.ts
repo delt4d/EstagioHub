@@ -54,7 +54,6 @@ export class ResetPasswordTable extends Model<
     SequelizeResetPasswordTokenCreate
 > {
     @Index
-    @Unique
     @AllowNull(false)
     @Length({
         max: config.validations.maxEmailLength,

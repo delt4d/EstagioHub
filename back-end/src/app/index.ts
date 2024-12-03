@@ -73,6 +73,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({
         origin: [config.project.frontendUrl],
+        credentials: true,
     })
 );
 

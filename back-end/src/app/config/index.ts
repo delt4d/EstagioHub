@@ -69,7 +69,7 @@ const project = (() => {
         environment: 'production' as Environment,
         port: Number(process.env.PORT || '8000'),
         secret: process.env.secret || randomUUID(),
-        frontendUrl: process.env.FRONTEND_URL ?? '',
+        frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:8081',
         redisUrl: process.env.REDIS_URL,
         emailOptions: {
             host: process.env.EMAIL_HOST,
