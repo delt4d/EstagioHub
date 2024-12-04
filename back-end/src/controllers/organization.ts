@@ -6,7 +6,10 @@ import organizationService from '../services/organization';
 export default class OrganizationController {
     async findByCnpj(req: Request, res: Response) {
         const cnpj = validateSchema(CnpjSchema, req.params.cnpj);
-        const result = await organizationService.fetchDataByCnpj(cnpj);
-        return res.send(result);
+        const organization = await organizationService.fetchDataByCnpj(cnpj);
+        return res.send({
+            success: true,
+            data: organization,
+        });
     }
 }
