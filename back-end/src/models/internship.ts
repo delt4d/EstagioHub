@@ -48,7 +48,7 @@ export interface InternshipDocument {
     type: InternshipDocumentType;
 }
 
-export type InternshipTasks = {
+export type InternshipTask = {
     id?: number;
     name: string; // Nome da atividade
     description: string; // Descrição da atividade
@@ -84,7 +84,7 @@ export type Internship = {
     workSituation: WorkSituation; // situação de trabalho (presencial, semi presencial, remota)
     internshipSchedule: InternshipSchedule;
     period: InternshipPeriod;
-    tasks: InternshipTasks[];
+    tasks: InternshipTask[];
     documents: InternshipDocument[];
     internshipCloseReason?: string;
 };

@@ -16,7 +16,7 @@ import {
     InternshipDocumentType,
     InternshipSchedule,
     InternshipStatus,
-    InternshipTasks,
+    InternshipTask,
 } from '../../../models/internship';
 import config from '../../config';
 import {
@@ -374,7 +374,7 @@ export class InternshipTable extends Model<
     @AllowNull(false)
     @NotEmpty
     @Column(DataTypes.JSON)
-    public declare tasks: InternshipTasks[];
+    public declare tasks: InternshipTask[];
 
     @AllowNull(false)
     @NotEmpty

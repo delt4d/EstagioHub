@@ -6,7 +6,7 @@ import {
     Internship,
     InternshipDocument,
     InternshipSchedule,
-    InternshipTasks,
+    InternshipTask,
 } from '../../../models/internship';
 import { Organization } from '../../../models/organization';
 import { ResetPasswordToken } from '../../../models/reset-password-token';
@@ -49,7 +49,7 @@ export type SequelizeResetPasswordToken =
     BaseSequelizeModel<ResetPasswordToken>;
 export type SequelizeAddress = BaseSequelizeModel<Address>;
 export type SequelizeAcademicClass = AcademicClass;
-export type SequelizeInternshipTasks = InternshipTasks;
+export type SequelizeInternshipTasks = InternshipTask;
 export type SequelizeOrganization = BaseSequelizeModel<
     Organization,
     'address',
@@ -73,7 +73,7 @@ export type SequelizeInternship = BaseSequelizeModel<
         organizationSupervisorEmail: string;
         organizationSupervisorPosition: string;
         internshipCloseReason?: string;
-        tasks: InternshipTasks[];
+        tasks: InternshipTask[];
     }
 >;
 export type SequelizeInternshipDocument = BaseSequelizeModel<
