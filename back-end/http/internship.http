@@ -34,13 +34,13 @@ Authorization: Bearer {{token}}
     "transportationAid": 3,
     "internshipSchedule": { 
         "mondayToFriday": { 
-            "startTime": 8, 
-            "endTime": 11.40 
+            "startTime": "08:00", 
+            "endTime": "11:40" 
         },
         "mondayToFridaySecondary": null, 
         "saturday": {
-            "startTime": 9,
-            "endTime": 12 
+            "startTime": "09:00",
+            "endTime": "12:00" 
         }
     },
     "workSituation": "onsite"

@@ -5,6 +5,15 @@ import {
     InStartNewInternshipDto,
 } from '../dtos/internship';
 
+const TimeSchema = Joi.string()
+    .pattern(/^([01]\d|2[0-3]):[0-5]\d$/, 'HH:mm')
+    .required()
+    .messages({
+        'string.base': 'O horário deve ser uma string.',
+        'string.pattern.base': 'O horário deve estar no formato HH:mm.',
+        'any.required': 'O horário é obrigatório.',
+    });
+
 export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
     classification: Joi.string()
         .valid('mandatory', 'non_mandatory')
@@ -111,96 +120,83 @@ export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
     }),
     internshipSchedule: Joi.object({
         mondayToFriday: Joi.object({
-            startTime: Joi.number().min(0).max(24).required().messages({
+            startTime: TimeSchema.messages({
                 'any.required':
                     'O horário de início de segunda a sexta é obrigatório.',
-                'number.base': 'O horário de início deve ser um número.',
-                'number.min': 'O horário de início deve estar entre 0 e 24.',
-                'number.max': 'O horário de início deve estar entre 0 e 24.',
             }),
-            endTime: Joi.number()
-                .greater(Joi.ref('startTime'))
-                .max(24)
-                .required()
-                .messages({
-                    'any.required':
-                        'O horário de término de segunda a sexta é obrigatório.',
-                    'number.base': 'O horário de término deve ser um número.',
-                    'number.greater':
-                        'O horário de término deve ser após o horário de início.',
-                    'number.max':
-                        'O horário de término deve estar entre 0 e 24.',
-                }),
+            endTime: TimeSchema.custom((value, helpers) => {
+                const startTime = helpers.state.ancestors[0].startTime;
+                if (startTime && value <= startTime) {
+                    return helpers.error('any.custom');
+                }
+                return value;
+            }).messages({
+                'any.required':
+                    'O horário de término de segunda a sexta é obrigatório.',
+                'any.custom':
+                    'O horário de término deve ser após o horário de início.',
+            }),
         }).allow(null),
         mondayToFridaySecondary: Joi.object({
-            startTime: Joi.number().min(0).max(24).required().messages({
+            startTime: TimeSchema.messages({
                 'any.required':
                     'O horário secundário de início de segunda a sexta é obrigatório.',
-                'number.base': 'O horário de início deve ser um número.',
-                'number.min': 'O horário de início deve estar entre 0 e 24.',
-                'number.max': 'O horário de início deve estar entre 0 e 24.',
             }),
-            endTime: Joi.number()
-                .greater(Joi.ref('startTime'))
-                .max(24)
-                .required()
-                .messages({
-                    'any.required':
-                        'O horário secundário de término de segunda a sexta é obrigatório.',
-                    'number.base': 'O horário de término deve ser um número.',
-                    'number.greater':
-                        'O horário de término deve ser após o horário de início.',
-                    'number.max':
-                        'O horário de término deve estar entre 0 e 24.',
-                }),
+            endTime: TimeSchema.custom((value, helpers) => {
+                const startTime = helpers.state.ancestors[0].startTime;
+                if (startTime && value <= startTime) {
+                    return helpers.error('any.custom');
+                }
+                return value;
+            }).messages({
+                'any.required':
+                    'O horário secundário de término de segunda a sexta é obrigatório.',
+                'any.custom':
+                    'O horário de término deve ser após o horário de início.',
+            }),
         })
             .allow(null)
             .custom((value, helpers) => {
                 const { mondayToFriday } = helpers.state.ancestors[0];
+
                 if (value !== null && mondayToFriday === null) {
-                    return helpers.error('any.custom', {
-                        message:
-                            'O horário secundário de segunda a sexta só pode ser especificado se o horário principal de segunda a sexta estiver definido.',
-                    });
+                    return helpers.error('any.custom');
                 }
+
                 return value;
             }),
         saturday: Joi.object({
-            startTime: Joi.number().min(0).max(24).required().messages({
+            startTime: TimeSchema.messages({
                 'any.required': 'O horário de início do sábado é obrigatório.',
-                'number.base': 'O horário de início deve ser um número.',
-                'number.min': 'O horário de início deve estar entre 0 e 24.',
-                'number.max': 'O horário de início deve estar entre 0 e 24.',
+                'any.custom':
+                    'O horário secundário só pode ser especificado se o horário principal de segunda a sexta estiver definido.',
             }),
-            endTime: Joi.number()
-                .greater(Joi.ref('startTime'))
-                .max(24)
-                .required()
-                .messages({
-                    'any.required':
-                        'O horário de término do sábado é obrigatório.',
-                    'number.base': 'O horário de término deve ser um número.',
-                    'number.greater':
-                        'O horário de término deve ser após o horário de início.',
-                    'number.max':
-                        'O horário de término deve estar entre 0 e 24.',
-                }),
+            endTime: TimeSchema.custom((value, helpers) => {
+                const startTime = helpers.state.ancestors[0].startTime;
+
+                if (startTime && value <= startTime) {
+                    return helpers.error('any.custom');
+                }
+
+                return value;
+            }).messages({
+                'any.required': 'O horário de término do sábado é obrigatório.',
+                'any.custom':
+                    'O horário de término deve ser após o horário de início.',
+            }),
         }).allow(null),
     })
         .custom((value, helpers) => {
             const { mondayToFriday, mondayToFridaySecondary, saturday } = value;
             if (!mondayToFriday && !mondayToFridaySecondary && !saturday) {
-                return helpers.error('any.custom', {
-                    message:
-                        'Pelo menos um horário deve ser especificado: segunda a sexta, horário secundário ou sábado.',
-                });
+                return helpers.error('any.custom');
             }
             return value;
         })
         .messages({
-            'any.required': 'A programação do estágio é obrigatória.',
+            'any.required': 'O horário de estágio é obrigatória.',
             'any.custom':
-                'Pelo menos um horário deve ser especificado: segunda a sexta, horário secundário ou sábado.',
+                'Pelo menos um horário deve ser especificado: segunda a sexta ou aos sábados.',
         }),
     workSituation: Joi.string()
         .valid('onsite', 'hybrid', 'remote')

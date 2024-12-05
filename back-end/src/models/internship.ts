@@ -55,8 +55,8 @@ export type InternshipTasks = {
 };
 
 export type InternshipScheduleTimeRange = {
-    startTime: number;
-    endTime: number;
+    startTime: string;
+    endTime: string;
 };
 
 export type InternshipSchedule = {
