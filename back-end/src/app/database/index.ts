@@ -120,6 +120,7 @@ export interface DatabaseConnection {
     findInternshipsByStudentId(
         studentId: number
     ): Promise<Internship[] | undefined>;
+    findInternshipsByUserId(userId: number): Promise<Internship[] | undefined>;
     confirmInternshipDocument(
         documentId: number
     ): Promise<InternshipDocument | undefined>;

@@ -29,7 +29,7 @@ routes.get(
     '/student/me',
     ensureIsAuthenticated,
     ensureIsAuthorized(UserRole.Student),
-    controller.getInternshipsByCurrentStudentId
+    controller.getInternshipsByCurrentStudent
 );
 
 routes.get(

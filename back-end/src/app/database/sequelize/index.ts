@@ -652,6 +652,41 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
         }
     }
 
+    async findInternshipsByUserId(
+        userId: number
+    ): Promise<Internship[] | undefined> {
+        try {
+            const transaction = await this.sequelize.transaction();
+            const studentModel = await StudentTable.findOne({
+                where: { $userId$: userId },
+                transaction,
+            });
+
+            if (!studentModel) return;
+
+            const models = await InternshipTable.findAll({
+                where: { $studentId$: studentModel.id },
+                include: [
+                    InternshipTasksTable,
+                    {
+                        model: StudentTable,
+                        include: [UserTable, AddressTable],
+                    },
+                    {
+                        model: SupervisorTable,
+                        include: [UserTable],
+                    },
+                    OrganizationTable,
+                ],
+                transaction,
+            });
+
+            return models.map((model) => mapSequelizeInternshipToModel(model));
+        } catch (err) {
+            this.error = err as SequelizeDatabaseError;
+        }
+    }
+
     async confirmInternshipDocument(
         documentId: number
     ): Promise<InternshipDocument | undefined> {

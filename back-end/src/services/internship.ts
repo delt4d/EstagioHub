@@ -82,6 +82,15 @@ class InternshipService {
         return internship!;
     }
 
+    async getInternishipsByUserId(
+        userId: number
+    ): Promise<Internship[] | never> {
+        const conn = await DatabaseResolver.getConnection();
+        const internships = await conn.findInternshipsByUserId(userId);
+        conn.throwIfHasError();
+        return internships!;
+    }
+
     async getInternishipsByStudentId(
         studentId: number
     ): Promise<Internship[] | never> {

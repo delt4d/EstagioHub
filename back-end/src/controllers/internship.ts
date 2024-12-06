@@ -51,10 +51,9 @@ export default class InternshipController {
         });
     }
 
-    async getInternshipsByCurrentStudentId(req: Request, res: Response) {
+    async getInternshipsByCurrentStudent(req: Request, res: Response) {
         const id = req.user?.id!;
-        const internships =
-            await internshipService.getInternishipsByStudentId(id);
+        const internships = await internshipService.getInternishipsByUserId(id);
 
         return res.send({
             success: true,

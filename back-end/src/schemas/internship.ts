@@ -26,6 +26,7 @@ export const StartNewInternshipSchema = Joi.object<InStartNewInternshipDto>({
         }),
     division: Joi.string().required().messages({
         'any.required': 'A divisão é obrigatória.',
+        'string,empty': 'A divisão não pode estar vazia.',
         'string.base': 'A divisão deve ser uma string.',
     }),
     monthlyStipend: Joi.number().min(0).required().messages({
