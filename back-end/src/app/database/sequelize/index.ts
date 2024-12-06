@@ -655,8 +655,9 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
     async findInternshipsByUserId(
         userId: number
     ): Promise<Internship[] | undefined> {
+        const transaction = await this.sequelize.transaction();
+
         try {
-            const transaction = await this.sequelize.transaction();
             const studentModel = await StudentTable.findOne({
                 where: { $userId$: userId },
                 transaction,
@@ -681,8 +682,11 @@ export class SequelizeDatabaseConnection implements DatabaseConnection {
                 transaction,
             });
 
+            await transaction.commit();
+
             return models.map((model) => mapSequelizeInternshipToModel(model));
         } catch (err) {
+            await transaction.rollback();
             this.error = err as SequelizeDatabaseError;
         }
     }
