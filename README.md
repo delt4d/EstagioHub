@@ -2,19 +2,6 @@
   <img src="https://github.com/gabrielceravoloo/EstagioHUB/blob/main/Banner.png" alt="Capa do Repositorio">
 </div>
 
-
-![Status](http://img.shields.io/static/v1?label=STATUS&message=EM-DESENVOLVIMENTO&color=yellow&style=for-the-badge)
-
-## Tarefas atuais
-
--   [ ] Login de estudantes, orientadores e administradores e cadastro dos dois últimos
--   [ ] Criação de formulário de inicio de estágio para estudantes e orientadores
--   [ ] Criação do formulário para visualização de todos os estágios solicitados, concluídos e em andamento para os orientadores e administradores
--   [ ] Criação de formulário de validação de estágios para. orientadores
--   [ ] Criação de formulário para encerramento de estágio para os orientadores
--   [ ] Sistema para notificar orientadores e estudantes de documentações pendentes de forma automática
--   [ ] Formulário para que o orientador encerre um estágio
-
 ## Descrição do projeto:
 
 O **EstagioHUB** é uma plataforma destinada a centralizar e facilitar o acesso dos alunos a vagas de estágio, permitindo que eles se candidatem diretamente através do sistema. Além disso, a ferramenta permite a gestão completa dos estágios, desde o envio de relatórios de progresso até o gerenciamento de documentos, como termos de estágio, com assinaturas digitais. O sistema também oferece funcionalidades para concedentes e instituições de ensino, que podem acessar e assinar documentos, além de acompanhar o andamento dos estágios. Com uma interface prática e organizada, a plataforma visa otimizar e modernizar o processo de estágio, proporcionando maior eficiência e acessibilidade tanto para alunos quanto para professores e empresas.
